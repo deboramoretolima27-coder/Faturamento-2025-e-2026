@@ -16,7 +16,7 @@
   /* Tons derivados, apenas para hierarquia de leitura */
   --suave:#8C7563; --linha:#E3D8C6;
   /* indicador de desempenho, fora da paleta institucional por pedido de leitura */
-  --verde:#3F7A3F;
+  --verde:#3F7A3F; --verde-vivo:#17A34A;
   --display:'Helvetica Now Display','Helvetica Now Text','Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
   --texto:'Helvetica Now Text','Helvetica Now Display','Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
 }
@@ -368,7 +368,7 @@ canvas{cursor:pointer}
   var MES  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   var MESL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
   var COR = {marrom:'#2E1E11', medio:'#73573F', suave:'#8C7563', areia:'#EEE3D1',
-             linha:'#E3D8C6', preto:'#141413', verde:'#3F7A3F'};
+             linha:'#E3D8C6', preto:'#141413', verde:'#3F7A3F', vivo:'#17A34A'};
   var RAMPA = ['#2E1E11','#4A3524','#73573F','#8C7563','#A89179','#C0AC93','#D5C6AE','#EEE3D1'];
   var FONTE = "'Helvetica Now Text','Inter','Helvetica Neue',Arial,sans-serif";
 
@@ -625,33 +625,80 @@ canvas{cursor:pointer}
 
     if(modoComp === 'canal'){
       document.getElementById('notaComp').textContent =
-        'Quantidade de vendas por canal. A barra da esquerda é 2025 e a da direita é 2026, empilhadas por canal. ' +
+        'Evolução contínua dos dois canais, de Janeiro de 2025 até hoje. A linha divisória marca a virada do ano. ' +
         'A faixa clara são as vendas sem canal registrado no quadro.';
-      op.scales.x.stacked = true;
-      op.scales.y.stacked = true;
-      op.plugins.tooltip.callbacks = { label:function(c){
-        return c.dataset.label + ': ' + c.parsed.y + (c.parsed.y === 1 ? ' venda' : ' vendas'); }};
 
-      function serie(anoRef, campo, qtdRef, limite){
-        return MES.map(function(_, i){
-          if(limite !== null && i > limite) return null;
-          var c = ((D.canal[anoRef] || [])[i]) || {l:0,o:0};
-          if(campo === 'l') return c.l || 0;
-          if(campo === 'o') return c.o || 0;
-          return Math.max((qtdRef[i] || 0) - (c.l || 0) - (c.o || 0), 0);
-        });
-      }
-      charts.comp = new Chart(document.getElementById('gComp'), {
-        type:'bar',
-        data:{labels:MES, datasets:[
-          {label:'Loja ' + B,   data:serie(B,'l',qB,null), backgroundColor:COR.medio,  stack:'b', maxBarThickness:20},
-          {label:'Online ' + B, data:serie(B,'o',qB,null), backgroundColor:COR.suave,  stack:'b', maxBarThickness:20},
-          {label:'Sem registro ' + B, data:serie(B,'s',qB,null), backgroundColor:COR.areia, stack:'b', maxBarThickness:20},
-          {label:'Loja ' + A,   data:serie(A,'l',qA,uA), backgroundColor:COR.marrom, stack:'a', maxBarThickness:20},
-          {label:'Online ' + A, data:serie(A,'o',qA,uA), backgroundColor:COR.verde,  stack:'a', maxBarThickness:20},
-          {label:'Sem registro ' + A, data:serie(A,'s',qA,uA), backgroundColor:COR.areia, stack:'a', maxBarThickness:20}
-        ]}, options:op
+      var rotulos = [], serieLoja = [], serieOn = [], serieSem = [], mapa = [];
+      [B, A].forEach(function(y){
+        var lim = (y === A) ? uA : 11;
+        for(var i = 0; i <= lim; i++){
+          var c = ((D.canal[y] || [])[i]) || {l:0,o:0};
+          var q = ((y === A ? qA : qB)[i]) || 0;
+          rotulos.push(MES[i] + '/' + y.slice(2));
+          serieLoja.push(c.l || 0);
+          serieOn.push(c.o || 0);
+          serieSem.push(Math.max(q - (c.l || 0) - (c.o || 0), 0));
+          mapa.push({ano:y, mes:i});
+        }
       });
+      var corte = 12;
+
+      var divisor = { id:'div' + Math.random().toString(36).slice(2),
+        beforeDatasetsDraw:function(chart){
+          var x = chart.scales.x.getPixelForValue(corte - 0.5);
+          var a2 = chart.chartArea, ctx = chart.ctx;
+          ctx.save();
+          ctx.strokeStyle = COR.linha; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+          ctx.beginPath(); ctx.moveTo(x, a2.top); ctx.lineTo(x, a2.bottom); ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = COR.suave; ctx.font = '600 10px ' + FONTE;
+          ctx.textAlign = 'right'; ctx.fillText('2025', x - 8, a2.top + 12);
+          ctx.textAlign = 'left';  ctx.fillText('2026', x + 8, a2.top + 12);
+          ctx.restore();
+        }};
+
+      var opl = legenda(clone(BASE));
+      opl.scales.x.ticks.maxRotation = 60;
+      opl.scales.x.ticks.autoSkip = false;
+      opl.scales.x.ticks.font = {family:FONTE, size:9};
+      opl.scales.y.title = {display:true, text:'vendas no mês', color:COR.suave, font:{family:FONTE,size:10}};
+      opl.interaction = {mode:'index', intersect:false};
+      opl.plugins.tooltip.callbacks = { label:function(c){
+        return c.dataset.label + ': ' + c.parsed.y + (c.parsed.y === 1 ? ' venda' : ' vendas'); }};
+      opl.onClick = function(e, els){
+        if(!els.length) return;
+        var p = mapa[els[0].index];
+        var canalNome = els[0].datasetIndex === 0 ? 'Loja' : (els[0].datasetIndex === 1 ? 'Online' : null);
+        lerCanal(p, serieLoja, serieOn, serieSem, els[0].index, corte);
+        if(canalNome){
+          abrirDetalhe('Canal ' + canalNome + ' · ' + p.ano, MESL[p.mes], function(v){
+            return v.a === p.ano && v.m === p.mes && v.c === canalNome; });
+        } else {
+          abrirDetalhe('Sem canal registrado · ' + p.ano, MESL[p.mes], function(v){
+            return v.a === p.ano && v.m === p.mes && !v.c; });
+        }
+      };
+
+      charts.comp = new Chart(document.getElementById('gComp'), {
+        type:'line',
+        data:{labels:rotulos, datasets:[
+          {label:'Loja', data:serieLoja, borderColor:COR.marrom, backgroundColor:'rgba(46,30,17,.06)',
+           borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:COR.marrom, fill:true, tension:.28},
+          {label:'Online', data:serieOn, borderColor:COR.vivo, backgroundColor:'rgba(23,163,74,.07)',
+           borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:COR.vivo, fill:true, tension:.28},
+          {label:'Sem canal registrado', data:serieSem, borderColor:COR.suave, borderDash:[4,4],
+           borderWidth:1.5, pointRadius:0, fill:false, tension:.28}
+        ]}, options:opl, plugins:[divisor]
+      });
+
+      var lojaIni = serieLoja.slice(0,6).reduce(function(x,y){return x+y;},0);
+      var lojaFim = serieLoja.slice(-6).reduce(function(x,y){return x+y;},0);
+      var onIni = serieOn.slice(0,6).reduce(function(x,y){return x+y;},0);
+      var onFim = serieOn.slice(-6).reduce(function(x,y){return x+y;},0);
+      leitura('Nos seis primeiros meses da série a loja fez ' + lojaIni + ' vendas e o online ' + onIni +
+              '. Nos seis últimos, loja ' + lojaFim + ' e online ' + onFim + '. ' +
+              (onFim > onIni ? 'O online cresceu' : 'O online recuou') + ' e ' +
+              (lojaFim > lojaIni ? 'a loja cresceu' : 'a loja recuou') + ' no período.');
       return;
     }
 
@@ -720,6 +767,16 @@ canvas{cursor:pointer}
             '. ' + altas + ' de ' + (fim2 + 1) + ' meses ficaram acima do ano anterior.');
   }
 
+  function lerCanal(p, sl, so, ss, idx, corte){
+    var ant = idx >= 12 ? idx - 12 : null;   // mesmo mes do ano anterior
+    var t = MESL[p.mes] + ' de ' + p.ano + ': ' + sl[idx] + ' vendas na loja, ' + so[idx] + ' no online';
+    t += ss[idx] ? ' e ' + ss[idx] + ' sem canal registrado no quadro.' : '.';
+    if(ant !== null){
+      t += ' No mesmo mês de 2025 foram ' + sl[ant] + ' na loja e ' + so[ant] + ' no online.';
+    }
+    leitura(t);
+  }
+
   function linhaCanal(nome, antes, agora, emCurso){
     var d = agora - antes;
     var seta = emCurso ? '—' : (d > 0 ? '▲ +' + d : (d < 0 ? '▼ −' + Math.abs(d) : '='));
@@ -785,17 +842,24 @@ canvas{cursor:pointer}
     var fat = (D.fat[ano]||[]).slice(0,u+1);
     var qtd = (D.qtd[ano]||[]).slice(0,u+1);
     var mt = (D.metas || {})[ano] || METAS_LOCAIS[ano] || null;
-    document.getElementById('notaFat').textContent = mt
-      ? 'Valor faturado em destaque, com a quantidade de vendas abaixo. A linha pontilhada é a meta de ' + ano + '. Clique para ver os clientes.'
+    document.getElementById('notaFat').innerHTML = mt
+      ? 'Valor faturado em destaque, com a quantidade de vendas abaixo. As três linhas são Meta, Super Meta e Hiper Meta de ' + ano +
+        '. <b style="color:' + COR.vivo + '">Os meses em verde bateram a meta.</b> Clique para ver os clientes.'
       : 'Valor faturado em destaque, com a quantidade de vendas abaixo. ' + ano + ' não teve meta definida. Clique para ver os clientes.';
 
     var op = clone(BASE);
     op.layout = {padding:{top:34}};
     op.scales.y.ticks.callback = function(v){ return brl(v); };
     op.plugins.tooltip.callbacks = { label:function(c){
-      if(c.dataset.label === 'Meta') return 'Meta: ' + brlCheio(c.parsed.y);
+      if(c.dataset.label.indexOf('Meta') > -1) return c.dataset.label + ': ' + brlCheio(c.parsed.y);
       var t = brlCheio(c.parsed.y) + '  ·  ' + qtd[c.dataIndex] + ' vendas';
-      if(mt && mt.meta[c.dataIndex]) t += '  ·  ' + (c.parsed.y/mt.meta[c.dataIndex]*100).toFixed(0) + '% da meta';
+      if(mt && mt.meta[c.dataIndex]){
+        var i2 = c.dataIndex, nv = 'abaixo da meta';
+        if(c.parsed.y >= mt.hiper[i2]) nv = 'Hiper Meta';
+        else if(c.parsed.y >= mt['super'][i2]) nv = 'Super Meta';
+        else if(c.parsed.y >= mt.meta[i2]) nv = 'Meta batida';
+        t += '  ·  ' + (c.parsed.y/mt.meta[i2]*100).toFixed(0) + '% da meta  ·  ' + nv;
+      }
       return t;
     }};
     op.onClick = function(e, els){
@@ -808,15 +872,28 @@ canvas{cursor:pointer}
         var d = ((fat[i]-fo)/fo)*100;
         t += ' Contra o mesmo mês do outro ano, ' + (d>=0?'alta':'queda') + ' de ' + Math.abs(d).toFixed(0) + '%.';
       }
+      if(mt && mt.meta[i]){
+        var nv2 = fat[i] >= mt.hiper[i] ? 'Hiper Meta' : (fat[i] >= mt['super'][i] ? 'Super Meta'
+                 : (fat[i] >= mt.meta[i] ? 'meta batida' : 'abaixo da meta'));
+        t += ' Meta de ' + brlCheio(mt.meta[i]) + ', ' + (fat[i]/mt.meta[i]*100).toFixed(0) + '% de atingimento, ' + nv2 + '.';
+      }
       leitura(t);
       abrirDetalhe('Faturamento · ' + ano, MESL[i], function(v){ return v.a === ano && v.m === i; });
     };
-    var conjuntos = [{type:'bar', label:ano, data:fat, backgroundColor:COR.marrom,
-                      borderRadius:2, maxBarThickness:64, order:2}];
+    var bateu = fat.map(function(v,i){ return mt ? v >= mt.meta[i] : false; });
+    var conjuntos = [{type:'bar', label:ano, data:fat, order:3,
+                      backgroundColor:fat.map(function(v,i){ return bateu[i] ? COR.vivo : COR.marrom; }),
+                      borderRadius:2, maxBarThickness:64}];
     if(mt){
-      conjuntos.push({type:'line', label:'Meta', data:mt.meta.slice(0,u+1), borderColor:COR.preto,
-                      borderDash:[6,4], borderWidth:2, pointRadius:3, pointBackgroundColor:COR.preto,
-                      fill:false, tension:0, order:1});
+      conjuntos.push(
+        {type:'line', label:'Meta', data:mt.meta.slice(0,u+1), borderColor:COR.preto,
+         borderDash:[6,4], borderWidth:2, pointRadius:3, pointBackgroundColor:COR.preto,
+         fill:false, tension:0, order:2},
+        {type:'line', label:'Super Meta', data:mt['super'].slice(0,u+1), borderColor:COR.medio,
+         borderDash:[3,3], borderWidth:1.5, pointRadius:0, fill:false, tension:0, order:1},
+        {type:'line', label:'Hiper Meta', data:mt.hiper.slice(0,u+1), borderColor:COR.suave,
+         borderDash:[2,4], borderWidth:1.5, pointRadius:0, fill:false, tension:0, order:0}
+      );
       op = legenda(op);
     }
     charts.fat = new Chart(document.getElementById('gFat'), {
