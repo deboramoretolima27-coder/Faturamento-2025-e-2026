@@ -15,8 +15,6 @@ const COL = {
   data:     "date_mm5ts0ng",
 };
 
-// Metas oficiais CiaDoSono. 2025 nao teve meta definida.
-// Para trocar de ano, basta editar esta tabela.
 const METAS = {
   "2026": {
     meta:  [454577.04,323016.31,267805.03,298884.38,467056.16,407812.08,
@@ -62,7 +60,6 @@ async function monday(query, variables = {}) {
   return j.data;
 }
 
-// Transforma um mapa nome/quantidade em lista ordenada, cortando na posicao pedida.
 function ranking(mapa, corte) {
   return Object.keys(mapa)
     .map((nome) => ({ nome, qtd: mapa[nome].qtd, fat: Math.round(mapa[nome].fat) }))
@@ -71,7 +68,6 @@ function ranking(mapa, corte) {
 }
 
 export default async function handler(req, res) {
-  // O botao Atualizar chama com ?fresh=1 e pula o cache. As demais visitas usam a copia guardada.
   const fresco = req.query && (req.query.fresh === "1" || req.query.fresh === 1);
   res.setHeader(
     "Cache-Control",
@@ -111,7 +107,6 @@ export default async function handler(req, res) {
       cursor = d.next_items_page.cursor;
     }
 
-    // Estruturas por ano
     const fat = {}, qtd = {}, canal = {};
     const mapaOrigem = {}, mapaEstado = {}, mapaCidade = {}, mapaVendedor = {};
     ANOS.forEach((a) => {
@@ -122,7 +117,7 @@ export default async function handler(req, res) {
     });
 
     const semAno = { qtd: 0, fat: 0 };
-    const lista = [];   // vendas individuais, para o detalhamento por clique
+    const lista = [];
     const semVendedor = { "2025": { qtd: 0, fat: 0 }, "2026": { qtd: 0, fat: 0 } };
 
     function somar(mapa, chave, valor) {
