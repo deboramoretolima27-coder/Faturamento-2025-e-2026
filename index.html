@@ -102,6 +102,13 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .tela{position:relative;height:280px}
 .tela.alta{height:340px}
 .tela.pizza{height:250px}
+.tela.metagrafico{height:470px}
+.faixasLeg{margin-top:18px;padding-top:16px;border-top:1px solid var(--linha);
+           display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.faixaIt{display:flex;gap:11px;align-items:flex-start}
+.faixaIt .marca{flex:none;margin-top:6px;width:20px}
+.faixaIt .tt{font-size:10px;font-weight:700;letter-spacing:.1em;margin:0}
+.faixaIt .dd{font-size:11px;color:var(--suave);line-height:1.5;margin:3px 0 0}
 .par{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .rot{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--suave);
      text-align:center;margin-bottom:8px}
@@ -199,6 +206,7 @@ canvas{cursor:pointer}
   .tela{height:250px}
   .tela.alta{height:300px}
   .tela.pizza{height:210px}
+  .tela.metagrafico{height:400px}
 
   /* legenda da pizza em duas linhas por item */
   .legLinha{flex-wrap:wrap;gap:7px 9px;padding:11px 2px}
@@ -297,7 +305,8 @@ canvas{cursor:pointer}
           <h2>Faturamento por mês</h2>
           <div class="nota" id="notaFat"></div>
         </div></div>
-        <div class="tela alta"><canvas id="gFat"></canvas><div class="vazio oculto" id="vFat"></div></div>
+        <div class="tela metagrafico"><canvas id="gFat"></canvas><div class="vazio oculto" id="vFat"></div></div>
+        <div class="faixasLeg" id="legFaixas"></div>
       </div>
 
       <div class="card c12">
@@ -833,73 +842,206 @@ canvas{cursor:pointer}
     alvo.innerHTML = html;
   }
 
-  /* ---------- faturamento ---------- */
+  /* ---------- faturamento por mes, contra as tres faixas de meta ---------- */
+  function larguraFlag(ctx, nome, valor){
+    ctx.font = '700 8px ' + FONTE;  var wn = ctx.measureText(nome).width;
+    ctx.font = '700 10px ' + FONTE; var wv = ctx.measureText(valor).width;
+    return {lw: wn + wv + 16, wn: wn};
+  }
+  function desenhaFlag(ctx, cx, py, yReal, nome, valor, fundo, cor, alfa, meia){
+    var d = larguraFlag(ctx, nome, valor), x0 = cx - d.lw/2;
+    if(Math.abs(py - yReal) > 1.5){
+      ctx.save(); ctx.strokeStyle = fundo; ctx.globalAlpha = .55; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x0 - 3, py); ctx.lineTo(cx - meia, yReal); ctx.stroke(); ctx.restore();
+    }
+    ctx.fillStyle = fundo;
+    ctx.beginPath(); ctx.roundRect(x0, py - 8.5, d.lw, 17, 8.5); ctx.fill();
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.fillStyle = cor; ctx.globalAlpha = alfa; ctx.font = '700 8px ' + FONTE;
+    ctx.fillText(nome, x0 + 7, py + 1);
+    ctx.globalAlpha = 1; ctx.font = '700 10px ' + FONTE;
+    ctx.fillText(valor, x0 + 7 + d.wn + 4, py + 1);
+  }
+  function mil(v){ return Math.round(v/1000) + 'k'; }
+
+  // Linhas e etiquetas das faixas. Tudo recebido como parametro.
+  function faixasMeta(mt, u){
+    return { id:'fx' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw:function(chart){
+        var ctx = chart.ctx, x = chart.scales.x, y = chart.scales.y, w = 62, GAP = 20;
+        for(var i = 0; i <= u; i++){
+          var cx = x.getPixelForValue(i);
+          var yM = y.getPixelForValue(mt.meta[i]);
+          var yS = y.getPixelForValue(mt['super'][i]);
+          var yH = y.getPixelForValue(mt.hiper[i]);
+          ctx.save(); ctx.lineCap = 'round';
+          ctx.strokeStyle = '#C4B39F'; ctx.lineWidth = 1.5; ctx.setLineDash([4,4]);
+          ctx.beginPath(); ctx.moveTo(cx - w/2, yH); ctx.lineTo(cx + w/2, yH); ctx.stroke();
+          ctx.strokeStyle = COR.medio; ctx.lineWidth = 2; ctx.setLineDash([1.5,3.5]);
+          ctx.beginPath(); ctx.moveTo(cx - w/2, yS); ctx.lineTo(cx + w/2, yS); ctx.stroke();
+          ctx.setLineDash([]); ctx.strokeStyle = COR.preto; ctx.lineWidth = 2.5;
+          ctx.beginPath(); ctx.moveTo(cx - w/2, yM); ctx.lineTo(cx + w/2, yM); ctx.stroke();
+          var aM = yM, aS = Math.min(yS, aM - GAP), aH = Math.min(yH, aS - GAP);
+          desenhaFlag(ctx, cx, aH, yH, 'HIPER', mil(mt.hiper[i]), COR.areia, COR.marrom, .55, w/2);
+          desenhaFlag(ctx, cx, aS, yS, 'SUPER', mil(mt['super'][i]), COR.medio, '#FAF4E8', .6, w/2);
+          desenhaFlag(ctx, cx, aM, yM, 'META',  mil(mt.meta[i]),  COR.preto, '#FAF4E8', .6, w/2);
+          ctx.restore();
+        }
+      }};
+  }
+
+  // Percentual, valor, quantidade e nivel alcancado.
+  function rotulosMes(fat, qtd, mt){
+    return { id:'rm' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw:function(chart){
+        var ctx = chart.ctx, y = chart.scales.y, GAP = 20;
+        var base = y.getPixelForValue(0);
+        ctx.save(); ctx.textAlign = 'center';
+        chart.getDatasetMeta(0).data.forEach(function(el, i){
+          var v = fat[i], topo;
+          if(mt){
+            var yM = y.getPixelForValue(mt.meta[i]);
+            var aS = Math.min(y.getPixelForValue(mt['super'][i]), yM - GAP);
+            var aH = Math.min(y.getPixelForValue(mt.hiper[i]), aS - GAP);
+            topo = Math.min(aH, y.getPixelForValue(v));
+          } else {
+            topo = y.getPixelForValue(v);
+          }
+          if(mt){
+            var p = v/mt.meta[i]*100, ok = v >= mt.meta[i];
+            var txt = p.toFixed(0) + '%';
+            ctx.font = '700 13px ' + FONTE;
+            var lw = ctx.measureText(txt).width + 18;
+            ctx.fillStyle = ok ? COR.vivo : '#F2EADC';
+            ctx.beginPath(); ctx.roundRect(el.x - lw/2, topo - 40, lw, 21, 10.5); ctx.fill();
+            ctx.fillStyle = ok ? '#FFFFFF' : COR.marrom; ctx.textBaseline = 'middle';
+            ctx.fillText(txt, el.x, topo - 29);
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillStyle = COR.suave; ctx.font = '600 11px ' + FONTE;
+            ctx.fillText('R$ ' + mil(v), el.x, topo - 48);
+            var nv = v >= mt.hiper[i] ? 'HIPER META'
+                   : (v >= mt['super'][i] ? 'SUPER META'
+                   : (v >= mt.meta[i] ? 'META BATIDA' : null));
+            if(nv){ ctx.fillStyle = COR.vivo; ctx.font = '700 8.5px ' + FONTE;
+                    ctx.fillText(nv, el.x, base + 32); }
+          } else {
+            ctx.fillStyle = COR.marrom; ctx.font = '700 13px ' + FONTE;
+            ctx.fillText('R$ ' + mil(v), el.x, topo - 12);
+          }
+          ctx.fillStyle = COR.suave; ctx.font = '500 10px ' + FONTE;
+          ctx.fillText(qtd[i] + (qtd[i] === 1 ? ' venda' : ' vendas'), el.x, base + 17);
+        });
+        ctx.restore();
+      }};
+  }
+
   function gFaturamento(){
     destruir('fat');
     var u = ultimoMes(ano);
     if(u < 0){ mostrarVazio('vFat','SEM INFORMAÇÃO'); return; }
     mostrarVazio('vFat', null);
+
     var fat = (D.fat[ano]||[]).slice(0,u+1);
     var qtd = (D.qtd[ano]||[]).slice(0,u+1);
-    var mt = (D.metas || {})[ano] || METAS_LOCAIS[ano] || null;
+    var mtc = (D.metas || {})[ano] || METAS_LOCAIS[ano] || null;
+    var mt = null;
+    if(mtc){ mt = {meta:mtc.meta.slice(0,u+1), 'super':mtc['super'].slice(0,u+1), hiper:mtc.hiper.slice(0,u+1)}; }
+
     document.getElementById('notaFat').innerHTML = mt
-      ? 'Valor faturado em destaque, com a quantidade de vendas abaixo. As três linhas são Meta, Super Meta e Hiper Meta de ' + ano +
-        '. <b style="color:' + COR.vivo + '">Os meses em verde bateram a meta.</b> Clique para ver os clientes.'
-      : 'Valor faturado em destaque, com a quantidade de vendas abaixo. ' + ano + ' não teve meta definida. Clique para ver os clientes.';
+      ? 'Cada coluna vai até a Hiper Meta. O bloco cheio é o faturado e o vazio é o que faltou. ' +
+        '<b style="color:' + COR.vivo + '">Colunas verdes bateram a meta.</b> Clique para ver os clientes.'
+      : ano + ' não teve meta definida. O valor acima de cada barra é o faturamento e abaixo a quantidade de vendas. Clique para ver os clientes.';
+
+    var dados;
+    if(mt){
+      dados = [
+        {label:'Faturado', data:fat.map(function(v,i){ return Math.min(v, mt.meta[i]); }),
+         backgroundColor:fat.map(function(v,i){ return v >= mt.meta[i] ? COR.vivo : COR.marrom; }),
+         stack:'s', maxBarThickness:62},
+        {label:'Faltou', data:fat.map(function(v,i){ return Math.max(mt.meta[i]-v,0); }),
+         backgroundColor:'#F4EDE2', stack:'s', maxBarThickness:62},
+        {label:'Acima', data:fat.map(function(v,i){ return Math.max(Math.min(v,mt['super'][i])-mt.meta[i],0); }),
+         backgroundColor:COR.vivo, stack:'s', maxBarThickness:62},
+        {label:'z1', data:fat.map(function(v,i){ return Math.max(mt['super'][i]-Math.max(v,mt.meta[i]),0); }),
+         backgroundColor:'#FAF5EC', stack:'s', maxBarThickness:62},
+        {label:'Acima2', data:fat.map(function(v,i){ return Math.max(Math.min(v,mt.hiper[i])-mt['super'][i],0); }),
+         backgroundColor:COR.vivo, stack:'s', maxBarThickness:62},
+        {label:'z2', data:fat.map(function(v,i){ return Math.max(mt.hiper[i]-Math.max(v,mt['super'][i]),0); }),
+         backgroundColor:'#FDFAF5', stack:'s', maxBarThickness:62,
+         borderRadius:{topLeft:3, topRight:3}}
+      ];
+    } else {
+      dados = [{label:ano, data:fat, backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:62}];
+    }
 
     var op = clone(BASE);
-    op.layout = {padding:{top:34}};
+    op.layout = {padding:{top: mt ? 70 : 36, bottom: mt ? 38 : 22}};
+    op.scales.x.stacked = !!mt; op.scales.y.stacked = !!mt;
+    op.scales.x.ticks.color = COR.marrom;
+    op.scales.x.ticks.font = {family:FONTE, size:12, weight:'600'};
+    op.scales.x.ticks.padding = mt ? 40 : 22;
+    op.scales.y.grid = {color:'#F0E9DE'};
+    op.scales.y.ticks.padding = 6;
     op.scales.y.ticks.callback = function(v){ return brl(v); };
-    op.plugins.tooltip.callbacks = { label:function(c){
-      if(c.dataset.label.indexOf('Meta') > -1) return c.dataset.label + ': ' + brlCheio(c.parsed.y);
-      var t = brlCheio(c.parsed.y) + '  ·  ' + qtd[c.dataIndex] + ' vendas';
-      if(mt && mt.meta[c.dataIndex]){
-        var i2 = c.dataIndex, nv = 'abaixo da meta';
-        if(c.parsed.y >= mt.hiper[i2]) nv = 'Hiper Meta';
-        else if(c.parsed.y >= mt['super'][i2]) nv = 'Super Meta';
-        else if(c.parsed.y >= mt.meta[i2]) nv = 'Meta batida';
-        t += '  ·  ' + (c.parsed.y/mt.meta[i2]*100).toFixed(0) + '% da meta  ·  ' + nv;
-      }
-      return t;
-    }};
+    op.plugins.tooltip.filter = function(c){ return c.datasetIndex === 0; };
+    op.plugins.tooltip.callbacks = {
+      title: function(c){ return MESL[c[0].dataIndex] + ' de ' + ano; },
+      label: function(c){
+        var i = c.dataIndex, v = fat[i];
+        var linhas = ['Faturado  ' + brlCheio(v) + '  ·  ' + qtd[i] + ' vendas'];
+        if(mt){
+          var d = v - mt.meta[i];
+          linhas.push('Meta        ' + brlCheio(mt.meta[i]) + '  ·  ' + (v/mt.meta[i]*100).toFixed(0) + '%');
+          linhas.push('Super       ' + brlCheio(mt['super'][i]));
+          linhas.push('Hiper        ' + brlCheio(mt.hiper[i]));
+          linhas.push((d >= 0 ? 'Acima da meta em ' : 'Faltaram ') + brlCheio(Math.abs(d)));
+        }
+        return linhas;
+      }};
     op.onClick = function(e, els){
       if(!els.length) return;
       var i = els[0].index;
       var t = MESL[i] + ' de ' + ano + ': ' + brlCheio(fat[i]) + ' em ' + qtd[i] +
               ' vendas, ticket médio de ' + brlCheio(qtd[i] ? fat[i]/qtd[i] : 0) + '.';
+      if(mt){
+        var nv = fat[i] >= mt.hiper[i] ? 'Hiper Meta alcançada'
+               : (fat[i] >= mt['super'][i] ? 'Super Meta alcançada'
+               : (fat[i] >= mt.meta[i] ? 'meta batida' : 'abaixo da meta'));
+        t += ' Meta de ' + brlCheio(mt.meta[i]) + ', ' + (fat[i]/mt.meta[i]*100).toFixed(0) +
+             '% de atingimento, ' + nv + '.';
+      }
       var fo = (D.fat[ano === '2026' ? '2025' : '2026']||[])[i] || 0;
       if(fo > 0){
-        var d = ((fat[i]-fo)/fo)*100;
-        t += ' Contra o mesmo mês do outro ano, ' + (d>=0?'alta':'queda') + ' de ' + Math.abs(d).toFixed(0) + '%.';
-      }
-      if(mt && mt.meta[i]){
-        var nv2 = fat[i] >= mt.hiper[i] ? 'Hiper Meta' : (fat[i] >= mt['super'][i] ? 'Super Meta'
-                 : (fat[i] >= mt.meta[i] ? 'meta batida' : 'abaixo da meta'));
-        t += ' Meta de ' + brlCheio(mt.meta[i]) + ', ' + (fat[i]/mt.meta[i]*100).toFixed(0) + '% de atingimento, ' + nv2 + '.';
+        var dd = ((fat[i]-fo)/fo)*100;
+        t += ' Contra o mesmo mês do outro ano, ' + (dd>=0?'alta':'queda') + ' de ' + Math.abs(dd).toFixed(0) + '%.';
       }
       leitura(t);
       abrirDetalhe('Faturamento · ' + ano, MESL[i], function(v){ return v.a === ano && v.m === i; });
     };
-    var bateu = fat.map(function(v,i){ return mt ? v >= mt.meta[i] : false; });
-    var conjuntos = [{type:'bar', label:ano, data:fat, order:3,
-                      backgroundColor:fat.map(function(v,i){ return bateu[i] ? COR.vivo : COR.marrom; }),
-                      borderRadius:2, maxBarThickness:64}];
-    if(mt){
-      conjuntos.push(
-        {type:'line', label:'Meta', data:mt.meta.slice(0,u+1), borderColor:COR.preto,
-         borderDash:[6,4], borderWidth:2, pointRadius:3, pointBackgroundColor:COR.preto,
-         fill:false, tension:0, order:2},
-        {type:'line', label:'Super Meta', data:mt['super'].slice(0,u+1), borderColor:COR.medio,
-         borderDash:[3,3], borderWidth:1.5, pointRadius:0, fill:false, tension:0, order:1},
-        {type:'line', label:'Hiper Meta', data:mt.hiper.slice(0,u+1), borderColor:COR.suave,
-         borderDash:[2,4], borderWidth:1.5, pointRadius:0, fill:false, tension:0, order:0}
-      );
-      op = legenda(op);
-    }
+
+    var extras = [rotulosMes(fat, qtd, mt)];
+    if(mt) extras.unshift(faixasMeta(mt, u));
+
     charts.fat = new Chart(document.getElementById('gFat'), {
-      data:{labels:MES.slice(0,u+1), datasets:conjuntos},
-      options:op, plugins:[rotuloDuplo(fat, qtd)]
+      type:'bar', data:{labels:MES.slice(0,u+1), datasets:dados}, options:op, plugins:extras
     });
+
+    var leg = document.getElementById('legFaixas');
+    if(!mt){ leg.innerHTML = ''; return; }
+    function item(marca, titulo, cor, texto){
+      return '<div class="faixaIt"><span class="marca" style="' + marca + '"></span>' +
+             '<div><p class="tt" style="color:' + cor + '">' + titulo + '</p>' +
+             '<p class="dd">' + texto + '</p></div></div>';
+    }
+    leg.innerHTML =
+      item('height:3px;background:' + COR.preto + ';border-radius:2px', 'META', COR.marrom,
+           'O alvo do mês. Bater aqui é cumprir o planejado.') +
+      item('border-top:3px dotted ' + COR.medio, 'SUPER META', COR.medio,
+           'Cerca de 12,5% acima da Meta. Primeiro degrau de superação.') +
+      item('border-top:3px dashed #C4B39F', 'HIPER META', '#A89179',
+           'Cerca de 29% acima da Meta. Teto de desempenho do mês.') +
+      item('width:11px;height:11px;margin-top:3px;border-radius:2px;background:' + COR.vivo, 'MÊS NA META', COR.vivo,
+           'Coluna verde. O excedente aparece acima da linha.');
   }
 
   /* ---------- canal ---------- */
@@ -1135,7 +1277,7 @@ canvas{cursor:pointer}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 7  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 8  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
