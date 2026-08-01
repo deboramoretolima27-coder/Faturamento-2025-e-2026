@@ -55,11 +55,17 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .abas button:focus-visible{outline:2px solid var(--marrom-medio);outline-offset:-4px}
 .aviso{background:var(--areia);border-radius:3px;padding:13px 18px;font-size:12px;color:var(--marrom);
        line-height:1.55;margin-bottom:20px;text-align:center}
-.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px}
+.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:10px}
 .mesBox .par2{display:flex;justify-content:space-between;font-size:11px;margin-top:9px;color:var(--suave)}
 .mesBox .par2 b{font-weight:600;color:var(--marrom)}
 .mesBox .dif{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.03em;margin-top:10px}
 .mesBox .abs{font-size:11px;color:var(--suave);margin-top:4px}
+.mesBox .canais{margin-top:12px;padding-top:10px;border-top:1px solid var(--linha)}
+.mesBox .cl{display:flex;align-items:baseline;gap:7px;font-size:11px;margin-top:5px}
+.mesBox .cl .nome{flex:1;color:var(--suave)}
+.mesBox .cl .num{font-weight:600;color:var(--marrom);white-space:nowrap}
+.mesBox .cl .var{width:38px;text-align:right;font-weight:600;white-space:nowrap}
+.mesBox .semreg{font-size:10px;color:var(--suave);margin-top:8px;line-height:1.5}
 .mesBox{border:1px solid var(--linha);border-radius:3px;padding:13px 8px;text-align:center;cursor:pointer;
         transition:border-color .15s,background .15s}
 .mesBox:hover{border-color:var(--marrom);background:var(--offwhite)}
@@ -270,7 +276,7 @@ canvas{cursor:pointer}
         <div class="card c12">
           <div class="topo"><div>
             <h2>Diferença por mês</h2>
-            <div class="nota">Quanto cada mês de 2026 rendeu a mais ou a menos que o mesmo mês de 2025.</div>
+            <div class="nota">Quanto cada mês de 2026 rendeu a mais ou a menos que o mesmo mês de 2025, e como o canal de venda se moveu entre os dois anos.</div>
           </div></div>
           <div class="meses" id="mesesComp"></div>
         </div>
@@ -629,6 +635,11 @@ canvas{cursor:pointer}
       var emCurso = (parcial && k === uA);
       var d2 = b ? ((a - b) / b) * 100 : null;
       var cor = emCurso ? COR.suave : (d2 === null ? COR.suave : (d2 >= 0 ? COR.marrom : COR.medio));
+      var cA = ((D.canal[A] || [])[k]) || {l:0,o:0};
+      var cB = ((D.canal[B] || [])[k]) || {l:0,o:0};
+      var semA = Math.max((qA[k] || 0) - cA.l - cA.o, 0);
+      var semB = Math.max((qB[k] || 0) - cB.l - cB.o, 0);
+
       caixas += '<div class="mesBox" data-m="' + k + '">' +
         '<div class="mn">' + MESL[k] + (emCurso ? ' · em curso' : '') + '</div>' +
         '<div class="par2"><span>2025</span><b>' + (b ? brl(b) : 'sem venda') + '</b></div>' +
@@ -637,6 +648,14 @@ canvas{cursor:pointer}
           (d2 === null ? 'SEM BASE' : pct(d2)) + '</div>' +
         '<div class="abs">' + (d2 === null ? '2025 não teve venda neste mês'
           : (a >= b ? '2026 fez ' + brl(a - b) + ' a mais' : '2026 fez ' + brl(b - a) + ' a menos')) +
+        '</div>' +
+        '<div class="canais">' +
+          linhaCanal('Loja', cB.l, cA.l) +
+          linhaCanal('Online', cB.o, cA.o) +
+          ((semA || semB)
+            ? '<div class="semreg">Canal não registrado: ' + semB + ' venda' + (semB === 1 ? '' : 's') +
+              ' em 2025 e ' + semA + ' em 2026. Não temos essa informação no quadro.</div>'
+            : '') +
         '</div></div>';
     }
     var alvo = document.getElementById('mesesComp');
@@ -654,12 +673,26 @@ canvas{cursor:pointer}
             '. ' + altas + ' de ' + (fim2 + 1) + ' meses ficaram acima do ano anterior.');
   }
 
+  function linhaCanal(nome, antes, agora){
+    var d = agora - antes;
+    var seta = d > 0 ? '▲ +' + d : (d < 0 ? '▼ −' + Math.abs(d) : '=');
+    var cor = d > 0 ? COR.marrom : (d < 0 ? COR.medio : COR.suave);
+    return '<div class="cl"><span class="nome">' + nome + '</span>' +
+           '<span class="num">' + antes + ' → ' + agora + '</span>' +
+           '<span class="var" style="color:' + cor + '">' + seta + '</span></div>';
+  }
+
   function lerComparativo(i, fA, fB, qA, qB){
     var a = fA[i] || 0, b = fB[i] || 0;
     var t = MESL[i] + ': 2026 fez ' + brlCheio(a) + ' em ' + (qA[i]||0) + ' vendas, contra ' +
             brlCheio(b) + ' em ' + (qB[i]||0) + ' vendas de 2025.';
     if(b) t += ' Diferença de ' + brlCheio(Math.abs(a-b)) + ', ' +
                (a >= b ? 'alta' : 'queda') + ' de ' + Math.abs((a-b)/b*100).toFixed(1).replace('.',',') + '%.';
+    var cA = ((D.canal['2026'] || [])[i]) || {l:0,o:0};
+    var cB = ((D.canal['2025'] || [])[i]) || {l:0,o:0};
+    t += ' Na loja, ' + cB.l + ' para ' + cA.l + ' vendas. No online, ' + cB.o + ' para ' + cA.o + '.';
+    var semA = Math.max((qA[i]||0) - cA.l - cA.o, 0), semB = Math.max((qB[i]||0) - cB.l - cB.o, 0);
+    if(semA || semB) t += ' Outras ' + (semB + semA) + ' vendas do período estão sem canal registrado no quadro.';
     leitura(t);
   }
 
