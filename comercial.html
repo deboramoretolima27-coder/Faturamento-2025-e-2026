@@ -40,6 +40,7 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .btnTopo:hover{background:var(--preto)}
 .btnTopo:focus-visible{outline:2px solid var(--marrom-medio);outline-offset:2px}
 .btnTopo .giro{display:inline-block;font-size:14px;line-height:1}
+.btnTopo .txt{min-width:132px;text-align:left}
 .btnTopo.girando .giro{animation:girar .9s linear infinite}
 .btnTopo[disabled]{opacity:.6;cursor:default}
 @keyframes girar{to{transform:rotate(360deg)}}
@@ -280,7 +281,7 @@ canvas{cursor:pointer}
           <button data-ano="2026" class="on">2026</button>
           <button data-ano="2025">2025</button>
         </div>
-        <button class="btnTopo" id="btnAtualizar"><span class="giro">↻</span> Atualizar dados</button>
+        <button class="btnTopo" id="btnAtualizar"><span class="giro">↻</span> <span class="txt">Atualizar dados</span></button>
       </div>
     </header>
 
@@ -1377,13 +1378,22 @@ canvas{cursor:pointer}
   }
 
   /* ---------- carregar ---------- */
-  function carregar(aoTerminar){
+  function carregar(aoTerminar, fresco){
     if(!D) document.getElementById('carregando').classList.remove('oculto');
     document.getElementById('falha').classList.add('oculto');
-    fetch('/api/dados', {cache:'no-store'})
+    fetch('/api/dados' + (fresco ? '?fresh=1&t=' + Date.now() : ''), {cache:'no-store'})
       .then(function(r){
-        if(!r.ok) throw new Error('A API respondeu com o código ' + r.status + '.');
-        return r.json();
+        // Le o corpo mesmo quando o codigo e de erro, para mostrar a mensagem real da API.
+        return r.text().then(function(txt){
+          var j = null;
+          try { j = JSON.parse(txt); } catch(e){}
+          if(!r.ok){
+            var det = (j && j.erro) ? j.erro : txt.slice(0, 400);
+            throw new Error('A API respondeu com o código ' + r.status + '.\n' + det);
+          }
+          if(!j) throw new Error('A API respondeu algo que não é dado válido.\n' + txt.slice(0, 400));
+          return j;
+        });
       })
       .then(function(j){
         if(j.erro) throw new Error(j.erro);
@@ -1395,7 +1405,7 @@ canvas{cursor:pointer}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 15  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 17  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
@@ -1403,7 +1413,10 @@ canvas{cursor:pointer}
         document.getElementById('carregando').classList.add('oculto');
         var f = document.getElementById('falha');
         f.classList.remove('oculto');
-        f.innerHTML = 'Não foi possível ler os dados do monday.<br>' + e.message +
+        f.innerHTML = 'Não foi possível ler os dados do monday.<br><br>' +
+          '<span style="font-family:monospace;font-size:11px;color:' + COR.marrom +
+          ';display:inline-block;max-width:640px;text-align:left;white-space:pre-wrap;background:' + COR.areia +
+          ';padding:12px 14px;border-radius:3px">' + escapar(e.message) + '</span>' +
           '<br><br>Confira se a variável MONDAY_TOKEN está cadastrada no Vercel e se o projeto foi republicado depois disso.';
         if(aoTerminar) aoTerminar();
       });
@@ -1451,9 +1464,19 @@ canvas{cursor:pointer}
     });
   });
   document.getElementById('btnAtualizar').addEventListener('click', function(){
-    var b = this;
+    var b = this, rotulo = b.querySelector('.txt'), t0 = Date.now();
     b.classList.add('girando'); b.disabled = true;
-    carregar(function(){ b.classList.remove('girando'); b.disabled = false; });
+    var relogio = setInterval(function(){
+      rotulo.textContent = 'Lendo o monday, ' + Math.round((Date.now() - t0)/1000) + 's';
+    }, 1000);
+    rotulo.textContent = 'Lendo o monday…';
+    carregar(function(){
+      clearInterval(relogio);
+      var seg = ((Date.now() - t0)/1000).toFixed(1).replace('.',',');
+      rotulo.textContent = 'Atualizado em ' + seg + 's';
+      b.classList.remove('girando'); b.disabled = false;
+      setTimeout(function(){ rotulo.textContent = 'Atualizar dados'; }, 4000);
+    }, true);
   });
 
   carregar();
