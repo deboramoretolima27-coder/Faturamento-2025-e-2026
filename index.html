@@ -73,6 +73,7 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .mesBox:hover{border-color:var(--marrom);background:var(--offwhite)}
 .mesBox .mn{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--suave)}
 .mesBox{text-align:left;padding:14px 13px}
+.mesBox.curso{background:var(--offwhite);border-style:dashed}
 .leitura{margin:24px 0 28px;padding:17px 22px;background:var(--preto);color:var(--offwhite);border-radius:3px;
          font-size:14px;line-height:1.5;min-height:58px;display:flex;align-items:center;justify-content:center;
          gap:16px;text-align:center}
@@ -683,20 +684,21 @@ canvas{cursor:pointer}
       var semA = Math.max((qA[k] || 0) - cA.l - cA.o, 0);
       var semB = Math.max((qB[k] || 0) - cB.l - cB.o, 0);
 
-      caixas += '<div class="mesBox" data-m="' + k + '">' +
+      caixas += '<div class="mesBox' + (emCurso ? ' curso' : '') + '" data-m="' + k + '">' +
         '<div class="mn">' + MESL[k] + (emCurso ? ' · em curso' : '') + '</div>' +
         '<div class="par2"><span>2025</span><b>' + (b ? brl(b) : 'sem venda') + '</b></div>' +
         '<div class="par2"><span>2026</span><b>' + (a ? brl(a) : 'sem venda') + '</b></div>' +
         '<div class="dif" style="color:' + cor + '">' +
-          (d2 === null ? 'SEM BASE' : pct(d2)) + '</div>' +
-        '<div class="abs"' + (d2 !== null && d2 >= 0 && !emCurso ? ' style="color:' + COR.verde + '"' : '') + '>' +
-          (d2 === null ? '2025 não teve venda neste mês'
+          (emCurso ? 'MÊS EM CURSO' : (d2 === null ? 'SEM BASE' : pct(d2))) + '</div>' +
+        '<div class="abs"' + (!emCurso && d2 !== null && d2 >= 0 ? ' style="color:' + COR.verde + '"' : '') + '>' +
+          (emCurso ? 'Comparação só quando ' + MESL[k] + ' fechar'
+          : (d2 === null ? '2025 não teve venda neste mês'
           : (a >= b ? '2026 fez ' + brl(a - b) + ' a mais, melhor que 2025'
-                    : '2026 fez ' + brl(b - a) + ' a menos')) +
+                    : '2026 fez ' + brl(b - a) + ' a menos'))) +
         '</div>' +
         '<div class="canais">' +
-          linhaCanal('Loja', cB.l, cA.l) +
-          linhaCanal('Online', cB.o, cA.o) +
+          linhaCanal('Loja', cB.l, cA.l, emCurso) +
+          linhaCanal('Online', cB.o, cA.o, emCurso) +
           ((semA || semB)
             ? '<div class="semreg">Canal não registrado: ' + semB + ' venda' + (semB === 1 ? '' : 's') +
               ' em 2025 e ' + semA + ' em 2026. Não temos essa informação no quadro.</div>'
@@ -718,10 +720,10 @@ canvas{cursor:pointer}
             '. ' + altas + ' de ' + (fim2 + 1) + ' meses ficaram acima do ano anterior.');
   }
 
-  function linhaCanal(nome, antes, agora){
+  function linhaCanal(nome, antes, agora, emCurso){
     var d = agora - antes;
-    var seta = d > 0 ? '▲ +' + d : (d < 0 ? '▼ −' + Math.abs(d) : '=');
-    var cor = d > 0 ? COR.verde : (d < 0 ? COR.medio : COR.suave);
+    var seta = emCurso ? '—' : (d > 0 ? '▲ +' + d : (d < 0 ? '▼ −' + Math.abs(d) : '='));
+    var cor = emCurso ? COR.suave : (d > 0 ? COR.verde : (d < 0 ? COR.medio : COR.suave));
     return '<div class="cl"><span class="nome">' + nome + '</span>' +
            '<span class="num">' + antes + ' → ' + agora + '</span>' +
            '<span class="var" style="color:' + cor + '">' + seta + '</span></div>';
