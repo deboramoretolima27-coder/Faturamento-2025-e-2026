@@ -602,11 +602,13 @@ canvas{cursor:pointer}
     var fim2 = parcial ? uA - 1 : uA;   // so meses fechados entram na conta
 
     document.getElementById('avisoComp').textContent =
-      'Comparação direta entre os dois anos, mês a mês. Os totais consideram apenas os meses fechados, de Janeiro a ' +
-      MES[fim2] + (parcial ? ', porque ' + MESL[uA] + ' de ' + A + ' ainda está em curso.' : '.');
+      'O total compara de 1º de janeiro até ' + diaMes() + ' nos dois anos, a mesma régua usada na Visão geral. ' +
+      'Os quadros de cada mês comparam mês fechado contra mês fechado' +
+      (parcial ? ', e ' + MESL[uA] + ' de ' + A + ' aparece sem porcentagem por ainda estar em curso.' : '.');
 
-    var sA = 0, sB = 0;
-    for(var i = 0; i <= fim2; i++){ sA += fA[i] || 0; sB += fB[i] || 0; }
+    // Mesma regra do cartao da Visao geral: de 1º de janeiro ate hoje, nos dois anos.
+    var pA = ateHoje(A), pB = ateHoje(B);
+    var sA = pA.fat, sB = pB.fat;
     var varTotal = sB ? ((sA - sB) / sB) * 100 : 0;
 
     // Extremos de cada ano. O mes em curso fica de fora, porque ainda nao fechou.
@@ -641,8 +643,7 @@ canvas{cursor:pointer}
     html += card('2026 contra 2025',
       pct(varTotal) + '<span style="font-size:15px;color:' + (difTotal >= 0 ? COR.vivo : COR.medio) + '">&nbsp; ' +
       (difTotal >= 0 ? '+' : '−') + brlCheio(Math.abs(difTotal)) + '</span>',
-      brlCheio(sA) + ' contra ' + brlCheio(sB) + ', de Janeiro a ' + MES[fim2] +
-      (difTotal >= 0 ? '. 2026 faturou a mais.' : '. 2026 faturou a menos.'));
+      brlCheio(sA) + ' contra ' + brlCheio(sB) + ', de 1º de janeiro a ' + diaMes());
     html += cardDuplo('Melhor mês',
       linhaAno('2025', fB, eB.alto), linhaAno('2026', fA, eA.alto),
       'Maior faturamento de cada ano');
@@ -759,7 +760,7 @@ canvas{cursor:pointer}
 
     montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial);
 
-    leitura('De Janeiro a ' + MES[fim2] + ': 2026 fez ' + brlCheio(sA) + ' contra ' + brlCheio(sB) +
+    leitura('De 1º de janeiro a ' + diaMes() + ': 2026 fez ' + brlCheio(sA) + ' contra ' + brlCheio(sB) +
             ' de 2025, ' + pct(varTotal).replace('▲ ','alta de ').replace('▼ ','queda de ') +
             ', diferença de ' + brlCheio(Math.abs(sA - sB)) + '.');
   }
@@ -1340,7 +1341,7 @@ canvas{cursor:pointer}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 11  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 12  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
