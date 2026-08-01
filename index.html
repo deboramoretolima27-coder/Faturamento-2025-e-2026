@@ -353,6 +353,18 @@ canvas{cursor:pointer}
 
   var D = null, ano = '2026', modoCanal = '2026', modoOrigem = 'pizza', aba = 'geral';
   var ANO_META = '2026';
+
+  /* Metas oficiais CiaDoSono. Usadas se a API nao devolver a tabela. */
+  var METAS_LOCAIS = {
+    "2026": {
+      meta:  [454577.04,323016.31,267805.03,298884.38,467056.16,407812.08,
+              297332.72,642585.48,425923.56,399516.48,460468.91,165424.84],
+      "super":[511399.17,363393.35,301280.66,336244.93,525438.18,458788.59,
+              334499.31,722908.67,479164.01,449456.04,518027.52,186102.95],
+      hiper: [587162.01,417229.40,345914.83,386059.00,603280.88,526757.27,
+              384054.77,830006.25,550151.27,516042.12,594772.34,213673.76]
+    }
+  };
   var filtroAtual = null;
   var charts = {};
 
@@ -548,7 +560,7 @@ canvas{cursor:pointer}
 
   function desenharComparativo(){
     destruir('meta');
-    var mt = (D.metas || {})[ANO_META];
+    var mt = (D.metas || {})[ANO_META] || METAS_LOCAIS[ANO_META];
     var f26 = D.fat[ANO_META] || [], q26 = D.qtd[ANO_META] || [];
     var outro = ANO_META === '2026' ? '2025' : '2024';
     var fOut = D.fat[outro] || [];
@@ -559,9 +571,9 @@ canvas{cursor:pointer}
         '. As barras comparam o faturamento dos dois anos.'
       : 'SEM INFORMAÇÃO de meta para ' + ANO_META + '.';
 
-    if(!mt || u < 0){
+    if(u < 0){
       document.getElementById('kpisMeta').innerHTML =
-        card('Meta ' + ANO_META, 'SEM INFORMAÇÃO', 'Nenhuma meta cadastrada para este ano');
+        card('Ano de ' + ANO_META, 'SEM INFORMAÇÃO', 'O quadro não tem registros neste ano');
       document.getElementById('mesesMeta').innerHTML = '';
       return;
     }
