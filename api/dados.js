@@ -1,75 +1,183 @@
-const BOARD_ID = 18424710436;
-const COL = {
-  ano: "color_mm5tgycy", mes: "color_mm5tn4j6", canal: "color_mm5tzffa",
-  origem: "color_mm5tfhvz", estado: "color_mm5tzey", cidade: "dropdown_mm5tqq3w",
-  valor: "numeric_mm5tyjjm"
-};
-const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+// api/dados.js  ·  ponte entre o Vercel e o quadro Analise Anual 2025 e 2026
+// O token nunca fica aqui. Ele vem da variavel MONDAY_TOKEN cadastrada no Vercel.
 
-async function mondayQuery(query, token) {
+const BOARD_ID = "18424710436";
+
+const COL = {
+  ano:      "color_mm5tgycy",
+  mes:      "color_mm5tn4j6",
+  canal:    "color_mm5tzffa",
+  valor:    "numeric_mm5tyjjm",
+  origem:   "color_mm5tfhvz",
+  estado:   "color_mm5tzey",
+  cidade:   "dropdown_mm5tqq3w",
+  vendedor: "color_mm5tga5s",
+  data:     "date_mm5ts0ng",
+};
+
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
+               "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+
+const ANOS = ["2025", "2026"];
+
+function num(t) {
+  if (!t) return 0;
+  let s = String(t).trim();
+  if (s.includes(",")) s = s.replace(/\./g, "").replace(",", ".");
+  const n = parseFloat(s.replace(/[^\d.-]/g, ""));
+  return isNaN(n) ? 0 : n;
+}
+
+function vazio(t) {
+  if (!t) return true;
+  const s = String(t).trim().toLowerCase();
+  return s === "" || s === "não informado" || s === "nao informado";
+}
+
+async function monday(query, variables = {}) {
   const r = await fetch("https://api.monday.com/v2", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "Authorization": token },
-    body: JSON.stringify({ query })
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": process.env.MONDAY_TOKEN,
+      "API-Version": "2024-10",
+    },
+    body: JSON.stringify({ query, variables }),
   });
-  return r.json();
+  const j = await r.json();
+  if (j.errors) throw new Error(JSON.stringify(j.errors));
+  return j.data;
+}
+
+// Transforma um mapa nome/quantidade em lista ordenada, cortando na posicao pedida.
+function ranking(mapa, corte) {
+  return Object.keys(mapa)
+    .map((nome) => ({ nome, qtd: mapa[nome].qtd, fat: Math.round(mapa[nome].fat) }))
+    .sort((a, b) => b.qtd - a.qtd)
+    .slice(0, corte);
 }
 
 export default async function handler(req, res) {
-  const token = process.env.MONDAY_TOKEN;
-  if (!token) { res.status(500).json({ error: "Token não configurado" }); return; }
+  res.setHeader("Cache-Control", "s-maxage=180, stale-while-revalidate=600");
+
+  if (!process.env.MONDAY_TOKEN) {
+    return res.status(500).json({ erro: "MONDAY_TOKEN nao cadastrado no Vercel." });
+  }
 
   try {
-    let items = [];
-    let first = await mondayQuery(
-      `{ boards(ids:${BOARD_ID}){ items_page(limit:200){ cursor items{ column_values{ id text } } } } }`, token);
-    let pageData = first.data.boards[0].items_page;
-    items = items.concat(pageData.items);
-    let cursor = pageData.cursor;
+    const primeira = `query {
+      boards(ids: ${BOARD_ID}) {
+        name
+        items_page(limit: 200) {
+          cursor
+          items { id name column_values { id text } }
+        }
+      }
+    }`;
+
+    const d0 = await monday(primeira);
+    const board = d0.boards[0];
+    let itens = board.items_page.items;
+    let cursor = board.items_page.cursor;
+
+    const proxima = `query($c: String!) {
+      next_items_page(limit: 200, cursor: $c) {
+        cursor
+        items { id name column_values { id text } }
+      }
+    }`;
+
     while (cursor) {
-      const nx = await mondayQuery(
-        `{ next_items_page(limit:200, cursor:"${cursor}"){ cursor items{ column_values{ id text } } } }`, token);
-      pageData = nx.data.next_items_page;
-      items = items.concat(pageData.items);
-      cursor = pageData.cursor;
+      const d = await monday(proxima, { c: cursor });
+      itens = itens.concat(d.next_items_page.items);
+      cursor = d.next_items_page.cursor;
     }
 
-    const blank = () => Array.from({length:12}, () => 0);
-    const fat = { 2025: blank(), 2026: blank() };
-    const qtd = { 2025: blank(), 2026: blank() };
-    const canal = { 2025: Array.from({length:12},()=>({l:0,o:0})), 2026: Array.from({length:12},()=>({l:0,o:0})) };
-    const origem = {}, estado = {}, cidade = {};
-
-    for (const it of items) {
-      const v = {};
-      for (const cv of it.column_values) v[cv.id] = cv.text;
-      const ano = v[COL.ano], mes = v[COL.mes];
-      const val = parseFloat(v[COL.valor] || "0") || 0;
-      const mi = MESES.indexOf(mes);
-      if ((ano === "2025" || ano === "2026") && mi >= 0) {
-        fat[ano][mi] += val; qtd[ano][mi] += 1;
-        const c = v[COL.canal];
-        if (c === "Loja") canal[ano][mi].l += 1;
-        else if (c === "Online") canal[ano][mi].o += 1;
-      }
-      if (ano === "2026") {
-        const o = v[COL.origem] || "Não informado"; origem[o] = (origem[o]||0)+1;
-        const e = v[COL.estado]; if (e) estado[e] = (estado[e]||0)+1;
-        const cd = v[COL.cidade]; if (cd) cidade[cd] = (cidade[cd]||0)+1;
-      }
-    }
-    const topN = (obj,n)=>Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([nome,q])=>({nome,qtd:q}));
-
-    res.setHeader("Cache-Control", "s-maxage=300, stale-while-revalidate=600");
-    res.status(200).json({
-      atualizado: new Date().toISOString(),
-      total: items.length,
-      fat, qtd, canal,
-      origens: topN(origem, 10),
-      estados: topN(estado, 8),
-      cidades: topN(cidade, 5)
+    // Estruturas por ano
+    const fat = {}, qtd = {}, canal = {};
+    const mapaOrigem = {}, mapaEstado = {}, mapaCidade = {}, mapaVendedor = {};
+    ANOS.forEach((a) => {
+      fat[a] = new Array(12).fill(0);
+      qtd[a] = new Array(12).fill(0);
+      canal[a] = Array.from({ length: 12 }, () => ({ l: 0, o: 0 }));
+      mapaOrigem[a] = {}; mapaEstado[a] = {}; mapaCidade[a] = {}; mapaVendedor[a] = {};
     });
-  } catch (err) {
-    res.status(500).json({ error: String(err) });
+
+    const semAno = { qtd: 0, fat: 0 };
+    const lista = [];   // vendas individuais, para o detalhamento por clique
+    const semVendedor = { "2025": { qtd: 0, fat: 0 }, "2026": { qtd: 0, fat: 0 } };
+
+    function somar(mapa, chave, valor) {
+      if (!mapa[chave]) mapa[chave] = { qtd: 0, fat: 0 };
+      mapa[chave].qtd += 1;
+      mapa[chave].fat += valor;
+    }
+
+    itens.forEach((it) => {
+      const cv = {};
+      it.column_values.forEach((c) => (cv[c.id] = c.text));
+
+      const ano = (cv[COL.ano] || "").trim();
+      const valor = num(cv[COL.valor]);
+
+      if (ANOS.indexOf(ano) === -1) {
+        semAno.qtd += 1; semAno.fat += valor;
+        return;
+      }
+
+      const mi = MESES.indexOf((cv[COL.mes] || "").trim());
+      if (mi >= 0) {
+        fat[ano][mi] += valor;
+        qtd[ano][mi] += 1;
+        const c = (cv[COL.canal] || "").trim().toLowerCase();
+        if (c === "loja") canal[ano][mi].l += 1;
+        else if (c === "online") canal[ano][mi].o += 1;
+      }
+
+      lista.push({
+        n: it.name,
+        a: ano,
+        m: mi,
+        v: valor,
+        d: cv[COL.data] || "",
+        c: vazio(cv[COL.canal])    ? "" : cv[COL.canal].trim(),
+        o: vazio(cv[COL.origem])   ? "" : cv[COL.origem].trim(),
+        e: vazio(cv[COL.estado])   ? "" : cv[COL.estado].trim(),
+        ci: vazio(cv[COL.cidade])  ? "" : cv[COL.cidade].trim(),
+        vd: vazio(cv[COL.vendedor])? "" : cv[COL.vendedor].trim(),
+      });
+
+      if (!vazio(cv[COL.origem])) somar(mapaOrigem[ano], cv[COL.origem].trim(), valor);
+      if (!vazio(cv[COL.estado])) somar(mapaEstado[ano], cv[COL.estado].trim(), valor);
+      if (!vazio(cv[COL.cidade])) somar(mapaCidade[ano], cv[COL.cidade].trim(), valor);
+
+      if (vazio(cv[COL.vendedor])) {
+        semVendedor[ano].qtd += 1;
+        semVendedor[ano].fat += valor;
+      } else {
+        somar(mapaVendedor[ano], cv[COL.vendedor].trim(), valor);
+      }
+    });
+
+    const origens = {}, estados = {}, cidades = {}, vendedores = {};
+    ANOS.forEach((a) => {
+      origens[a]    = ranking(mapaOrigem[a], 12);
+      estados[a]    = ranking(mapaEstado[a], 10);
+      cidades[a]    = ranking(mapaCidade[a], 8);
+      vendedores[a] = ranking(mapaVendedor[a], 12);
+    });
+
+    res.status(200).json({
+      quadro: board.name,
+      atualizado: new Date().toISOString(),
+      total: itens.length,
+      fat, qtd, canal,
+      origens, estados, cidades, vendedores,
+      vendas: lista,
+      sem_vendedor: semVendedor,
+      sem_ano: semAno,
+    });
+  } catch (e) {
+    res.status(500).json({ erro: String(e.message || e) });
   }
 }
