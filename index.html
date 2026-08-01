@@ -21,11 +21,12 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--offwhite);color:var(--marrom);font-family:var(--texto);
      -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;padding:44px 24px 64px}
+@media(max-width:640px){body{padding:26px 14px 48px}}
 .wrap{max-width:1240px;margin:0 auto}
 
 /* CABECALHO CENTRALIZADO */
 header{text-align:center;padding-bottom:30px;border-bottom:1px solid var(--linha)}
-.logo{width:210px;height:auto;color:var(--marrom);display:block;margin:0 auto}
+.logo{width:min(330px,72vw);height:auto;color:var(--marrom);display:block;margin:0 auto}
 h1{font-family:var(--display);font-size:34px;font-weight:700;line-height:1;letter-spacing:-.055em;margin-top:6px}
 .sub{font-size:13px;color:var(--marrom-medio);margin-top:11px;line-height:1.5}
 .meta{font-size:11px;color:var(--suave);margin-top:6px;letter-spacing:.02em}
@@ -46,6 +47,23 @@ h1{font-family:var(--display);font-size:34px;font-weight:700;line-height:1;lette
 .anos button.on{background:var(--marrom);color:var(--offwhite)}
 .anos button:focus-visible,.mini button:focus-visible{outline:2px solid var(--marrom-medio);outline-offset:2px}
 
+.abas{display:flex;justify-content:center;gap:0;margin-top:22px;border-bottom:1px solid var(--linha)}
+.abas button{background:transparent;border:0;border-bottom:2px solid transparent;padding:13px 26px;
+             font-family:var(--texto);font-size:14px;font-weight:500;cursor:pointer;color:var(--suave);
+             margin-bottom:-1px;transition:color .15s}
+.abas button.on{color:var(--marrom);border-bottom-color:var(--marrom);font-weight:600}
+.abas button:focus-visible{outline:2px solid var(--marrom-medio);outline-offset:-4px}
+.aviso{background:var(--areia);border-radius:3px;padding:13px 18px;font-size:12px;color:var(--marrom);
+       line-height:1.55;margin-bottom:20px;text-align:center}
+.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin-top:20px}
+.mesBox{border:1px solid var(--linha);border-radius:3px;padding:13px 8px;text-align:center;cursor:pointer;
+        transition:border-color .15s,background .15s}
+.mesBox:hover{border-color:var(--marrom);background:var(--offwhite)}
+.mesBox .mn{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--suave)}
+.mesBox .mp{font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-.03em;margin-top:7px;line-height:1}
+.mesBox .ms{font-size:10px;margin-top:6px;letter-spacing:.06em}
+.mesBox .barra{height:3px;background:var(--linha);border-radius:2px;margin-top:9px;overflow:hidden}
+.mesBox .barra i{display:block;height:100%;background:var(--marrom)}
 .leitura{margin:24px 0 28px;padding:17px 22px;background:var(--preto);color:var(--offwhite);border-radius:3px;
          font-size:14px;line-height:1.5;min-height:58px;display:flex;align-items:center;justify-content:center;
          gap:16px;text-align:center}
@@ -127,8 +145,72 @@ footer button{background:transparent;border:1px solid var(--linha);border-radius
 .nadaAqui{padding:34px 24px;text-align:center;font-size:12px;color:var(--suave);letter-spacing:.1em}
 canvas{cursor:pointer}
 
-@media(max-width:980px){.c6{grid-column:span 12}.par{grid-template-columns:1fr}
-  h1{font-size:26px}.logo{width:150px}}
+/* ---------- TELAS MEDIAS ---------- */
+@media(max-width:980px){
+  .c6{grid-column:span 12}
+  .par{grid-template-columns:1fr}
+  h1{font-size:28px}
+  .grade{gap:16px}
+}
+
+/* ---------- CELULAR ---------- */
+@media(max-width:640px){
+  h1{font-size:23px;margin-top:4px}
+  .sub{font-size:12px;margin-top:9px}
+  .meta{font-size:10px}
+  header{padding-bottom:22px}
+
+  /* controles empilhados e do tamanho do dedo */
+  .controles{flex-direction:column;gap:10px;margin-top:18px}
+  .anos{width:100%}
+  .anos button{flex:1;padding:13px 0}
+  .btnTopo{width:100%;justify-content:center;padding:14px 0}
+
+  /* leitura vira duas linhas */
+  .leitura{flex-direction:column;align-items:center;gap:9px;padding:15px 16px;font-size:13px;margin:18px 0 20px}
+  .leitura .tag{border-right:0;border-bottom:1px solid rgba(250,244,232,.25);padding:0 0 8px}
+
+  /* indicadores em duas colunas */
+  .kpis{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}
+  .kpi{padding:16px 12px}
+  .kpi .val{font-size:22px;margin-top:8px}
+  .kpi .rot{font-size:9px;letter-spacing:.12em}
+  .kpi .sub{font-size:11px;margin-top:7px}
+
+  /* cards */
+  .card{padding:17px 14px 18px}
+  .card h2{font-size:16px}
+  .card .nota{font-size:11px}
+  .topo{flex-direction:column;align-items:stretch;gap:11px}
+  .mini{width:100%}
+  .mini button{flex:1;padding:9px 4px;text-align:center}
+
+  /* graficos mais altos para caber os rotulos */
+  .tela{height:250px}
+  .tela.alta{height:300px}
+  .tela.pizza{height:210px}
+
+  /* legenda da pizza em duas linhas por item */
+  .legLinha{flex-wrap:wrap;gap:7px 9px;padding:11px 2px}
+  .legLinha .ln{flex:1 1 100%;order:1;white-space:normal}
+  .legLinha .bolinha{order:0}
+  .legLinha .lq{order:2;font-size:11px}
+  .legLinha .lf{order:3;font-size:11px}
+  .legLinha .lp{order:4;flex:1;text-align:right;font-size:13px}
+
+  /* gaveta ocupa a tela toda */
+  .gaveta{width:100%;border-left:0}
+  .gaveta .cabeca{padding:18px 18px 14px}
+  .gaveta h3{font-size:19px}
+  .linhaCli{padding:12px 18px}
+  footer{flex-direction:column;align-items:flex-start;gap:10px}
+}
+
+/* telas bem estreitas */
+@media(max-width:380px){
+  .kpis{grid-template-columns:1fr}
+  .kpi .val{font-size:26px}
+}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -164,11 +246,31 @@ canvas{cursor:pointer}
       </div>
     </header>
 
+    <div class="abas">
+      <button data-aba="geral" class="on">Visão geral</button>
+      <button data-aba="comp">Comparativo do ano</button>
+    </div>
+
     <div class="leitura"><span class="tag">Leitura</span><span id="txtLeitura"></span></div>
 
     <div class="kpis" id="kpis"></div>
 
-    <div class="grade">
+    <div id="abaComp" class="oculto">
+      <div class="aviso" id="avisoMeta"></div>
+      <div class="kpis" id="kpisMeta"></div>
+      <div class="grade">
+        <div class="card c12">
+          <div class="topo"><div>
+            <h2>Faturamento contra a meta</h2>
+            <div class="nota">Barras são o faturamento de cada ano. A linha pontilhada é a meta de 2026. Clique numa barra para ver os clientes.</div>
+          </div></div>
+          <div class="tela alta"><canvas id="gMeta"></canvas></div>
+          <div class="meses" id="mesesMeta"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grade" id="abaGeral">
 
       <div class="card c12">
         <div class="topo"><div>
@@ -194,7 +296,7 @@ canvas{cursor:pointer}
         </div></div>
       </div>
 
-      <div class="card c6">
+      <div class="card c12">
         <div class="topo">
           <div><h2>Origem da venda</h2><div class="nota" id="notaOrigem"></div></div>
           <div class="mini" id="selOrigem">
@@ -207,17 +309,6 @@ canvas{cursor:pointer}
           <div class="legenda" id="legOrigem"></div>
         </div>
         <div id="oMes" class="tela alta oculto"><canvas id="gOrigemMes"></canvas></div>
-      </div>
-
-      <div class="card c6">
-        <div class="topo">
-          <div><h2>Vendas por especialista</h2><div class="nota" id="notaVend"></div></div>
-          <div class="mini" id="selVend">
-            <button data-eixo="qtd" class="on">Vendas</button>
-            <button data-eixo="fat">Faturamento</button>
-          </div>
-        </div>
-        <div class="tela alta"><canvas id="gVend"></canvas><div class="vazio oculto" id="vVend"></div></div>
       </div>
 
       <div class="card c12">
@@ -260,7 +351,8 @@ canvas{cursor:pointer}
   var RAMPA = ['#2E1E11','#4A3524','#73573F','#8C7563','#A89179','#C0AC93','#D5C6AE','#EEE3D1'];
   var FONTE = "'Helvetica Now Text','Inter','Helvetica Neue',Arial,sans-serif";
 
-  var D = null, ano = '2026', modoCanal = '2026', eixoVend = 'qtd', modoOrigem = 'pizza';
+  var D = null, ano = '2026', modoCanal = '2026', modoOrigem = 'pizza', aba = 'geral';
+  var ANO_META = '2026';
   var filtroAtual = null;
   var charts = {};
 
@@ -440,6 +532,134 @@ canvas{cursor:pointer}
         });
         ctx.restore();
       }};
+  }
+
+
+  /* ---------- comparativo do ano contra a meta ---------- */
+  function nivel(v, m){
+    if(!m) return {txt:'sem meta', cls:'suave', p:0};
+    var p = v/m.meta*100;
+    if(v >= m.hiper) return {txt:'Hiper Meta', cor:COR.marrom, p:p};
+    if(v >= m.sup)   return {txt:'Super Meta', cor:COR.marrom, p:p};
+    if(v >= m.meta)  return {txt:'na meta',    cor:COR.marrom, p:p};
+    if(p >= 85)      return {txt:'quase',      cor:COR.medio,  p:p};
+    return {txt:'abaixo', cor:COR.suave, p:p};
+  }
+
+  function desenharComparativo(){
+    destruir('meta');
+    var mt = (D.metas || {})[ANO_META];
+    var f26 = D.fat[ANO_META] || [], q26 = D.qtd[ANO_META] || [];
+    var outro = ANO_META === '2026' ? '2025' : '2024';
+    var fOut = D.fat[outro] || [];
+    var u = ultimoMes(ANO_META);
+
+    document.getElementById('avisoMeta').innerHTML = mt
+      ? 'Em ' + outro + ' não houve meta definida, por isso a linha pontilhada aparece só a partir de ' + ANO_META +
+        '. As barras comparam o faturamento dos dois anos.'
+      : 'SEM INFORMAÇÃO de meta para ' + ANO_META + '.';
+
+    if(!mt || u < 0){
+      document.getElementById('kpisMeta').innerHTML =
+        card('Meta ' + ANO_META, 'SEM INFORMAÇÃO', 'Nenhuma meta cadastrada para este ano');
+      document.getElementById('mesesMeta').innerHTML = '';
+      return;
+    }
+
+    var hoje = new Date();
+    var parcial = (String(hoje.getFullYear()) === ANO_META && hoje.getMonth() === u);
+    var fim = parcial ? u - 1 : u;   // so meses fechados entram na conta
+
+    var real = 0, alvo = 0, bateram = 0;
+    for(var i = 0; i <= fim; i++){
+      real += f26[i] || 0; alvo += mt.meta[i] || 0;
+      if((f26[i] || 0) >= mt.meta[i]) bateram++;
+    }
+    var metaAno = mt.meta.reduce(function(a,b){ return a+b; }, 0);
+    var realAno = f26.reduce(function(a,b){ return a+b; }, 0);
+    var faltam = 12 - (fim + 1);
+    var nomesOk = [];
+    for(var j = 0; j <= fim; j++){ if((f26[j]||0) >= mt.meta[j]) nomesOk.push(MES[j]); }
+
+    var html = '';
+    html += card('Atingimento até ' + MES[fim],
+      (alvo ? (real/alvo*100).toFixed(1).replace('.',',') : '0') + '%',
+      'De Janeiro a ' + MES[fim] + ', meses fechados');
+    html += card('Meses na meta', bateram + ' de ' + (fim+1),
+      nomesOk.length ? nomesOk.join(', ') : 'Nenhum mês atingiu a meta');
+    var dif = real - alvo;
+    html += card('Diferença acumulada', (dif >= 0 ? '+' : '−') + brl(Math.abs(dif)),
+      dif >= 0 ? 'Acima da meta no período' : 'Abaixo da meta no período');
+    html += card('Falta para a meta anual', brl(Math.max(metaAno - realAno, 0)),
+      faltam > 0 ? brl((metaAno - realAno)/faltam) + ' por mês nos ' + faltam + ' meses restantes'
+                 : 'Ano completo');
+    document.getElementById('kpisMeta').innerHTML = html;
+
+    /* grafico */
+    var op = clone(BASE);
+    op.scales.y.ticks.callback = function(v){ return brl(v); };
+    op.plugins.tooltip.callbacks = { label:function(c){
+      var t = c.dataset.label + ': ' + brlCheio(c.parsed.y);
+      if(c.dataset.label === ANO_META && mt.meta[c.dataIndex]){
+        t += '  ·  ' + (c.parsed.y/mt.meta[c.dataIndex]*100).toFixed(0) + '% da meta';
+      }
+      return t;
+    }};
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var i = els[0].index;
+      var qual = els[0].datasetIndex === 0 ? outro : ANO_META;
+      if(els[0].datasetIndex === 2) qual = ANO_META;
+      lerMes(i, mt);
+      abrirDetalhe('Faturamento · ' + qual, MESL[i], function(v){ return v.a === qual && v.m === i; });
+    };
+    charts.meta = new Chart(document.getElementById('gMeta'), {
+      data:{labels:MES, datasets:[
+        {type:'bar', label:outro, data:fOut, backgroundColor:COR.medio, borderRadius:2, maxBarThickness:22},
+        {type:'bar', label:ANO_META, data:f26.map(function(v,i){ return i <= u ? v : null; }),
+         backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:22},
+        {type:'line', label:'Meta ' + ANO_META, data:mt.meta, borderColor:COR.preto, borderDash:[6,4],
+         borderWidth:2, pointRadius:3, pointBackgroundColor:COR.preto, fill:false, tension:0}
+      ]}, options:legenda(op)
+    });
+
+    /* quadradinhos por mes */
+    var caixas = '';
+    for(var k = 0; k <= u; k++){
+      var n = nivel(f26[k] || 0, {meta:mt.meta[k], sup:mt.super[k], hiper:mt.hiper[k]});
+      var emCurso = (parcial && k === u);
+      caixas += '<div class="mesBox" data-m="' + k + '">' +
+        '<div class="mn">' + MES[k] + '</div>' +
+        '<div class="mp" style="color:' + (emCurso ? COR.suave : n.cor) + '">' + n.p.toFixed(0) + '%</div>' +
+        '<div class="ms" style="color:' + (emCurso ? COR.suave : n.cor) + '">' +
+          (emCurso ? 'em curso' : n.txt) + '</div>' +
+        '<div class="barra"><i style="width:' + Math.min(n.p,100).toFixed(0) + '%;background:' +
+          (emCurso ? COR.suave : n.cor) + '"></i></div></div>';
+    }
+    var alvoCaixas = document.getElementById('mesesMeta');
+    alvoCaixas.innerHTML = caixas;
+    alvoCaixas.querySelectorAll('.mesBox').forEach(function(el){
+      el.addEventListener('click', function(){
+        var i = parseInt(el.dataset.m, 10);
+        lerMes(i, mt);
+        abrirDetalhe('Faturamento · ' + ANO_META, MESL[i], function(v){ return v.a === ANO_META && v.m === i; });
+      });
+    });
+
+    leitura('Meta de ' + ANO_META + ': ' + bateram + ' de ' + (fim+1) + ' meses fechados na meta, ' +
+            (alvo ? (real/alvo*100).toFixed(1).replace('.',',') : '0') + '% de atingimento no período.');
+  }
+
+  function lerMes(i, mt){
+    var v = (D.fat[ANO_META] || [])[i] || 0;
+    var m = mt.meta[i] || 0;
+    var outro = ANO_META === '2026' ? '2025' : '2024';
+    var vo = (D.fat[outro] || [])[i] || 0;
+    var t = MESL[i] + ': ' + brlCheio(v) + ' contra meta de ' + brlCheio(m) + ', ' +
+            (m ? (v/m*100).toFixed(0) : '0') + '% de atingimento, ' +
+            (v >= m ? 'acima em ' : 'abaixo em ') + brlCheio(Math.abs(v-m)) + '.';
+    if(vo > 0) t += ' Em ' + outro + ' o mesmo mês fez ' + brlCheio(vo) + '.';
+    leitura(t);
   }
 
   /* ---------- KPIs ---------- */
@@ -683,48 +903,6 @@ canvas{cursor:pointer}
     });
   }
 
-  /* ---------- especialistas ---------- */
-  function gVendedores(){
-    destruir('vend');
-    var lista = (D.vendedores && D.vendedores[ano]) || [];
-    var sem = (D.sem_vendedor && D.sem_vendedor[ano]) || {qtd:0, fat:0};
-    var nota = document.getElementById('notaVend');
-
-    if(!lista.length){
-      mostrarVazio('vVend','SEM INFORMAÇÃO<br>A coluna de especialista está vazia em ' + ano + '.');
-      nota.textContent = 'Nenhum registro com especialista em ' + ano + '.';
-      return;
-    }
-    mostrarVazio('vVend', null);
-    nota.textContent = 'Ano de ' + ano + '. Clique para ver os clientes.' +
-      (sem.qtd ? ' ' + sem.qtd + ' venda' + (sem.qtd>1?'s':'') + ' sem especialista, fora do gráfico.' : '');
-
-    var totalQ = lista.reduce(function(a,b){ return a + b.qtd; }, 0);
-    var totalF = lista.reduce(function(a,b){ return a + b.fat; }, 0);
-    var dados = lista.map(function(x){ return eixoVend === 'qtd' ? x.qtd : x.fat; });
-
-    var op = eixoHorizontal(clone(BASE));
-    if(eixoVend === 'fat') op.scales.x.ticks.callback = function(v){ return brl(v); };
-    op.plugins.tooltip.callbacks = { label:function(c){
-      var v = lista[c.dataIndex];
-      return v.qtd + ' vendas  ·  ' + brlCheio(v.fat) + '  ·  ticket ' + brlCheio(v.qtd ? v.fat/v.qtd : 0); }};
-    op.onClick = function(e, els){
-      if(!els.length) return;
-      var v = lista[els[0].index];
-      leitura(v.nome + ' em ' + ano + ': ' + v.qtd + ' vendas (' + Math.round(v.qtd/totalQ*100) +
-              '% do time) e ' + brlCheio(v.fat) + ' (' + Math.round(v.fat/totalF*100) +
-              '% do faturamento), com ticket médio de ' + brlCheio(v.qtd ? v.fat/v.qtd : 0) + '.');
-      abrirDetalhe('Especialista · ' + ano, v.nome, function(x){ return x.a === ano && x.vd === v.nome; });
-    };
-    charts.vend = new Chart(document.getElementById('gVend'), {
-      type:'bar',
-      data:{labels:lista.map(function(x){ return x.nome; }),
-            datasets:[{data:dados, borderRadius:2, maxBarThickness:22,
-                       backgroundColor:lista.map(function(x,i){ return RAMPA[i % RAMPA.length]; })}]},
-      options:op
-    });
-  }
-
   /* ---------- geografia ---------- */
   function gGeo(canvasId, vazioId, lista, chave, cor, campo, rotulo){
     destruir(chave);
@@ -750,7 +928,8 @@ canvas{cursor:pointer}
 
   /* ---------- desenhar ---------- */
   function desenhar(){
-    montarKPIs(); gFaturamento(); gCanal(); gOrigem(); gVendedores();
+    if(aba === 'comp'){ desenharComparativo(); return; }
+    montarKPIs(); gFaturamento(); gCanal(); gOrigem();
     document.getElementById('notaGeo').textContent =
       'Quantidade de vendas por estado e cidade em ' + ano + '. Clique para ver os clientes.';
     gGeo('gEstados','vEstados', (D.estados||{})[ano], 'estados', COR.marrom, 'e', 'Estado');
@@ -798,6 +977,18 @@ canvas{cursor:pointer}
   }
 
   /* ---------- controles ---------- */
+  document.querySelectorAll('.abas button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.abas button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); aba = b.dataset.aba;
+      var geral = aba === 'geral';
+      document.getElementById('abaGeral').classList.toggle('oculto', !geral);
+      document.getElementById('kpis').classList.toggle('oculto', !geral);
+      document.getElementById('abaComp').classList.toggle('oculto', geral);
+      document.querySelector('.anos').classList.toggle('oculto', !geral);
+      desenhar();
+    });
+  });
   document.querySelectorAll('.anos button').forEach(function(b){
     b.addEventListener('click', function(){
       document.querySelectorAll('.anos button').forEach(function(x){ x.classList.remove('on'); });
@@ -812,12 +1003,6 @@ canvas{cursor:pointer}
     b.addEventListener('click', function(){
       document.querySelectorAll('#selCanal button').forEach(function(x){ x.classList.remove('on'); });
       b.classList.add('on'); modoCanal = b.dataset.modo; gCanal();
-    });
-  });
-  document.querySelectorAll('#selVend button').forEach(function(b){
-    b.addEventListener('click', function(){
-      document.querySelectorAll('#selVend button').forEach(function(x){ x.classList.remove('on'); });
-      b.classList.add('on'); eixoVend = b.dataset.eixo; gVendedores();
     });
   });
   document.querySelectorAll('#selOrigem button').forEach(function(b){
