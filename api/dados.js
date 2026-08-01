@@ -15,6 +15,20 @@ const COL = {
   data:     "date_mm5ts0ng",
 };
 
+
+// Metas oficiais CiaDoSono. 2025 nao teve meta definida.
+// Para trocar de ano, basta editar esta tabela.
+const METAS = {
+  "2026": {
+    meta:  [454577.04,323016.31,267805.03,298884.38,467056.16,407812.08,
+            297332.72,642585.48,425923.56,399516.48,460468.91,165424.84],
+    super: [511399.17,363393.35,301280.66,336244.93,525438.18,458788.59,
+            334499.31,722908.67,479164.01,449456.04,518027.52,186102.95],
+    hiper: [587162.01,417229.40,345914.83,386059.00,603280.88,526757.27,
+            384054.77,830006.25,550151.27,516042.12,594772.34,213673.76],
+  },
+};
+
 const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
                "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 
@@ -173,6 +187,7 @@ export default async function handler(req, res) {
       total: itens.length,
       fat, qtd, canal,
       origens, estados, cidades, vendedores,
+      metas: METAS,
       vendas: lista,
       sem_vendedor: semVendedor,
       sem_ano: semAno,
