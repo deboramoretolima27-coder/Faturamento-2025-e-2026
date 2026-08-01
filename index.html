@@ -708,6 +708,7 @@ canvas{cursor:pointer}
               '. Nos seis últimos, loja ' + lojaFim + ' e online ' + onFim + '. ' +
               (onFim > onIni ? 'O online cresceu' : 'O online recuou') + ' e ' +
               (lojaFim > lojaIni ? 'a loja cresceu' : 'a loja recuou') + ' no período.');
+      montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial);
       return;
     }
 
@@ -727,7 +728,33 @@ canvas{cursor:pointer}
       ]}, options:op
     });
 
-    /* caixas de diferenca por mes */
+    montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial);
+
+    leitura('De Janeiro a ' + MES[fim2] + ': 2026 fez ' + brlCheio(sA) + ' contra ' + brlCheio(sB) +
+            ' de 2025, ' + pct(varTotal).replace('▲ ','alta de ').replace('▼ ','queda de ') +
+            '. ' + altas + ' de ' + (fim2 + 1) + ' meses ficaram acima do ano anterior.');
+  }
+
+  function lerCanal(p, sl, so, ss, idx, corte){
+    var ant = idx >= 12 ? idx - 12 : null;   // mesmo mes do ano anterior
+    var t = MESL[p.mes] + ' de ' + p.ano + ': ' + sl[idx] + ' vendas na loja, ' + so[idx] + ' no online';
+    t += ss[idx] ? ' e ' + ss[idx] + ' sem canal registrado no quadro.' : '.';
+    if(ant !== null){
+      t += ' No mesmo mês de 2025 foram ' + sl[ant] + ' na loja e ' + so[ant] + ' no online.';
+    }
+    leitura(t);
+  }
+
+  function linhaCanal(nome, antes, agora, emCurso){
+    var d = agora - antes;
+    var seta = emCurso ? '—' : (d > 0 ? '▲ +' + d : (d < 0 ? '▼ −' + Math.abs(d) : '='));
+    var cor = emCurso ? COR.suave : (d > 0 ? COR.verde : (d < 0 ? COR.medio : COR.suave));
+    return '<div class="cl"><span class="nome">' + nome + '</span>' +
+           '<span class="num">' + antes + ' → ' + agora + '</span>' +
+           '<span class="var" style="color:' + cor + '">' + seta + '</span></div>';
+  }
+
+  function montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial){
     var caixas = '';
     for(var k = 0; k < 12; k++){
       var a = fA[k] || 0, b = fB[k] || 0;
@@ -771,28 +798,6 @@ canvas{cursor:pointer}
       });
     });
 
-    leitura('De Janeiro a ' + MES[fim2] + ': 2026 fez ' + brlCheio(sA) + ' contra ' + brlCheio(sB) +
-            ' de 2025, ' + pct(varTotal).replace('▲ ','alta de ').replace('▼ ','queda de ') +
-            '. ' + altas + ' de ' + (fim2 + 1) + ' meses ficaram acima do ano anterior.');
-  }
-
-  function lerCanal(p, sl, so, ss, idx, corte){
-    var ant = idx >= 12 ? idx - 12 : null;   // mesmo mes do ano anterior
-    var t = MESL[p.mes] + ' de ' + p.ano + ': ' + sl[idx] + ' vendas na loja, ' + so[idx] + ' no online';
-    t += ss[idx] ? ' e ' + ss[idx] + ' sem canal registrado no quadro.' : '.';
-    if(ant !== null){
-      t += ' No mesmo mês de 2025 foram ' + sl[ant] + ' na loja e ' + so[ant] + ' no online.';
-    }
-    leitura(t);
-  }
-
-  function linhaCanal(nome, antes, agora, emCurso){
-    var d = agora - antes;
-    var seta = emCurso ? '—' : (d > 0 ? '▲ +' + d : (d < 0 ? '▼ −' + Math.abs(d) : '='));
-    var cor = emCurso ? COR.suave : (d > 0 ? COR.verde : (d < 0 ? COR.medio : COR.suave));
-    return '<div class="cl"><span class="nome">' + nome + '</span>' +
-           '<span class="num">' + antes + ' → ' + agora + '</span>' +
-           '<span class="var" style="color:' + cor + '">' + seta + '</span></div>';
   }
 
   function lerComparativo(i, fA, fB, qA, qB){
@@ -1053,34 +1058,60 @@ canvas{cursor:pointer}
 
     if(modoCanal === 'comp'){
       unico.classList.add('oculto'); duplo.classList.remove('oculto');
-      nota.textContent = 'Cada painel é um canal. Marrom claro é 2025, marrom escuro é 2026. O número é a quantidade de vendas.';
+      nota.textContent = 'Cada painel é um canal. Marrom é 2025, verde é 2026. O número é a quantidade de vendas.';
       par('loja','gLoja','l'); par('online','gOnline','o');
       leitura('Comparativo de canal: loja e online lado a lado, com os dois anos em cada mês.');
       return;
     }
     duplo.classList.add('oculto'); unico.classList.remove('oculto');
     var a = modoCanal, u = ultimoMes(a);
-    nota.textContent = 'Loja e online em ' + a + '. O número em cada barra é a quantidade de vendas. Clique para ver os clientes.';
     var c = (D.canal[a]||[]).slice(0,u+1);
+    var qt = (D.qtd[a]||[]).slice(0,u+1);
     var loja = c.map(function(x){ return x.l||0; });
     var onl  = c.map(function(x){ return x.o||0; });
+    var sem  = c.map(function(x,i){ return Math.max((qt[i]||0) - (x.l||0) - (x.o||0), 0); });
+    var totalSem = sem.reduce(function(x,y){ return x+y; }, 0);
+
+    nota.textContent = 'Quantidade de vendas por canal em ' + a + '. Clique numa barra para ver os clientes.' +
+      (totalSem ? ' ' + totalSem + ' venda' + (totalSem>1?'s':'') + ' do ano estão sem canal registrado no quadro, na faixa clara.' : '');
+
+    var conj = [
+      {label:'Loja', data:loja, backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:26},
+      {label:'Online', data:onl, backgroundColor:COR.vivo, borderRadius:2, maxBarThickness:26}
+    ];
+    if(totalSem){
+      conj.push({label:'Sem canal registrado', data:sem, backgroundColor:COR.areia,
+                 borderColor:COR.linha, borderWidth:1, borderRadius:2, maxBarThickness:26});
+    }
+
     var op = legenda(clone(BASE));
+    op.scales.y.title = {display:true, text:'vendas no mês', color:COR.suave, font:{family:FONTE,size:10}};
+    op.plugins.tooltip.callbacks = { label:function(x){
+      return x.dataset.label + ': ' + x.parsed.y + (x.parsed.y === 1 ? ' venda' : ' vendas'); }};
     op.onClick = function(e, els){
       if(!els.length) return;
-      var i = els[0].index, t = loja[i] + onl[i];
-      if(!t){ leitura(MESL[i] + ' de ' + a + ': SEM INFORMAÇÃO de canal.'); return; }
-      leitura(MESL[i] + ' de ' + a + ': ' + loja[i] + ' vendas na loja e ' + onl[i] + ' no online, ' +
-              Math.round(loja[i]/t*100) + '% loja contra ' + Math.round(onl[i]/t*100) + '% online.');
-      var canalClicado = els[0].datasetIndex === 0 ? 'Loja' : 'Online';
-      abrirDetalhe('Canal ' + canalClicado + ' · ' + a, MESL[i], function(v){
-        return v.a === a && v.m === i && v.c === canalClicado; });
+      var i = els[0].index, t = loja[i] + onl[i] + sem[i];
+      if(!t){ leitura(MESL[i] + ' de ' + a + ': SEM INFORMAÇÃO no quadro.'); return; }
+      var txt = MESL[i] + ' de ' + a + ': ' + loja[i] + ' vendas na loja e ' + onl[i] + ' no online';
+      txt += sem[i] ? ', mais ' + sem[i] + ' sem canal registrado no quadro.' : '.';
+      if(loja[i] + onl[i] > 0){
+        txt += ' Entre as registradas, ' + Math.round(loja[i]/(loja[i]+onl[i])*100) + '% loja contra ' +
+               Math.round(onl[i]/(loja[i]+onl[i])*100) + '% online.';
+      }
+      leitura(txt);
+      var di = els[0].datasetIndex;
+      if(di === 2){
+        abrirDetalhe('Sem canal registrado · ' + a, MESL[i], function(v){
+          return v.a === a && v.m === i && !v.c; });
+      } else {
+        var canalClicado = di === 0 ? 'Loja' : 'Online';
+        abrirDetalhe('Canal ' + canalClicado + ' · ' + a, MESL[i], function(v){
+          return v.a === a && v.m === i && v.c === canalClicado; });
+      }
     };
     charts.canal = new Chart(document.getElementById('gCanal'), {
-      type:'bar',
-      data:{labels:MES.slice(0,u+1), datasets:[
-        {label:'Loja', data:loja, backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:26},
-        {label:'Online', data:onl, backgroundColor:COR.medio, borderRadius:2, maxBarThickness:26}
-      ]}, options:op, plugins:[rotulosProprios(COR.suave)]
+      type:'bar', data:{labels:MES.slice(0,u+1), datasets:conj},
+      options:op, plugins:[rotulosProprios(COR.suave)]
     });
   }
   function par(chave, canvasId, campo){
@@ -1092,7 +1123,7 @@ canvas{cursor:pointer}
       type:'bar',
       data:{labels:MES, datasets:[
         {label:'2025', data:d25, backgroundColor:COR.medio, borderRadius:2, maxBarThickness:16},
-        {label:'2026', data:d26, backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:16}
+        {label:'2026', data:d26, backgroundColor:COR.vivo, borderRadius:2, maxBarThickness:16}
       ]}, options:op, plugins:[rotulosProprios(COR.suave)]
     });
   }
@@ -1277,7 +1308,7 @@ canvas{cursor:pointer}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 8  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 9  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
