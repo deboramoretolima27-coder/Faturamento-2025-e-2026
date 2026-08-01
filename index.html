@@ -26,7 +26,7 @@ body{background:var(--offwhite);color:var(--marrom);font-family:var(--texto);
 
 /* CABECALHO CENTRALIZADO */
 header{text-align:center;padding-bottom:30px;border-bottom:1px solid var(--linha)}
-.logo{width:min(330px,72vw);height:auto;color:var(--marrom);display:block;margin:0 auto}
+.logo{width:min(430px,84vw);height:auto;color:var(--marrom);display:block;margin:0 auto}
 h1{font-family:var(--display);font-size:34px;font-weight:700;line-height:1;letter-spacing:-.055em;margin-top:6px}
 .sub{font-size:13px;color:var(--marrom-medio);margin-top:11px;line-height:1.5}
 .meta{font-size:11px;color:var(--suave);margin-top:6px;letter-spacing:.02em}
@@ -55,15 +55,16 @@ h1{font-family:var(--display);font-size:34px;font-weight:700;line-height:1;lette
 .abas button:focus-visible{outline:2px solid var(--marrom-medio);outline-offset:-4px}
 .aviso{background:var(--areia);border-radius:3px;padding:13px 18px;font-size:12px;color:var(--marrom);
        line-height:1.55;margin-bottom:20px;text-align:center}
-.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:10px;margin-top:20px}
+.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:10px}
+.mesBox .par2{display:flex;justify-content:space-between;font-size:11px;margin-top:9px;color:var(--suave)}
+.mesBox .par2 b{font-weight:600;color:var(--marrom)}
+.mesBox .dif{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.03em;margin-top:10px}
+.mesBox .abs{font-size:11px;color:var(--suave);margin-top:4px}
 .mesBox{border:1px solid var(--linha);border-radius:3px;padding:13px 8px;text-align:center;cursor:pointer;
         transition:border-color .15s,background .15s}
 .mesBox:hover{border-color:var(--marrom);background:var(--offwhite)}
 .mesBox .mn{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--suave)}
-.mesBox .mp{font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-.03em;margin-top:7px;line-height:1}
-.mesBox .ms{font-size:10px;margin-top:6px;letter-spacing:.06em}
-.mesBox .barra{height:3px;background:var(--linha);border-radius:2px;margin-top:9px;overflow:hidden}
-.mesBox .barra i{display:block;height:100%;background:var(--marrom)}
+.mesBox{text-align:left;padding:14px 13px}
 .leitura{margin:24px 0 28px;padding:17px 22px;background:var(--preto);color:var(--offwhite);border-radius:3px;
          font-size:14px;line-height:1.5;min-height:58px;display:flex;align-items:center;justify-content:center;
          gap:16px;text-align:center}
@@ -222,17 +223,17 @@ canvas{cursor:pointer}
 
   <div id="painel">
     <header>
-      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="logo" viewBox="0 0 592.8 493.8">
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 198.351562 262.8125 C 204.152344 262.8125 211.046875 260.015625 216.347656 257.816406 L 213.445312 268.511719 C 209.449219 269.609375 204.550781 271.910156 194.753906 271.910156 C 179.660156 271.910156 172.863281 262.214844 176.960938 246.621094 C 180.960938 231.625 193.054688 221.828125 208.148438 221.828125 C 218.046875 221.828125 221.644531 223.929688 225.140625 225.226562 L 222.34375 235.824219 C 218.246094 233.824219 212.746094 231.027344 207.050781 231.027344 C 198.152344 231.027344 191.753906 239.023438 189.554688 247.121094 C 187.15625 255.117188 189.457031 262.8125 198.351562 262.8125 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 238.738281 231.625 L 227.339844 231.625 L 229.742188 222.929688 L 241.136719 222.929688 Z M 226.140625 236.023438 L 237.636719 236.023438 L 228.242188 270.910156 L 216.84375 270.910156 Z M 226.140625 236.023438 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 251.730469 264.414062 C 255.429688 265.210938 258.828125 262.214844 258.828125 262.214844 L 263.726562 243.921875 C 262.226562 242.921875 260.429688 242.421875 258.628906 242.320312 C 251.632812 242.320312 248.933594 249.019531 247.632812 253.917969 C 246.433594 258.515625 246.132812 263.214844 251.730469 264.414062 M 268.023438 270.910156 L 256.628906 270.910156 L 256.929688 269.710938 C 254.53125 271.109375 251.832031 271.910156 249.132812 271.910156 C 235.339844 271.910156 234.238281 262.011719 236.238281 254.316406 C 239.238281 243.222656 246.132812 235.023438 258.730469 235.023438 C 270.625 234.925781 276.621094 238.722656 276.621094 238.722656 Z M 268.023438 270.910156 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 296.113281 231.125 L 287.71875 262.3125 C 289.714844 262.8125 291.714844 263.011719 293.8125 263.011719 C 303.808594 263.011719 308.308594 257.414062 311.207031 246.820312 C 312.605469 241.523438 313.804688 230.527344 302.710938 230.527344 C 300.410156 230.527344 298.210938 230.726562 296.113281 231.125 M 285.316406 224.527344 C 291.617188 222.628906 298.113281 221.730469 304.609375 221.730469 C 320.902344 221.828125 327.5 231.726562 323.601562 246.621094 C 319.402344 262.511719 309.507812 271.609375 291.617188 271.808594 C 285.417969 271.710938 279.21875 271.109375 273.121094 269.910156 Z M 285.316406 224.527344 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 341.09375 264.511719 C 346.792969 264.511719 349.691406 259.214844 351.191406 253.515625 C 352.789062 247.621094 352.691406 242.320312 347.09375 242.320312 C 341.496094 242.320312 338.597656 247.621094 336.996094 253.515625 C 335.496094 259.214844 335.496094 264.511719 341.09375 264.511719 M 349.09375 234.925781 C 360.6875 234.824219 365.386719 242.921875 362.585938 253.417969 C 359.789062 263.914062 350.792969 272.007812 339.195312 271.910156 C 327.601562 271.808594 323.003906 263.914062 325.800781 253.417969 C 328.601562 242.921875 337.597656 235.023438 349.09375 234.925781 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 393.875 221.929688 C 399.472656 221.929688 405.070312 222.628906 410.46875 224.230469 C 410.566406 224.328125 407.367188 235.425781 407.367188 235.324219 C 404.769531 233.125 397.773438 231.027344 392.675781 231.027344 C 389.875 231.027344 383.976562 230.925781 382.777344 235.023438 C 380.777344 242.421875 408.367188 240.320312 403.96875 256.816406 C 401.171875 267.410156 390.976562 272.007812 378.578125 272.007812 C 366.984375 272.007812 361.585938 269.410156 361.386719 269.410156 C 361.488281 269.511719 364.585938 257.914062 364.585938 257.914062 C 367.382812 259.613281 374.382812 263.011719 379.878906 263.011719 C 382.679688 263.011719 390.074219 262.8125 391.273438 258.113281 C 393.074219 251.117188 365.785156 253.117188 370.285156 236.125 C 373.082031 225.828125 385.476562 221.929688 393.875 221.929688 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 423.863281 264.511719 C 429.558594 264.511719 432.457031 259.214844 433.957031 253.515625 C 435.558594 247.621094 435.457031 242.320312 429.859375 242.320312 C 424.261719 242.320312 421.363281 247.621094 419.761719 253.515625 C 418.164062 259.214844 418.164062 264.511719 423.863281 264.511719 M 431.757812 234.925781 C 443.355469 234.824219 448.050781 242.921875 445.253906 253.417969 C 442.453125 263.914062 433.457031 272.007812 421.863281 271.910156 C 410.265625 271.808594 405.769531 263.914062 408.46875 253.417969 C 411.265625 242.921875 420.261719 235.023438 431.757812 234.925781 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 452.851562 238.722656 C 452.949219 238.722656 463.546875 235.023438 474.339844 235.023438 C 488.535156 235.023438 486.4375 243.519531 485.136719 248.519531 L 479.140625 270.910156 L 467.742188 270.910156 L 472.84375 252.117188 C 474.140625 247.320312 475.941406 242.519531 469.644531 242.519531 C 467.34375 242.621094 465.144531 243.121094 463.046875 244.121094 L 455.847656 271.011719 L 444.453125 271.011719 Z M 452.851562 238.722656 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 502.628906 264.511719 C 508.328125 264.511719 511.226562 259.214844 512.726562 253.515625 C 514.324219 247.621094 514.226562 242.320312 508.628906 242.320312 C 503.03125 242.320312 500.128906 247.621094 498.53125 253.515625 C 497.03125 259.214844 497.03125 264.511719 502.628906 264.511719 M 510.625 234.925781 C 522.222656 234.824219 526.921875 242.921875 524.121094 253.417969 C 521.320312 263.914062 512.324219 272.007812 500.730469 271.910156 C 489.136719 271.808594 484.535156 263.914062 487.335938 253.417969 C 490.035156 242.921875 499.132812 235.023438 510.625 234.925781 "/>
-<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 81.300781 261.015625 C 61.707031 234.226562 96.496094 203.039062 126.082031 212.035156 C 109.1875 210.335938 96.695312 216.332031 89.796875 224.730469 C 79.300781 237.324219 81.800781 250.019531 87.699219 254.714844 C 94.695312 260.214844 104.589844 261.3125 119.085938 242.320312 C 124.683594 235.023438 129.382812 232.824219 134.777344 234.722656 C 141.777344 237.222656 144.375 246.121094 139.875 253.71875 C 123.984375 280.105469 92.195312 275.90625 81.300781 261.015625 M 152.871094 241.722656 C 151.273438 256.617188 139.175781 272.710938 113.6875 274.707031 C 133.578125 270.808594 143.273438 259.316406 146.675781 250.019531 C 150.574219 239.324219 146.273438 227.027344 133.777344 226.226562 C 125.382812 225.628906 121.683594 229.925781 113.6875 239.722656 C 104.390625 251.117188 98.195312 251.617188 93.296875 247.917969 C 87.097656 243.222656 87.898438 232.226562 96.394531 223.328125 C 104.890625 214.433594 122.082031 211.234375 137.078125 215.632812 C 137.378906 215.730469 137.578125 215.433594 137.277344 215.132812 C 106.289062 194.339844 63.609375 219.832031 68.003906 254.214844 C 73.703125 299.5 155.671875 297.199219 153.472656 241.820312 C 153.472656 241.621094 153.269531 241.523438 153.070312 241.523438 C 152.972656 241.523438 152.871094 241.621094 152.871094 241.722656 "/>
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="logo" viewBox="0 0 1012.61 356.665">
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 360.421875 206.132812 C 370.59375 206.132812 382.773438 201.171875 392 197.382812 L 386.914062 216.183594 C 379.816406 218.195312 371.3125 222.101562 354.046875 222.101562 C 327.5625 222.101562 315.621094 205.078125 322.832031 177.644531 C 329.925781 151.386719 351.085938 134.019531 377.570312 134.019531 C 394.835938 134.019531 401.332031 137.792969 407.367188 139.933594 L 402.394531 158.605469 C 395.183594 155.074219 385.609375 150.101562 375.433594 150.101562 C 359.832031 150.101562 348.484375 164.289062 344.707031 178.351562 C 340.804688 192.660156 344.816406 206.132812 360.421875 206.132812 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 431.335938 151.386719 L 411.246094 151.386719 L 415.378906 136.023438 L 435.480469 136.023438 Z M 409.230469 159.085938 L 429.332031 159.085938 L 412.894531 220.4375 L 392.914062 220.4375 Z M 409.230469 159.085938 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 453.4375 208.972656 C 459.949219 210.390625 465.855469 205.195312 465.855469 205.195312 L 474.492188 173.035156 C 474.492188 173.035156 470.585938 170.3125 465.617188 170.3125 C 453.320312 170.3125 448.597656 182.140625 446.230469 190.765625 C 444.101562 198.5625 443.507812 206.847656 453.4375 208.972656 M 482.054688 220.4375 L 461.949219 220.4375 L 462.542969 218.308594 C 462.542969 218.308594 456.398438 222.207031 448.828125 222.207031 C 424.59375 222.207031 422.585938 204.957031 426.132812 191.238281 C 431.339844 171.730469 443.398438 157.425781 465.738281 157.304688 C 486.664062 157.1875 497.179688 163.808594 497.179688 163.808594 Z M 482.054688 220.4375 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 529.125 150.570312 L 514.339844 205.421875 C 514.230469 205.539062 519.910156 206.722656 524.992188 206.609375 C 542.613281 206.609375 550.40625 196.789062 555.492188 178.121094 C 557.96875 168.78125 560.101562 149.503906 540.480469 149.394531 C 534.917969 149.394531 529.125 150.570312 529.125 150.570312 M 510.210938 138.980469 C 510.210938 139.21875 523.214844 134.019531 544.148438 134.132812 C 572.75 134.253906 584.457031 151.753906 577.476562 177.886719 C 570.03125 205.785156 552.644531 221.859375 521.328125 222.101562 C 506.191406 222.207031 488.933594 218.902344 488.933594 218.777344 Z M 510.210938 138.980469 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 606.054688 209.207031 C 615.988281 209.207031 621.074219 199.859375 623.789062 189.824219 C 626.632812 179.417969 626.511719 170.191406 616.578125 170.191406 C 606.773438 170.191406 601.683594 179.417969 598.839844 189.824219 C 596.128906 199.859375 596.128906 209.207031 606.054688 209.207031 M 620.003906 157.1875 C 640.34375 157.070312 648.617188 171.261719 643.78125 189.703125 C 638.8125 208.144531 622.964844 222.332031 602.632812 222.207031 C 582.417969 222.101562 574.253906 208.144531 579.105469 189.703125 C 583.953125 171.261719 599.789062 157.304688 620.003906 157.1875 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 696.53125 134.253906 C 709.421875 134.253906 719.941406 136.496094 725.738281 138.277344 C 725.859375 138.398438 720.300781 157.90625 720.300781 157.78125 C 715.808594 154 703.511719 150.214844 694.398438 150.214844 C 689.4375 150.214844 679.042969 149.984375 677.03125 157.304688 C 673.46875 170.3125 722.070312 166.652344 714.269531 195.617188 C 709.304688 214.296875 691.453125 222.207031 669.585938 222.207031 C 649.117188 222.207031 639.664062 217.722656 639.433594 217.597656 C 639.550781 217.722656 644.984375 197.382812 644.984375 197.382812 C 649.945312 200.347656 662.132812 206.257812 671.820312 206.257812 C 676.667969 206.257812 689.671875 205.90625 691.921875 197.628906 C 695.121094 185.332031 647.117188 188.75 655.039062 158.960938 C 659.882812 141.109375 681.753906 134.253906 696.53125 134.253906 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 748.191406 209.207031 C 758.117188 209.207031 763.199219 199.859375 765.921875 189.824219 C 768.761719 179.417969 768.644531 170.191406 758.714844 170.191406 C 748.902344 170.191406 743.820312 179.417969 740.984375 189.824219 C 738.261719 199.859375 738.261719 209.207031 748.191406 209.207031 M 762.144531 157.1875 C 782.46875 157.070312 790.746094 171.261719 785.894531 189.703125 C 780.941406 208.144531 765.09375 222.332031 744.75 222.207031 C 724.546875 222.101562 716.390625 208.144531 721.234375 189.703125 C 726.085938 171.261719 741.925781 157.304688 762.144531 157.1875 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 797.6875 163.808594 C 797.804688 163.808594 816.496094 157.304688 835.398438 157.304688 C 860.34375 157.304688 856.683594 172.210938 854.320312 181.078125 L 843.792969 220.4375 L 823.703125 220.4375 L 832.570312 187.34375 C 834.808594 178.945312 838.003906 170.429688 827.015625 170.429688 C 821.097656 170.429688 815.421875 173.269531 815.421875 173.269531 L 802.773438 220.4375 L 782.796875 220.4375 Z M 797.6875 163.808594 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 884.121094 209.207031 C 894.054688 209.207031 899.136719 199.859375 901.855469 189.824219 C 904.691406 179.417969 904.578125 170.191406 894.648438 170.191406 C 884.828125 170.191406 879.753906 179.417969 876.910156 189.824219 C 874.1875 199.859375 874.1875 209.207031 884.121094 209.207031 M 898.074219 157.1875 C 918.410156 157.070312 926.6875 171.261719 921.828125 189.703125 C 916.875 208.144531 901.03125 222.332031 880.699219 222.207031 C 860.472656 222.101562 852.316406 208.144531 857.167969 189.703125 C 862.011719 171.261719 877.863281 157.304688 898.074219 157.1875 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 120.777344 210.316406 C 76.152344 149.417969 155.410156 78.382812 222.785156 98.824219 C 222.800781 98.824219 222.796875 98.851562 222.78125 98.851562 C 184.421875 94.96875 155.957031 108.703125 140.199219 127.648438 C 116.273438 156.398438 121.898438 185.308594 135.46875 195.964844 C 151.5 208.5625 173.828125 211.042969 206.847656 167.832031 C 219.542969 151.214844 230.222656 146.15625 242.675781 150.589844 C 258.660156 156.289062 264.617188 176.601562 254.253906 193.777344 C 218.03125 253.800781 145.796875 244.449219 120.777344 210.316406 M 283.886719 166.546875 C 280.285156 200.34375 252.59375 237.097656 194.648438 241.570312 C 194.632812 241.570312 194.625 241.546875 194.644531 241.542969 C 239.835938 232.621094 261.96875 206.570312 269.6875 185.324219 C 278.558594 160.886719 268.789062 133.0625 240.242188 131.125 C 221.207031 129.839844 212.613281 139.574219 194.609375 161.761719 C 173.496094 187.761719 159.367188 188.808594 148.207031 180.367188 C 134.207031 169.785156 135.816406 144.730469 155.347656 124.316406 C 174.652344 104.125 213.84375 96.71875 248.015625 106.933594 C 248.65625 107.125 249.234375 106.402344 248.476562 105.894531 C 178.003906 58.570312 80.816406 116.445312 90.714844 194.828125 C 103.722656 297.875 290.246094 292.726562 285.34375 166.578125 C 285.308594 165.699219 283.972656 165.679688 283.886719 166.546875 "/>
 </svg>
       <h1>Performance Comercial</h1>
       <div class="sub">Quadro do monday: Analise Anual 2025 e 2026, atualizado em tempo real</div>
@@ -256,16 +257,22 @@ canvas{cursor:pointer}
     <div class="kpis" id="kpis"></div>
 
     <div id="abaComp" class="oculto">
-      <div class="aviso" id="avisoMeta"></div>
-      <div class="kpis" id="kpisMeta"></div>
+      <div class="aviso" id="avisoComp"></div>
+      <div class="kpis" id="kpisComp"></div>
       <div class="grade">
         <div class="card c12">
           <div class="topo"><div>
-            <h2>Faturamento contra a meta</h2>
-            <div class="nota">Barras são o faturamento de cada ano. A linha pontilhada é a meta de 2026. Clique numa barra para ver os clientes.</div>
+            <h2>Faturamento mês a mês, 2026 contra 2025</h2>
+            <div class="nota">Marrom claro é 2025, marrom escuro é 2026. Clique numa barra para ver os clientes daquele mês.</div>
           </div></div>
-          <div class="tela alta"><canvas id="gMeta"></canvas></div>
-          <div class="meses" id="mesesMeta"></div>
+          <div class="tela alta"><canvas id="gComp"></canvas></div>
+        </div>
+        <div class="card c12">
+          <div class="topo"><div>
+            <h2>Diferença por mês</h2>
+            <div class="nota">Quanto cada mês de 2026 rendeu a mais ou a menos que o mesmo mês de 2025.</div>
+          </div></div>
+          <div class="meses" id="mesesComp"></div>
         </div>
       </div>
     </div>
@@ -275,7 +282,7 @@ canvas{cursor:pointer}
       <div class="card c12">
         <div class="topo"><div>
           <h2>Faturamento por mês</h2>
-          <div class="nota">Valor faturado em destaque, com a quantidade de vendas logo abaixo. Clique para ver os clientes.</div>
+          <div class="nota" id="notaFat"></div>
         </div></div>
         <div class="tela alta"><canvas id="gFat"></canvas><div class="vazio oculto" id="vFat"></div></div>
       </div>
@@ -547,130 +554,112 @@ canvas{cursor:pointer}
   }
 
 
-  /* ---------- comparativo do ano contra a meta ---------- */
-  function nivel(v, m){
-    if(!m) return {txt:'sem meta', cls:'suave', p:0};
-    var p = v/m.meta*100;
-    if(v >= m.hiper) return {txt:'Hiper Meta', cor:COR.marrom, p:p};
-    if(v >= m.sup)   return {txt:'Super Meta', cor:COR.marrom, p:p};
-    if(v >= m.meta)  return {txt:'na meta',    cor:COR.marrom, p:p};
-    if(p >= 85)      return {txt:'quase',      cor:COR.medio,  p:p};
-    return {txt:'abaixo', cor:COR.suave, p:p};
-  }
-
+  /* ---------- comparativo entre os anos ---------- */
   function desenharComparativo(){
-    destruir('meta');
-    var mt = (D.metas || {})[ANO_META] || METAS_LOCAIS[ANO_META];
-    var f26 = D.fat[ANO_META] || [], q26 = D.qtd[ANO_META] || [];
-    var outro = ANO_META === '2026' ? '2025' : '2024';
-    var fOut = D.fat[outro] || [];
-    var u = ultimoMes(ANO_META);
+    destruir('comp');
+    var A = '2026', B = '2025';
+    var fA = D.fat[A] || [], fB = D.fat[B] || [];
+    var qA = D.qtd[A] || [], qB = D.qtd[B] || [];
+    var uA = ultimoMes(A), uB = ultimoMes(B);
 
-    document.getElementById('avisoMeta').innerHTML = mt
-      ? 'Em ' + outro + ' não houve meta definida, por isso a linha pontilhada aparece só a partir de ' + ANO_META +
-        '. As barras comparam o faturamento dos dois anos.'
-      : 'SEM INFORMAÇÃO de meta para ' + ANO_META + '.';
-
-    if(u < 0){
-      document.getElementById('kpisMeta').innerHTML =
-        card('Ano de ' + ANO_META, 'SEM INFORMAÇÃO', 'O quadro não tem registros neste ano');
-      document.getElementById('mesesMeta').innerHTML = '';
+    if(uA < 0 && uB < 0){
+      document.getElementById('avisoComp').textContent = 'SEM INFORMAÇÃO no quadro.';
+      document.getElementById('kpisComp').innerHTML = '';
+      document.getElementById('mesesComp').innerHTML = '';
       return;
     }
 
     var hoje = new Date();
-    var parcial = (String(hoje.getFullYear()) === ANO_META && hoje.getMonth() === u);
-    var fim = parcial ? u - 1 : u;   // so meses fechados entram na conta
+    var parcial = (String(hoje.getFullYear()) === A && hoje.getMonth() === uA);
+    var fim2 = parcial ? uA - 1 : uA;   // so meses fechados entram na conta
 
-    var real = 0, alvo = 0, bateram = 0;
-    for(var i = 0; i <= fim; i++){
-      real += f26[i] || 0; alvo += mt.meta[i] || 0;
-      if((f26[i] || 0) >= mt.meta[i]) bateram++;
+    document.getElementById('avisoComp').textContent =
+      'Comparação direta entre os dois anos, mês a mês. Os totais consideram apenas os meses fechados, de Janeiro a ' +
+      MES[fim2] + (parcial ? ', porque ' + MESL[uA] + ' de ' + A + ' ainda está em curso.' : '.');
+
+    var sA = 0, sB = 0, altas = 0, melhor = null, pior = null;
+    for(var i = 0; i <= fim2; i++){
+      sA += fA[i] || 0; sB += fB[i] || 0;
+      if(!fB[i]) continue;
+      var d = ((fA[i] - fB[i]) / fB[i]) * 100;
+      if(d >= 0) altas++;
+      if(melhor === null || d > melhor.d) melhor = {m:i, d:d};
+      if(pior === null || d < pior.d) pior = {m:i, d:d};
     }
-    var metaAno = mt.meta.reduce(function(a,b){ return a+b; }, 0);
-    var realAno = f26.reduce(function(a,b){ return a+b; }, 0);
-    var faltam = 12 - (fim + 1);
-    var nomesOk = [];
-    for(var j = 0; j <= fim; j++){ if((f26[j]||0) >= mt.meta[j]) nomesOk.push(MES[j]); }
+    var varTotal = sB ? ((sA - sB) / sB) * 100 : 0;
 
     var html = '';
-    html += card('Atingimento até ' + MES[fim],
-      (alvo ? (real/alvo*100).toFixed(1).replace('.',',') : '0') + '%',
-      'De Janeiro a ' + MES[fim] + ', meses fechados');
-    html += card('Meses na meta', bateram + ' de ' + (fim+1),
-      nomesOk.length ? nomesOk.join(', ') : 'Nenhum mês atingiu a meta');
-    var dif = real - alvo;
-    html += card('Diferença acumulada', (dif >= 0 ? '+' : '−') + brl(Math.abs(dif)),
-      dif >= 0 ? 'Acima da meta no período' : 'Abaixo da meta no período');
-    html += card('Falta para a meta anual', brl(Math.max(metaAno - realAno, 0)),
-      faltam > 0 ? brl((metaAno - realAno)/faltam) + ' por mês nos ' + faltam + ' meses restantes'
-                 : 'Ano completo');
-    document.getElementById('kpisMeta').innerHTML = html;
+    html += card('2026 contra 2025', pct(varTotal),
+      brlCheio(sA) + ' contra ' + brlCheio(sB) + ', de Janeiro a ' + MES[fim2]);
+    html += card('Meses em alta', altas + ' de ' + (fim2 + 1),
+      'Meses de 2026 acima do mesmo mês de 2025');
+    html += card('Melhor mês', melhor ? MESL[melhor.m] : 'SEM INFORMAÇÃO',
+      melhor ? pct(melhor.d) + ' contra 2025' : '');
+    html += card('Mês mais fraco', pior ? MESL[pior.m] : 'SEM INFORMAÇÃO',
+      pior ? pct(pior.d) + ' contra 2025' : '');
+    document.getElementById('kpisComp').innerHTML = html;
 
-    /* grafico */
-    var op = clone(BASE);
+    /* grafico, sem meta */
+    var op = legenda(clone(BASE));
     op.scales.y.ticks.callback = function(v){ return brl(v); };
     op.plugins.tooltip.callbacks = { label:function(c){
-      var t = c.dataset.label + ': ' + brlCheio(c.parsed.y);
-      if(c.dataset.label === ANO_META && mt.meta[c.dataIndex]){
-        t += '  ·  ' + (c.parsed.y/mt.meta[c.dataIndex]*100).toFixed(0) + '% da meta';
-      }
-      return t;
-    }};
+      var ind = c.dataIndex, y = c.dataset.label;
+      var q = (y === A ? qA : qB)[ind] || 0;
+      return y + ': ' + brlCheio(c.parsed.y) + '  ·  ' + q + ' vendas'; }};
     op.onClick = function(e, els){
       if(!els.length) return;
-      var i = els[0].index;
-      var qual = els[0].datasetIndex === 0 ? outro : ANO_META;
-      if(els[0].datasetIndex === 2) qual = ANO_META;
-      lerMes(i, mt);
+      var i = els[0].index, qual = els[0].datasetIndex === 0 ? B : A;
+      lerComparativo(i, fA, fB, qA, qB);
       abrirDetalhe('Faturamento · ' + qual, MESL[i], function(v){ return v.a === qual && v.m === i; });
     };
-    charts.meta = new Chart(document.getElementById('gMeta'), {
+    charts.comp = new Chart(document.getElementById('gComp'), {
+      type:'bar',
       data:{labels:MES, datasets:[
-        {type:'bar', label:outro, data:fOut, backgroundColor:COR.medio, borderRadius:2, maxBarThickness:22},
-        {type:'bar', label:ANO_META, data:f26.map(function(v,i){ return i <= u ? v : null; }),
-         backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:22},
-        {type:'line', label:'Meta ' + ANO_META, data:mt.meta, borderColor:COR.preto, borderDash:[6,4],
-         borderWidth:2, pointRadius:3, pointBackgroundColor:COR.preto, fill:false, tension:0}
-      ]}, options:legenda(op)
+        {label:B, data:fB, backgroundColor:COR.medio, borderRadius:2, maxBarThickness:24},
+        {label:A, data:fA.map(function(v,i){ return i <= uA ? v : null; }),
+         backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:24}
+      ]}, options:op
     });
 
-    /* quadradinhos por mes */
+    /* caixas de diferenca por mes */
     var caixas = '';
-    for(var k = 0; k <= u; k++){
-      var n = nivel(f26[k] || 0, {meta:mt.meta[k], sup:mt.super[k], hiper:mt.hiper[k]});
-      var emCurso = (parcial && k === u);
+    for(var k = 0; k < 12; k++){
+      var a = fA[k] || 0, b = fB[k] || 0;
+      if(!a && !b) continue;
+      var emCurso = (parcial && k === uA);
+      var d2 = b ? ((a - b) / b) * 100 : null;
+      var cor = emCurso ? COR.suave : (d2 === null ? COR.suave : (d2 >= 0 ? COR.marrom : COR.medio));
       caixas += '<div class="mesBox" data-m="' + k + '">' +
-        '<div class="mn">' + MES[k] + '</div>' +
-        '<div class="mp" style="color:' + (emCurso ? COR.suave : n.cor) + '">' + n.p.toFixed(0) + '%</div>' +
-        '<div class="ms" style="color:' + (emCurso ? COR.suave : n.cor) + '">' +
-          (emCurso ? 'em curso' : n.txt) + '</div>' +
-        '<div class="barra"><i style="width:' + Math.min(n.p,100).toFixed(0) + '%;background:' +
-          (emCurso ? COR.suave : n.cor) + '"></i></div></div>';
+        '<div class="mn">' + MESL[k] + (emCurso ? ' · em curso' : '') + '</div>' +
+        '<div class="par2"><span>2025</span><b>' + (b ? brl(b) : 'sem venda') + '</b></div>' +
+        '<div class="par2"><span>2026</span><b>' + (a ? brl(a) : 'sem venda') + '</b></div>' +
+        '<div class="dif" style="color:' + cor + '">' +
+          (d2 === null ? 'SEM BASE' : pct(d2)) + '</div>' +
+        '<div class="abs">' + (d2 === null ? '2025 não teve venda neste mês'
+          : (a >= b ? '2026 fez ' + brl(a - b) + ' a mais' : '2026 fez ' + brl(b - a) + ' a menos')) +
+        '</div></div>';
     }
-    var alvoCaixas = document.getElementById('mesesMeta');
-    alvoCaixas.innerHTML = caixas;
-    alvoCaixas.querySelectorAll('.mesBox').forEach(function(el){
+    var alvo = document.getElementById('mesesComp');
+    alvo.innerHTML = caixas;
+    alvo.querySelectorAll('.mesBox').forEach(function(el){
       el.addEventListener('click', function(){
         var i = parseInt(el.dataset.m, 10);
-        lerMes(i, mt);
-        abrirDetalhe('Faturamento · ' + ANO_META, MESL[i], function(v){ return v.a === ANO_META && v.m === i; });
+        lerComparativo(i, fA, fB, qA, qB);
+        abrirDetalhe('Faturamento · 2026', MESL[i], function(v){ return v.a === '2026' && v.m === i; });
       });
     });
 
-    leitura('Meta de ' + ANO_META + ': ' + bateram + ' de ' + (fim+1) + ' meses fechados na meta, ' +
-            (alvo ? (real/alvo*100).toFixed(1).replace('.',',') : '0') + '% de atingimento no período.');
+    leitura('De Janeiro a ' + MES[fim2] + ': 2026 fez ' + brlCheio(sA) + ' contra ' + brlCheio(sB) +
+            ' de 2025, ' + pct(varTotal).replace('▲ ','alta de ').replace('▼ ','queda de ') +
+            '. ' + altas + ' de ' + (fim2 + 1) + ' meses ficaram acima do ano anterior.');
   }
 
-  function lerMes(i, mt){
-    var v = (D.fat[ANO_META] || [])[i] || 0;
-    var m = mt.meta[i] || 0;
-    var outro = ANO_META === '2026' ? '2025' : '2024';
-    var vo = (D.fat[outro] || [])[i] || 0;
-    var t = MESL[i] + ': ' + brlCheio(v) + ' contra meta de ' + brlCheio(m) + ', ' +
-            (m ? (v/m*100).toFixed(0) : '0') + '% de atingimento, ' +
-            (v >= m ? 'acima em ' : 'abaixo em ') + brlCheio(Math.abs(v-m)) + '.';
-    if(vo > 0) t += ' Em ' + outro + ' o mesmo mês fez ' + brlCheio(vo) + '.';
+  function lerComparativo(i, fA, fB, qA, qB){
+    var a = fA[i] || 0, b = fB[i] || 0;
+    var t = MESL[i] + ': 2026 fez ' + brlCheio(a) + ' em ' + (qA[i]||0) + ' vendas, contra ' +
+            brlCheio(b) + ' em ' + (qB[i]||0) + ' vendas de 2025.';
+    if(b) t += ' Diferença de ' + brlCheio(Math.abs(a-b)) + ', ' +
+               (a >= b ? 'alta' : 'queda') + ' de ' + Math.abs((a-b)/b*100).toFixed(1).replace('.',',') + '%.';
     leitura(t);
   }
 
@@ -715,11 +704,20 @@ canvas{cursor:pointer}
     mostrarVazio('vFat', null);
     var fat = (D.fat[ano]||[]).slice(0,u+1);
     var qtd = (D.qtd[ano]||[]).slice(0,u+1);
+    var mt = (D.metas || {})[ano] || METAS_LOCAIS[ano] || null;
+    document.getElementById('notaFat').textContent = mt
+      ? 'Valor faturado em destaque, com a quantidade de vendas abaixo. A linha pontilhada é a meta de ' + ano + '. Clique para ver os clientes.'
+      : 'Valor faturado em destaque, com a quantidade de vendas abaixo. ' + ano + ' não teve meta definida. Clique para ver os clientes.';
+
     var op = clone(BASE);
     op.layout = {padding:{top:34}};
     op.scales.y.ticks.callback = function(v){ return brl(v); };
     op.plugins.tooltip.callbacks = { label:function(c){
-      return brlCheio(c.parsed.y) + '  ·  ' + qtd[c.dataIndex] + ' vendas'; }};
+      if(c.dataset.label === 'Meta') return 'Meta: ' + brlCheio(c.parsed.y);
+      var t = brlCheio(c.parsed.y) + '  ·  ' + qtd[c.dataIndex] + ' vendas';
+      if(mt && mt.meta[c.dataIndex]) t += '  ·  ' + (c.parsed.y/mt.meta[c.dataIndex]*100).toFixed(0) + '% da meta';
+      return t;
+    }};
     op.onClick = function(e, els){
       if(!els.length) return;
       var i = els[0].index;
@@ -733,10 +731,16 @@ canvas{cursor:pointer}
       leitura(t);
       abrirDetalhe('Faturamento · ' + ano, MESL[i], function(v){ return v.a === ano && v.m === i; });
     };
+    var conjuntos = [{type:'bar', label:ano, data:fat, backgroundColor:COR.marrom,
+                      borderRadius:2, maxBarThickness:64, order:2}];
+    if(mt){
+      conjuntos.push({type:'line', label:'Meta', data:mt.meta.slice(0,u+1), borderColor:COR.preto,
+                      borderDash:[6,4], borderWidth:2, pointRadius:3, pointBackgroundColor:COR.preto,
+                      fill:false, tension:0, order:1});
+      op = legenda(op);
+    }
     charts.fat = new Chart(document.getElementById('gFat'), {
-      type:'bar',
-      data:{labels:MES.slice(0,u+1),
-            datasets:[{data:fat, backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:64}]},
+      data:{labels:MES.slice(0,u+1), datasets:conjuntos},
       options:op, plugins:[rotuloDuplo(fat, qtd)]
     });
   }
