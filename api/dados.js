@@ -139,4 +139,64 @@ export default async function handler(req, res) {
       const valor = num(cv[COL.valor]);
 
       if (ANOS.indexOf(ano) === -1) {
-        semAno.qtd += 1;
+        semAno.qtd += 1; semAno.fat += valor;
+        return;
+      }
+
+      const mi = MESES.indexOf((cv[COL.mes] || "").trim());
+      if (mi >= 0) {
+        fat[ano][mi] += valor;
+        qtd[ano][mi] += 1;
+        const c = (cv[COL.canal] || "").trim().toLowerCase();
+        if (c === "loja") canal[ano][mi].l += 1;
+        else if (c === "online") canal[ano][mi].o += 1;
+      }
+
+      lista.push({
+        n: it.name,
+        a: ano,
+        m: mi,
+        v: valor,
+        d: cv[COL.data] || "",
+        c: vazio(cv[COL.canal])    ? "" : cv[COL.canal].trim(),
+        o: vazio(cv[COL.origem])   ? "" : cv[COL.origem].trim(),
+        e: vazio(cv[COL.estado])   ? "" : cv[COL.estado].trim(),
+        ci: vazio(cv[COL.cidade])  ? "" : cv[COL.cidade].trim(),
+        vd: vazio(cv[COL.vendedor])? "" : cv[COL.vendedor].trim(),
+      });
+
+      if (!vazio(cv[COL.origem])) somar(mapaOrigem[ano], cv[COL.origem].trim(), valor);
+      if (!vazio(cv[COL.estado])) somar(mapaEstado[ano], cv[COL.estado].trim(), valor);
+      if (!vazio(cv[COL.cidade])) somar(mapaCidade[ano], cv[COL.cidade].trim(), valor);
+
+      if (vazio(cv[COL.vendedor])) {
+        semVendedor[ano].qtd += 1;
+        semVendedor[ano].fat += valor;
+      } else {
+        somar(mapaVendedor[ano], cv[COL.vendedor].trim(), valor);
+      }
+    });
+
+    const origens = {}, estados = {}, cidades = {}, vendedores = {};
+    ANOS.forEach((a) => {
+      origens[a]    = ranking(mapaOrigem[a], 12);
+      estados[a]    = ranking(mapaEstado[a], 10);
+      cidades[a]    = ranking(mapaCidade[a], 8);
+      vendedores[a] = ranking(mapaVendedor[a], 12);
+    });
+
+    res.status(200).json({
+      quadro: board.name,
+      atualizado: new Date().toISOString(),
+      total: itens.length,
+      fat, qtd, canal,
+      origens, estados, cidades, vendedores,
+      metas: METAS,
+      vendas: lista,
+      sem_vendedor: semVendedor,
+      sem_ano: semAno,
+    });
+  } catch (e) {
+    res.status(500).json({ erro: String(e.message || e) });
+  }
+}
