@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CiaDoSono · Performance Comercial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root{
+  --areia:#F2EDE4;
+  --papel:#FBF8F3;
+  --tinta:#2A2118;
+  --tinta-suave:#6B5E50;
+  --linha:#DED4C4;
+  --navy:#1E3050;
+  --verde:#4F6B4A;
+  --ocre:#B08A45;
+  --vinho:#7A3B3B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--areia);
+  color:var(--tinta);
+  font-family:'Inter',system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  padding:32px 24px 64px;
+}
+.wrap{max-width:1240px;margin:0 auto}
+
+/* CABECALHO */
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-bottom:20px;border-bottom:1px solid var(--linha)}
+.marca{font-family:'EB Garamond',serif;font-size:13px;letter-spacing:.34em;text-transform:uppercase;color:var(--tinta-suave)}
+h1{font-family:'EB Garamond',serif;font-size:40px;font-weight:500;line-height:1.05;margin-top:6px}
+.meta{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--tinta-suave);margin-top:8px;letter-spacing:.04em}
+.anos{display:flex;gap:0;border:1px solid var(--tinta);border-radius:2px;overflow:hidden}
+.anos button{background:transparent;border:0;padding:9px 22px;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:.06em;cursor:pointer;color:var(--tinta);transition:.15s}
+.anos button+button{border-left:1px solid var(--tinta)}
+.anos button.on{background:var(--tinta);color:var(--areia)}
+.anos button:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+
+/* FAIXA DE LEITURA */
+.leitura{margin:20px 0 28px;padding:16px 20px;background:var(--tinta);color:var(--areia);border-radius:3px;font-size:14px;line-height:1.5;min-height:56px;display:flex;align-items:center;gap:14px}
+.leitura .tag{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.6;white-space:nowrap;border-right:1px solid rgba(242,237,228,.25);padding-right:14px}
+
+/* KPI */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:28px}
+.kpi{background:var(--papel);border:1px solid var(--linha);border-radius:3px;padding:18px 20px}
+.kpi .rot{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta-suave)}
+.kpi .val{font-family:'EB Garamond',serif;font-size:33px;font-weight:500;margin-top:8px;line-height:1}
+.kpi .sub{font-size:12px;color:var(--tinta-suave);margin-top:7px}
+.up{color:var(--verde);font-weight:500}
+.down{color:var(--vinho);font-weight:500}
+
+/* CARDS */
+.grade{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
+.card{background:var(--papel);border:1px solid var(--linha);border-radius:3px;padding:20px 22px 22px}
+.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}
+.card h2{font-family:'EB Garamond',serif;font-size:21px;font-weight:500}
+.card .nota{font-size:12px;color:var(--tinta-suave);margin-top:3px}
+.topo{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.mini{display:flex;gap:0;border:1px solid var(--linha);border-radius:2px;overflow:hidden}
+.mini button{background:transparent;border:0;padding:6px 13px;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;color:var(--tinta-suave)}
+.mini button+button{border-left:1px solid var(--linha)}
+.mini button.on{background:var(--tinta);color:var(--areia)}
+.tela{position:relative;height:280px}
+.tela.alta{height:330px}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.par .rot{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--tinta-suave);text-align:center;margin-bottom:6px}
+.oculto{display:none}
+.semdado{display:flex;align-items:center;justify-content:center;height:100%;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;color:var(--tinta-suave)}
+
+/* ESTADOS */
+#carregando,#falha{padding:60px 0;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--tinta-suave)}
+#falha{color:var(--vinho);line-height:1.7}
+#painel{display:none}
+footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--linha);font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--tinta-suave);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer button{background:transparent;border:1px solid var(--linha);border-radius:2px;padding:6px 14px;font-family:inherit;font-size:11px;cursor:pointer;color:var(--tinta)}
+
+@media(max-width:980px){.c8,.c6,.c4{grid-column:span 12}.par{grid-template-columns:1fr}h1{font-size:31px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="carregando">Carregando os dados do quadro…</div>
+  <div id="falha" class="oculto"></div>
+
+  <div id="painel">
+    <header>
+      <div>
+        <div class="marca">CiaDoSono</div>
+        <h1>Performance Comercial</h1>
+        <div class="meta" id="carimbo"></div>
+      </div>
+      <div class="anos">
+        <button data-ano="2026" class="on">2026</button>
+        <button data-ano="2025">2025</button>
+      </div>
+    </header>
+
+    <div class="leitura"><span class="tag">Leitura</span><span id="txtLeitura"></span></div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="grade">
+
+      <div class="card c8">
+        <div class="topo">
+          <div>
+            <h2>Faturamento por mês</h2>
+            <div class="nota">O número acima de cada barra é a quantidade de vendas do mês.</div>
+          </div>
+        </div>
+        <div class="tela alta"><canvas id="gFat"></canvas></div>
+      </div>
+
+      <div class="card c4">
+        <div class="topo"><div><h2>Acumulado</h2><div class="nota">2026 contra 2025, mês a mês.</div></div></div>
+        <div class="tela alta"><canvas id="gAcum"></canvas></div>
+      </div>
+
+      <div class="card c12">
+        <div class="topo">
+          <div>
+            <h2>Canal de venda</h2>
+            <div class="nota" id="notaCanal"></div>
+          </div>
+          <div class="mini" id="selCanal">
+            <button data-modo="2026" class="on">2026</button>
+            <button data-modo="2025">2025</button>
+            <button data-modo="comp">Comparativo</button>
+          </div>
+        </div>
+        <div id="canalUnico" class="tela alta"><canvas id="gCanal"></canvas></div>
+        <div id="canalDuplo" class="oculto">
+          <div class="par">
+            <div><div class="rot">Loja</div><div class="tela"><canvas id="gLoja"></canvas></div></div>
+            <div><div class="rot">Online</div><div class="tela"><canvas id="gOnline"></canvas></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card c6">
+        <div class="topo"><div><h2>Origem da venda</h2><div class="nota">Total acumulado de 2025 e 2026, em quantidade de vendas.</div></div></div>
+        <div class="tela alta"><canvas id="gOrigem"></canvas></div>
+      </div>
+
+      <div class="card c6">
+        <div class="topo"><div><h2>Onde o cliente está</h2><div class="nota">Total acumulado de 2025 e 2026, em quantidade de vendas.</div></div></div>
+        <div class="par">
+          <div><div class="rot">Estados</div><div class="tela"><canvas id="gEstados"></canvas></div></div>
+          <div><div class="rot">Cidades</div><div class="tela"><canvas id="gCidades"></canvas></div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer>
+      <span id="fonte"></span>
+      <button id="btnAtualizar">Atualizar dados</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var MES = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var COR = {tinta:'#2A2118', suave:'#6B5E50', linha:'#DED4C4', navy:'#1E3050',
+             verde:'#4F6B4A', ocre:'#B08A45', vinho:'#7A3B3B', papel:'#FBF8F3'};
+
+  var D = null, ano = '2026', modoCanal = '2026';
+  var charts = {};
+
+  /* ---------- formatação ---------- */
+  function brl(v){
+    if(v >= 1000000) return 'R$ ' + (v/1000000).toFixed(2).replace('.',',') + ' mi';
+    if(v >= 1000) return 'R$ ' + Math.round(v/1000) + ' mil';
+    return 'R$ ' + Math.round(v);
+  }
+  function brlCheio(v){
+    return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+  }
+  function pct(v){ return (v>0?'+':'') + v.toFixed(1).replace('.',',') + '%'; }
+
+  /* ---------- último mês com movimento ---------- */
+  function ultimoMes(a){
+    var q = D.qtd[a] || [], f = D.fat[a] || [], u = -1;
+    for(var i=0;i<12;i++){ if((q[i]||0)>0 || (f[i]||0)>0) u = i; }
+    return u;
+  }
+
+  /* ---------- rótulos nas barras ---------- */
+  // Desenha um valor por barra, recebido como parâmetro. Nada vem de fora do escopo.
+  function rotulosFixos(valores, cor){
+    return {
+      id: 'rot' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw: function(chart){
+        var ctx = chart.ctx;
+        var meta = chart.getDatasetMeta(0);
+        ctx.save();
+        ctx.fillStyle = cor;
+        ctx.font = '600 11px "IBM Plex Mono", monospace';
+        ctx.textAlign = 'center';
+        meta.data.forEach(function(el, i){
+          var v = valores[i];
+          if(!v) return;
+          ctx.fillText(String(v), el.x, el.y - 7);
+        });
+        ctx.restore();
+      }
+    };
+  }
+  // Desenha o próprio valor de cada barra, lendo do gráfico. Autocontido.
+  function rotulosProprios(cor){
+    return {
+      id: 'rotp' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw: function(chart){
+        var ctx = chart.ctx;
+        ctx.save();
+        ctx.fillStyle = cor;
+        ctx.font = '600 10px "IBM Plex Mono", monospace';
+        ctx.textAlign = 'center';
+        chart.data.datasets.forEach(function(ds, di){
+          var meta = chart.getDatasetMeta(di);
+          if(meta.hidden) return;
+          meta.data.forEach(function(el, i){
+            var v = ds.data[i];
+            if(!v) return;
+            ctx.fillText(String(v), el.x, el.y - 6);
+          });
+        });
+        ctx.restore();
+      }
+    };
+  }
+
+  var BASE = {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false}, tooltip:{
+      backgroundColor:'#2A2118', padding:11, cornerRadius:3,
+      titleFont:{family:'Inter',size:12}, bodyFont:{family:'Inter',size:12}
+    }},
+    scales:{
+      x:{grid:{display:false}, ticks:{color:COR.suave, font:{family:'IBM Plex Mono',size:11}}},
+      y:{grid:{color:COR.linha}, border:{display:false},
+         ticks:{color:COR.suave, font:{family:'IBM Plex Mono',size:10}}}
+    }
+  };
+  function clone(o){ return JSON.parse(JSON.stringify(o)); }
+  function destruir(k){ if(charts[k]){ charts[k].destroy(); delete charts[k]; } }
+
+  function leitura(txt){ document.getElementById('txtLeitura').textContent = txt; }
+
+  /* ---------- KPIs ---------- */
+  function montarKPIs(){
+    var u = ultimoMes(ano);
+    var fat = (D.fat[ano]||[]).slice(0,u+1).reduce(function(a,b){return a+b;},0);
+    var qtd = (D.qtd[ano]||[]).slice(0,u+1).reduce(function(a,b){return a+b;},0);
+    var ticket = qtd ? fat/qtd : 0;
+
+    var hoje = new Date();
+    var mesCorrente = (String(hoje.getFullYear()) === ano) ? hoje.getMonth() : -1;
+    var parcial = (mesCorrente === u);
+    // Só meses fechados entram na comparação entre anos.
+    var comparavel = Math.min(parcial ? u - 1 : u, ultimoMes(ano === '2026' ? '2025' : '2026'));
+    var html = '';
+
+    html += card('Faturamento no ano', brlCheio(fat),
+                 'Janeiro a ' + MES[u] + ' de ' + ano + (parcial ? ', com ' + MES[u] + ' em curso' : ''));
+    html += card('Vendas realizadas', qtd, 'Mesmo período');
+    html += card('Ticket médio', brlCheio(ticket), 'Faturamento dividido por venda');
+
+    if(comparavel >= 0 && ano === '2026'){
+      var f26 = (D.fat['2026']||[]).slice(0,comparavel+1).reduce(function(a,b){return a+b;},0);
+      var f25 = (D.fat['2025']||[]).slice(0,comparavel+1).reduce(function(a,b){return a+b;},0);
+      var v = f25 ? ((f26-f25)/f25)*100 : 0;
+      var cls = v >= 0 ? 'up' : 'down';
+      html += card('2026 contra 2025', '<span class="'+cls+'">'+pct(v)+'</span>',
+                   'Janeiro a ' + MES[comparavel] + ' fechados, mesmo período nos dois anos');
+    } else {
+      html += card('Ano completo', (D.qtd[ano]||[]).reduce(function(a,b){return a+b;},0) + ' vendas',
+                   'Doze meses fechados');
+    }
+    document.getElementById('kpis').innerHTML = html;
+  }
+  function card(rot, val, sub){
+    return '<div class="kpi"><div class="rot">'+rot+'</div><div class="val">'+val+'</div><div class="sub">'+sub+'</div></div>';
+  }
+
+  /* ---------- faturamento por mês ---------- */
+  function gFaturamento(){
+    destruir('fat');
+    var u = ultimoMes(ano);
+    var lab = MES.slice(0,u+1);
+    var fat = (D.fat[ano]||[]).slice(0,u+1);
+    var qtd = (D.qtd[ano]||[]).slice(0,u+1);
+    var op = clone(BASE);
+    op.scales.y.ticks.callback = function(v){ return brl(v); };
+    op.plugins.tooltip.callbacks = {
+      label: function(c){ return brlCheio(c.parsed.y) + '  ·  ' + qtd[c.dataIndex] + ' vendas'; }
+    };
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var i = els[0].index;
+      var t = MES[i] + '/' + ano + ': ' + brlCheio(fat[i]) + ' em ' + qtd[i] + ' vendas, ticket médio de ' +
+              brlCheio(qtd[i] ? fat[i]/qtd[i] : 0) + '.';
+      var outro = ano === '2026' ? '2025' : '2026';
+      var fo = (D.fat[outro]||[])[i] || 0;
+      if(fo > 0){
+        var d = ((fat[i]-fo)/fo)*100;
+        t += ' Contra ' + MES[i] + '/' + outro + ', ' + (d>=0 ? 'alta' : 'queda') + ' de ' +
+             Math.abs(d).toFixed(0) + '%.';
+      }
+      leitura(t);
+    };
+    charts.fat = new Chart(document.getElementById('gFat'), {
+      type:'bar',
+      data:{labels:lab, datasets:[{data:fat, backgroundColor:COR.navy, borderRadius:2, maxBarThickness:46}]},
+      options:op,
+      plugins:[rotulosFixos(qtd, COR.tinta)]
+    });
+  }
+
+  /* ---------- acumulado ---------- */
+  function gAcumulado(){
+    destruir('acum');
+    function acumular(a){
+      var s = 0;
+      return (D.fat[a]||[]).map(function(v, i){
+        if(i > ultimoMes(a)) return null;
+        s += v; return s;
+      });
+    }
+    var op = clone(BASE);
+    op.plugins.legend = {display:true, position:'bottom',
+      labels:{color:COR.suave, boxWidth:10, font:{family:'IBM Plex Mono',size:10}}};
+    op.scales.y.ticks.callback = function(v){ return brl(v); };
+    op.plugins.tooltip.callbacks = { label: function(c){
+      return c.dataset.label + ': ' + brlCheio(c.parsed.y); } };
+    charts.acum = new Chart(document.getElementById('gAcum'), {
+      type:'line',
+      data:{labels:MES, datasets:[
+        {label:'2026', data:acumular('2026'), borderColor:COR.navy, backgroundColor:'rgba(30,48,80,.08)',
+         fill:true, tension:.3, pointRadius:2, spanGaps:false},
+        {label:'2025', data:acumular('2025'), borderColor:COR.verde, borderDash:[5,4],
+         fill:false, tension:.3, pointRadius:0}
+      ]},
+      options:op
+    });
+  }
+
+  /* ---------- canal ---------- */
+  function gCanalRender(){
+    destruir('canal'); destruir('loja'); destruir('online');
+    var unico = document.getElementById('canalUnico');
+    var duplo = document.getElementById('canalDuplo');
+    var nota = document.getElementById('notaCanal');
+
+    if(modoCanal === 'comp'){
+      unico.classList.add('oculto'); duplo.classList.remove('oculto');
+      nota.textContent = 'Loja e online lado a lado. Verde é 2025, azul é 2026. O número é a quantidade de vendas.';
+      montarPar('loja', 'gLoja', 'l');
+      montarPar('online', 'gOnline', 'o');
+      leitura('Comparativo de canal: cada painel mostra um canal, com 2025 e 2026 lado a lado em cada mês.');
+      return;
+    }
+
+    duplo.classList.add('oculto'); unico.classList.remove('oculto');
+    var a = modoCanal;
+    nota.textContent = 'Loja e online em ' + a + '. O número em cada barra é a quantidade de vendas.';
+    var u = ultimoMes(a);
+    var c = (D.canal[a]||[]).slice(0,u+1);
+    var lab = MES.slice(0,u+1);
+    var loja = c.map(function(x){ return x.l || 0; });
+    var onl  = c.map(function(x){ return x.o || 0; });
+
+    var op = clone(BASE);
+    op.plugins.legend = {display:true, position:'bottom',
+      labels:{color:COR.suave, boxWidth:10, font:{family:'IBM Plex Mono',size:10}}};
+    op.scales.y.title = {display:true, text:'vendas', color:COR.suave,
+      font:{family:'IBM Plex Mono',size:10}};
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var i = els[0].index, t = loja[i] + onl[i];
+      if(!t){ leitura(MES[i] + '/' + a + ': SEM INFORMAÇÃO de canal.'); return; }
+      leitura(MES[i] + '/' + a + ': ' + loja[i] + ' vendas na loja e ' + onl[i] + ' no online, ' +
+              Math.round(loja[i]/t*100) + '% loja contra ' + Math.round(onl[i]/t*100) + '% online.');
+    };
+    charts.canal = new Chart(document.getElementById('gCanal'), {
+      type:'bar',
+      data:{labels:lab, datasets:[
+        {label:'Loja', data:loja, backgroundColor:COR.navy, borderRadius:2, maxBarThickness:26},
+        {label:'Online', data:onl, backgroundColor:COR.ocre, borderRadius:2, maxBarThickness:26}
+      ]},
+      options:op,
+      plugins:[rotulosProprios(COR.suave)]
+    });
+  }
+
+  function montarPar(chave, canvasId, campo){
+    var d25 = (D.canal['2025']||[]).map(function(x){ return x[campo] || 0; });
+    var d26 = (D.canal['2026']||[]).map(function(x, i){
+      return i <= ultimoMes('2026') ? (x[campo] || 0) : null;
+    });
+    var op = clone(BASE);
+    op.plugins.legend = {display:true, position:'bottom',
+      labels:{color:COR.suave, boxWidth:10, font:{family:'IBM Plex Mono',size:10}}};
+    charts[chave] = new Chart(document.getElementById(canvasId), {
+      type:'bar',
+      data:{labels:MES, datasets:[
+        {label:'2025', data:d25, backgroundColor:COR.verde, borderRadius:2, maxBarThickness:16},
+        {label:'2026', data:d26, backgroundColor:COR.navy, borderRadius:2, maxBarThickness:16}
+      ]},
+      options:op,
+      plugins:[rotulosProprios(COR.suave)]
+    });
+  }
+
+  /* ---------- origem ---------- */
+  function gOrigem(){
+    destruir('origem');
+    var lista = (D.origens||[]).slice().sort(function(a,b){ return b.qtd - a.qtd; });
+    var alvo = document.getElementById('gOrigem');
+    if(!lista.length){
+      alvo.parentNode.innerHTML = '<div class="semdado">SEM INFORMAÇÃO</div>';
+      return;
+    }
+    var total = lista.reduce(function(a,b){ return a + b.qtd; }, 0);
+    var op = clone(BASE);
+    op.indexAxis = 'y';
+    op.scales.x = {grid:{color:COR.linha}, border:{display:false},
+      ticks:{color:COR.suave, font:{family:'IBM Plex Mono',size:10}}};
+    op.scales.y = {grid:{display:false}, ticks:{color:COR.tinta, font:{family:'Inter',size:11}}};
+    op.plugins.tooltip.callbacks = { label: function(c){
+      return c.parsed.x + ' vendas, ' + Math.round(c.parsed.x/total*100) + '% do total'; } };
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var i = els[0].index;
+      leitura(lista[i].nome + ': ' + lista[i].qtd + ' vendas, ' +
+              Math.round(lista[i].qtd/total*100) + '% de tudo que foi vendido no período.');
+    };
+    charts.origem = new Chart(alvo, {
+      type:'bar',
+      data:{labels:lista.map(function(x){ return x.nome; }),
+            datasets:[{data:lista.map(function(x){ return x.qtd; }),
+                       backgroundColor:COR.navy, borderRadius:2, maxBarThickness:18}]},
+      options:op
+    });
+  }
+
+  /* ---------- geografia ---------- */
+  function gGeo(id, lista, chave, cor){
+    destruir(chave);
+    var alvo = document.getElementById(id);
+    if(!lista || !lista.length){
+      alvo.parentNode.innerHTML = '<div class="semdado">SEM INFORMAÇÃO</div>';
+      return;
+    }
+    var op = clone(BASE);
+    op.indexAxis = 'y';
+    op.scales.x = {grid:{color:COR.linha}, border:{display:false},
+      ticks:{color:COR.suave, font:{family:'IBM Plex Mono',size:10}}};
+    op.scales.y = {grid:{display:false}, ticks:{color:COR.tinta, font:{family:'Inter',size:11}}};
+    charts[chave] = new Chart(alvo, {
+      type:'bar',
+      data:{labels:lista.map(function(x){ return x.nome; }),
+            datasets:[{data:lista.map(function(x){ return x.qtd; }),
+                       backgroundColor:cor, borderRadius:2, maxBarThickness:16}]},
+      options:op
+    });
+  }
+
+  /* ---------- desenhar tudo ---------- */
+  function desenhar(){
+    montarKPIs();
+    gFaturamento();
+    gAcumulado();
+    gCanalRender();
+    gOrigem();
+    gGeo('gEstados', D.estados, 'estados', COR.navy);
+    gGeo('gCidades', D.cidades, 'cidades', COR.verde);
+
+    var u = ultimoMes(ano);
+    var fat = (D.fat[ano]||[]).slice(0,u+1).reduce(function(a,b){return a+b;},0);
+    var qtd = (D.qtd[ano]||[]).slice(0,u+1).reduce(function(a,b){return a+b;},0);
+    leitura(ano + ' até ' + MES[u] + ': ' + brlCheio(fat) + ' em ' + qtd +
+            ' vendas. Clique em qualquer barra para ler o detalhe do período.');
+  }
+
+  /* ---------- carregar ---------- */
+  function carregar(){
+    document.getElementById('carregando').classList.remove('oculto');
+    document.getElementById('falha').classList.add('oculto');
+    fetch('/api/dados', {cache:'no-store'})
+      .then(function(r){
+        if(!r.ok) throw new Error('A API respondeu com o código ' + r.status + '.');
+        return r.json();
+      })
+      .then(function(j){
+        if(j.erro) throw new Error(j.erro);
+        D = j;
+        document.getElementById('carregando').classList.add('oculto');
+        document.getElementById('painel').style.display = 'block';
+        var q = new Date(j.atualizado || Date.now());
+        document.getElementById('carimbo').textContent =
+          'Fonte: quadro Analise Anual 2025 e 2026  ·  ' + (j.total || 0) + ' vendas  ·  atualizado ' +
+          q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+        document.getElementById('fonte').textContent =
+          'Os dados vêm direto do monday. Nada aqui é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+        desenhar();
+      })
+      .catch(function(e){
+        document.getElementById('carregando').classList.add('oculto');
+        var f = document.getElementById('falha');
+        f.classList.remove('oculto');
+        f.innerHTML = 'Não foi possível ler os dados do monday.<br>' + e.message +
+          '<br><br>Confira se a variável MONDAY_TOKEN está cadastrada no Vercel e se o projeto foi republicado depois disso.';
+      });
+  }
+
+  /* ---------- controles ---------- */
+  document.querySelectorAll('.anos button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.anos button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      ano = b.dataset.ano;
+      desenhar();
+    });
+  });
+  document.querySelectorAll('#selCanal button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#selCanal button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      modoCanal = b.dataset.modo;
+      gCanalRender();
+    });
+  });
+  document.getElementById('btnAtualizar').addEventListener('click', function(){
+    document.getElementById('painel').style.display = 'none';
+    carregar();
+  });
+
+  carregar();
+})();
+</script>
+</body>
+</html>
