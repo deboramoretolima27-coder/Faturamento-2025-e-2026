@@ -84,7 +84,7 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-bottom:28px}
 .kpi{background:var(--branco);border:1px solid var(--linha);border-radius:3px;padding:22px 20px;text-align:center}
 .kpi .rot{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--suave)}
-.kpi .val{font-family:var(--display);font-size:33px;font-weight:700;letter-spacing:-.04em;margin-top:11px;line-height:1}
+.kpi .val{font-family:var(--display);font-size:31px;font-weight:700;letter-spacing:-.04em;margin-top:11px;line-height:1}
 .kpi .sub{font-size:12px;color:var(--suave);margin-top:9px;line-height:1.45}
 
 .grade{display:grid;grid-template-columns:repeat(12,1fr);gap:20px}
@@ -612,8 +612,12 @@ canvas{cursor:pointer}
     var varTotal = sB ? ((sA - sB) / sB) * 100 : 0;
 
     var html = '';
-    html += card('2026 contra 2025', pct(varTotal),
-      brlCheio(sA) + ' contra ' + brlCheio(sB) + ', de Janeiro a ' + MES[fim2]);
+    var difTotal = sA - sB;
+    html += card('2026 contra 2025',
+      pct(varTotal) + '<span style="font-size:15px;color:' + (difTotal >= 0 ? COR.vivo : COR.medio) + '">&nbsp; ' +
+      (difTotal >= 0 ? '+' : '−') + brlCheio(Math.abs(difTotal)) + '</span>',
+      brlCheio(sA) + ' contra ' + brlCheio(sB) + ', de Janeiro a ' + MES[fim2] +
+      (difTotal >= 0 ? '. 2026 faturou a mais.' : '. 2026 faturou a menos.'));
     html += card('Meses em alta', altas + ' de ' + (fim2 + 1),
       'Meses de 2026 acima do mesmo mês de 2025');
     html += card('Melhor mês', melhor ? MESL[melhor.m] : 'SEM INFORMAÇÃO',
@@ -841,8 +845,11 @@ canvas{cursor:pointer}
     } else {
       var a1 = ateHoje(ano), a2 = ateHoje(outro);
       var v = a2.fat ? ((a1.fat - a2.fat)/a2.fat)*100 : 0;
-      html += card(ano + ' contra ' + outro, pct(v),
-        'De 1º de janeiro a ' + diaMes() + ', nos dois anos');
+      var dif = a1.fat - a2.fat;
+      html += card(ano + ' contra ' + outro,
+        pct(v) + '<span style="font-size:15px;color:' + (dif >= 0 ? COR.vivo : COR.medio) + '">&nbsp; ' +
+        (dif >= 0 ? '+' : '−') + brlCheio(Math.abs(dif)).replace('R$', 'R$') + '</span>',
+        brlCheio(a1.fat) + ' contra ' + brlCheio(a2.fat) + ', de 1º de janeiro a ' + diaMes());
     }
     alvo.innerHTML = html;
   }
@@ -1308,7 +1315,7 @@ canvas{cursor:pointer}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 9  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 10  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
