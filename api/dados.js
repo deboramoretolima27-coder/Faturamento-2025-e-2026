@@ -15,7 +15,6 @@ const COL = {
   data:     "date_mm5ts0ng",
 };
 
-
 // Metas oficiais CiaDoSono. 2025 nao teve meta definida.
 // Para trocar de ano, basta editar esta tabela.
 const METAS = {
@@ -72,7 +71,12 @@ function ranking(mapa, corte) {
 }
 
 export default async function handler(req, res) {
-  res.setHeader("Cache-Control", "s-maxage=180, stale-while-revalidate=600");
+  // O botao Atualizar chama com ?fresh=1 e pula o cache. As demais visitas usam a copia guardada.
+  const fresco = req.query && (req.query.fresh === "1" || req.query.fresh === 1);
+  res.setHeader(
+    "Cache-Control",
+    fresco ? "no-store, max-age=0" : "s-maxage=180, stale-while-revalidate=600"
+  );
 
   if (!process.env.MONDAY_TOKEN) {
     return res.status(500).json({ erro: "MONDAY_TOKEN nao cadastrado no Vercel." });
@@ -82,7 +86,7 @@ export default async function handler(req, res) {
     const primeira = `query {
       boards(ids: ${BOARD_ID}) {
         name
-        items_page(limit: 200) {
+        items_page(limit: 500) {
           cursor
           items { id name column_values { id text } }
         }
@@ -95,7 +99,7 @@ export default async function handler(req, res) {
     let cursor = board.items_page.cursor;
 
     const proxima = `query($c: String!) {
-      next_items_page(limit: 200, cursor: $c) {
+      next_items_page(limit: 500, cursor: $c) {
         cursor
         items { id name column_values { id text } }
       }
@@ -135,64 +139,4 @@ export default async function handler(req, res) {
       const valor = num(cv[COL.valor]);
 
       if (ANOS.indexOf(ano) === -1) {
-        semAno.qtd += 1; semAno.fat += valor;
-        return;
-      }
-
-      const mi = MESES.indexOf((cv[COL.mes] || "").trim());
-      if (mi >= 0) {
-        fat[ano][mi] += valor;
-        qtd[ano][mi] += 1;
-        const c = (cv[COL.canal] || "").trim().toLowerCase();
-        if (c === "loja") canal[ano][mi].l += 1;
-        else if (c === "online") canal[ano][mi].o += 1;
-      }
-
-      lista.push({
-        n: it.name,
-        a: ano,
-        m: mi,
-        v: valor,
-        d: cv[COL.data] || "",
-        c: vazio(cv[COL.canal])    ? "" : cv[COL.canal].trim(),
-        o: vazio(cv[COL.origem])   ? "" : cv[COL.origem].trim(),
-        e: vazio(cv[COL.estado])   ? "" : cv[COL.estado].trim(),
-        ci: vazio(cv[COL.cidade])  ? "" : cv[COL.cidade].trim(),
-        vd: vazio(cv[COL.vendedor])? "" : cv[COL.vendedor].trim(),
-      });
-
-      if (!vazio(cv[COL.origem])) somar(mapaOrigem[ano], cv[COL.origem].trim(), valor);
-      if (!vazio(cv[COL.estado])) somar(mapaEstado[ano], cv[COL.estado].trim(), valor);
-      if (!vazio(cv[COL.cidade])) somar(mapaCidade[ano], cv[COL.cidade].trim(), valor);
-
-      if (vazio(cv[COL.vendedor])) {
-        semVendedor[ano].qtd += 1;
-        semVendedor[ano].fat += valor;
-      } else {
-        somar(mapaVendedor[ano], cv[COL.vendedor].trim(), valor);
-      }
-    });
-
-    const origens = {}, estados = {}, cidades = {}, vendedores = {};
-    ANOS.forEach((a) => {
-      origens[a]    = ranking(mapaOrigem[a], 12);
-      estados[a]    = ranking(mapaEstado[a], 10);
-      cidades[a]    = ranking(mapaCidade[a], 8);
-      vendedores[a] = ranking(mapaVendedor[a], 12);
-    });
-
-    res.status(200).json({
-      quadro: board.name,
-      atualizado: new Date().toISOString(),
-      total: itens.length,
-      fat, qtd, canal,
-      origens, estados, cidades, vendedores,
-      metas: METAS,
-      vendas: lista,
-      sem_vendedor: semVendedor,
-      sem_ano: semAno,
-    });
-  } catch (e) {
-    res.status(500).json({ erro: String(e.message || e) });
-  }
-}
+        semAno.qtd += 1;
