@@ -15,6 +15,8 @@
   --offwhite:#FAF4E8; --preto:#141413; --branco:#FFFFFF;
   /* Tons derivados, apenas para hierarquia de leitura */
   --suave:#8C7563; --linha:#E3D8C6;
+  /* indicador de desempenho, fora da paleta institucional por pedido de leitura */
+  --verde:#3F7A3F;
   --display:'Helvetica Now Display','Helvetica Now Text','Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
   --texto:'Helvetica Now Text','Helvetica Now Display','Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
 }
@@ -267,10 +269,14 @@ canvas{cursor:pointer}
       <div class="kpis" id="kpisComp"></div>
       <div class="grade">
         <div class="card c12">
-          <div class="topo"><div>
-            <h2>Faturamento mês a mês, 2026 contra 2025</h2>
-            <div class="nota">Marrom claro é 2025, marrom escuro é 2026. Clique numa barra para ver os clientes daquele mês.</div>
-          </div></div>
+          <div class="topo">
+            <div><h2>Faturamento mês a mês, 2026 contra 2025</h2>
+              <div class="nota" id="notaComp"></div></div>
+            <div class="mini" id="selComp">
+              <button data-modo="fat" class="on">Faturamento</button>
+              <button data-modo="canal">Canal de venda</button>
+            </div>
+          </div>
           <div class="tela alta"><canvas id="gComp"></canvas></div>
         </div>
         <div class="card c12">
@@ -360,11 +366,12 @@ canvas{cursor:pointer}
 
   var MES  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   var MESL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  var COR = {marrom:'#2E1E11', medio:'#73573F', suave:'#8C7563', areia:'#EEE3D1', linha:'#E3D8C6', preto:'#141413'};
+  var COR = {marrom:'#2E1E11', medio:'#73573F', suave:'#8C7563', areia:'#EEE3D1',
+             linha:'#E3D8C6', preto:'#141413', verde:'#3F7A3F'};
   var RAMPA = ['#2E1E11','#4A3524','#73573F','#8C7563','#A89179','#C0AC93','#D5C6AE','#EEE3D1'];
   var FONTE = "'Helvetica Now Text','Inter','Helvetica Neue',Arial,sans-serif";
 
-  var D = null, ano = '2026', modoCanal = '2026', modoOrigem = 'pizza', aba = 'geral';
+  var D = null, ano = '2026', modoCanal = '2026', modoOrigem = 'pizza', aba = 'geral', modoComp = 'fat';
   var ANO_META = '2026';
 
   /* Metas oficiais CiaDoSono. Usadas se a API nao devolver a tabela. */
@@ -607,17 +614,53 @@ canvas{cursor:pointer}
 
     /* grafico, sem meta */
     var op = legenda(clone(BASE));
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var i = els[0].index;
+      var qual = (els[0].datasetIndex <= (modoComp === 'canal' ? 2 : 0)) ? B : A;
+      lerComparativo(i, fA, fB, qA, qB);
+      abrirDetalhe('Faturamento · ' + qual, MESL[i], function(v){ return v.a === qual && v.m === i; });
+    };
+
+    if(modoComp === 'canal'){
+      document.getElementById('notaComp').textContent =
+        'Quantidade de vendas por canal. A barra da esquerda é 2025 e a da direita é 2026, empilhadas por canal. ' +
+        'A faixa clara são as vendas sem canal registrado no quadro.';
+      op.scales.x.stacked = true;
+      op.scales.y.stacked = true;
+      op.plugins.tooltip.callbacks = { label:function(c){
+        return c.dataset.label + ': ' + c.parsed.y + (c.parsed.y === 1 ? ' venda' : ' vendas'); }};
+
+      function serie(anoRef, campo, qtdRef, limite){
+        return MES.map(function(_, i){
+          if(limite !== null && i > limite) return null;
+          var c = ((D.canal[anoRef] || [])[i]) || {l:0,o:0};
+          if(campo === 'l') return c.l || 0;
+          if(campo === 'o') return c.o || 0;
+          return Math.max((qtdRef[i] || 0) - (c.l || 0) - (c.o || 0), 0);
+        });
+      }
+      charts.comp = new Chart(document.getElementById('gComp'), {
+        type:'bar',
+        data:{labels:MES, datasets:[
+          {label:'Loja ' + B,   data:serie(B,'l',qB,null), backgroundColor:COR.medio,  stack:'b', maxBarThickness:20},
+          {label:'Online ' + B, data:serie(B,'o',qB,null), backgroundColor:COR.suave,  stack:'b', maxBarThickness:20},
+          {label:'Sem registro ' + B, data:serie(B,'s',qB,null), backgroundColor:COR.areia, stack:'b', maxBarThickness:20},
+          {label:'Loja ' + A,   data:serie(A,'l',qA,uA), backgroundColor:COR.marrom, stack:'a', maxBarThickness:20},
+          {label:'Online ' + A, data:serie(A,'o',qA,uA), backgroundColor:COR.verde,  stack:'a', maxBarThickness:20},
+          {label:'Sem registro ' + A, data:serie(A,'s',qA,uA), backgroundColor:COR.areia, stack:'a', maxBarThickness:20}
+        ]}, options:op
+      });
+      return;
+    }
+
+    document.getElementById('notaComp').textContent =
+      'Marrom claro é 2025, marrom escuro é 2026. Clique numa barra para ver os clientes daquele mês.';
     op.scales.y.ticks.callback = function(v){ return brl(v); };
     op.plugins.tooltip.callbacks = { label:function(c){
       var ind = c.dataIndex, y = c.dataset.label;
       var q = (y === A ? qA : qB)[ind] || 0;
       return y + ': ' + brlCheio(c.parsed.y) + '  ·  ' + q + ' vendas'; }};
-    op.onClick = function(e, els){
-      if(!els.length) return;
-      var i = els[0].index, qual = els[0].datasetIndex === 0 ? B : A;
-      lerComparativo(i, fA, fB, qA, qB);
-      abrirDetalhe('Faturamento · ' + qual, MESL[i], function(v){ return v.a === qual && v.m === i; });
-    };
     charts.comp = new Chart(document.getElementById('gComp'), {
       type:'bar',
       data:{labels:MES, datasets:[
@@ -634,7 +677,7 @@ canvas{cursor:pointer}
       if(!a && !b) continue;
       var emCurso = (parcial && k === uA);
       var d2 = b ? ((a - b) / b) * 100 : null;
-      var cor = emCurso ? COR.suave : (d2 === null ? COR.suave : (d2 >= 0 ? COR.marrom : COR.medio));
+      var cor = emCurso ? COR.suave : (d2 === null ? COR.suave : (d2 >= 0 ? COR.verde : COR.medio));
       var cA = ((D.canal[A] || [])[k]) || {l:0,o:0};
       var cB = ((D.canal[B] || [])[k]) || {l:0,o:0};
       var semA = Math.max((qA[k] || 0) - cA.l - cA.o, 0);
@@ -646,8 +689,10 @@ canvas{cursor:pointer}
         '<div class="par2"><span>2026</span><b>' + (a ? brl(a) : 'sem venda') + '</b></div>' +
         '<div class="dif" style="color:' + cor + '">' +
           (d2 === null ? 'SEM BASE' : pct(d2)) + '</div>' +
-        '<div class="abs">' + (d2 === null ? '2025 não teve venda neste mês'
-          : (a >= b ? '2026 fez ' + brl(a - b) + ' a mais' : '2026 fez ' + brl(b - a) + ' a menos')) +
+        '<div class="abs"' + (d2 !== null && d2 >= 0 && !emCurso ? ' style="color:' + COR.verde + '"' : '') + '>' +
+          (d2 === null ? '2025 não teve venda neste mês'
+          : (a >= b ? '2026 fez ' + brl(a - b) + ' a mais, melhor que 2025'
+                    : '2026 fez ' + brl(b - a) + ' a menos')) +
         '</div>' +
         '<div class="canais">' +
           linhaCanal('Loja', cB.l, cA.l) +
@@ -676,7 +721,7 @@ canvas{cursor:pointer}
   function linhaCanal(nome, antes, agora){
     var d = agora - antes;
     var seta = d > 0 ? '▲ +' + d : (d < 0 ? '▼ −' + Math.abs(d) : '=');
-    var cor = d > 0 ? COR.marrom : (d < 0 ? COR.medio : COR.suave);
+    var cor = d > 0 ? COR.verde : (d < 0 ? COR.medio : COR.suave);
     return '<div class="cl"><span class="nome">' + nome + '</span>' +
            '<span class="num">' + antes + ' → ' + agora + '</span>' +
            '<span class="var" style="color:' + cor + '">' + seta + '</span></div>';
@@ -1026,6 +1071,12 @@ canvas{cursor:pointer}
   }
 
   /* ---------- controles ---------- */
+  document.querySelectorAll('#selComp button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#selComp button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); modoComp = b.dataset.modo; desenharComparativo();
+    });
+  });
   document.querySelectorAll('.abas button').forEach(function(b){
     b.addEventListener('click', function(){
       document.querySelectorAll('.abas button').forEach(function(x){ x.classList.remove('on'); });
