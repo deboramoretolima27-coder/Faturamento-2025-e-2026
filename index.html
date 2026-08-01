@@ -1039,16 +1039,30 @@ canvas{cursor:pointer}
       title: function(c){ return MESL[c[0].dataIndex] + ' de ' + ano; },
       label: function(c){
         var i = c.dataIndex, v = fat[i];
-        var linhas = ['Faturado  ' + brlCheio(v) + '  ·  ' + qtd[i] + ' vendas'];
+        var linhas = ['Faturado   ' + brlCheio(v) + '  ·  ' + qtd[i] + ' vendas'];
         if(mt){
-          var d = v - mt.meta[i];
-          linhas.push('Meta        ' + brlCheio(mt.meta[i]) + '  ·  ' + (v/mt.meta[i]*100).toFixed(0) + '%');
-          linhas.push('Super       ' + brlCheio(mt['super'][i]));
-          linhas.push('Hiper        ' + brlCheio(mt.hiper[i]));
-          linhas.push((d >= 0 ? 'Acima da meta em ' : 'Faltaram ') + brlCheio(Math.abs(d)));
+          // O visto marca cada faixa conquistada. O traco marca a que faltou.
+          function marca(alvo){ return v >= alvo ? '  ✓ batida' : '  ·  faltaram ' + brlCheio(alvo - v); }
+          linhas.push('');
+          linhas.push('Meta        ' + brlCheio(mt.meta[i]) + marca(mt.meta[i]));
+          linhas.push('Super       ' + brlCheio(mt['super'][i]) + marca(mt['super'][i]));
+          linhas.push('Hiper       ' + brlCheio(mt.hiper[i]) + marca(mt.hiper[i]));
+          linhas.push('');
+          linhas.push('Atingimento  ' + (v/mt.meta[i]*100).toFixed(0) + '% da meta');
         }
         return linhas;
+      },
+      footer: function(c){
+        if(!mt) return '';
+        var i = c[0].dataIndex, v = fat[i];
+        if(v >= mt.hiper[i])       return '★ HIPER META ALCANÇADA';
+        if(v >= mt['super'][i])    return '★ SUPER META ALCANÇADA';
+        if(v >= mt.meta[i])        return '★ META BATIDA';
+        return 'Abaixo da meta em ' + brlCheio(mt.meta[i] - v);
       }};
+    op.plugins.tooltip.footerFont = {family:FONTE, size:11, weight:'700'};
+    op.plugins.tooltip.footerColor = COR.vivo;
+    op.plugins.tooltip.footerMarginTop = 8;
     op.onClick = function(e, els){
       if(!els.length) return;
       var i = els[0].index;
@@ -1371,7 +1385,7 @@ canvas{cursor:pointer}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 13  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 14  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
