@@ -405,7 +405,12 @@ body.modoCapa{min-height:100%}
 .rkLinha:last-child{border-bottom:0}
 .rkLinha:hover{background:var(--offwhite)}
 .rkPos{font-family:var(--display);font-size:13px;font-weight:700;color:var(--suave);text-align:right}
-.rkNome{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.rkNome{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;
+  display:flex;align-items:center;gap:9px}
+.rkTag{font-size:8.5px;font-weight:700;letter-spacing:.09em;padding:3px 8px;border-radius:9px;
+  background:rgba(250,244,232,.14);color:rgba(250,244,232,.8);white-space:nowrap;flex:none}
+.rkNome span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:640px){.rkTag{font-size:8px;padding:2px 7px}}
 .rkQtd{font-size:11px;color:var(--suave);white-space:nowrap}
 .rkFat{font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
 .rkAnos{display:flex;gap:10px;font-size:11px;color:var(--suave);white-space:nowrap}
@@ -1346,9 +1351,12 @@ body.modoCapa{min-height:100%}
     alvo.innerHTML = lista.slice(0,15).map(function(c, i){
       var d = c.a25 ? ((c.a26 - c.a25)/c.a25)*100 : null;
       var cor = d === null ? COR.suave : (d >= 0 ? COR.verde : COR.medio);
+      var orig = Object.keys(c.origens || {}).sort(function(a,b){
+        return c.origens[b] - c.origens[a]; })[0];
+      var tag = orig ? '<span class="rkTag">' + escapar(orig.toUpperCase()) + '</span>' : '';
       return '<div class="rkLinha" data-n="' + escapar(c.nome) + '">' +
         '<span class="rkPos">' + (i+1) + '</span>' +
-        '<span class="rkNome">' + escapar(c.nome) + '</span>' +
+        '<span class="rkNome"><span>' + escapar(c.nome) + '</span>' + tag + '</span>' +
         '<span class="rkAnos"><span>2025 <b>' + brl(c.a25) + '</b></span>' +
         '<span>2026 <b>' + brl(c.a26) + '</b></span></span>' +
         '<span class="rkVar" style="color:' + cor + '">' + (d === null ? '—' : pct(d)) + '</span></div>';
@@ -1359,9 +1367,12 @@ body.modoCapa{min-height:100%}
         var nome = el.dataset.n;
         var c = lista.filter(function(x){ return x.nome === nome; })[0];
         if(c){
+          var oo = Object.keys(c.origens || {}).sort(function(a,b){
+            return c.origens[b] - c.origens[a]; })[0];
           leitura(c.nome + ': ' + c.q25 + (c.q25 === 1 ? ' compra' : ' compras') + ' em 2025 somando ' +
             brlCheio(c.a25) + ', e ' + c.q26 + (c.q26 === 1 ? ' compra' : ' compras') + ' em 2026 somando ' +
-            brlCheio(c.a26) + '. No total, ' + brlCheio(c.a25 + c.a26) + ' com a marca.');
+            brlCheio(c.a26) + '. No total, ' + brlCheio(c.a25 + c.a26) + ' com a marca' +
+            (oo ? ', vindo de ' + oo : '') + '.');
         }
         abrirDetalhe('Cliente recorrente', nome, function(v){
           return v.n && v.n.trim() === nome; });
