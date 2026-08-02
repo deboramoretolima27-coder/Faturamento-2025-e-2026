@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Faturamento CiaDoSono</title>
+<title>Comercial CiaDoSono</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -249,10 +249,160 @@ canvas{cursor:pointer}
   .kpi .val{font-size:26px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ---------- CAPA, isolada dentro de #telaCapa ---------- */
+:root{
+  --marrom:#2E1E11; --marrom-medio:#73573F; --areia:#EEE3D1;
+  --offwhite:#FAF4E8; --preto:#141413; --branco:#FFFFFF; --vivo:#17A34A;
+  --display:'Helvetica Now Display','Helvetica Now Text','Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+  --texto:'Helvetica Now Text','Helvetica Now Display','Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
+}
+body.modoCapa{min-height:100%}
+body.modoCapa{
+  font-family:var(--texto);color:var(--offwhite);
+  background:#0E0D0C url('fundo.jpg') center 42%/cover no-repeat fixed;
+  -webkit-font-smoothing:antialiased;
+}
+#telaCapa .scrim{position:relative;min-height:100vh;background:
+  linear-gradient(rgba(20,20,19,.42) 0%, rgba(20,20,19,.72) 30%, rgba(20,20,19,.86) 62%, rgba(20,20,19,.90) 100%);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:64px 26px 54px}
+#telaCapa .wrap{max-width:1140px;margin:0 auto;width:100%}
+#telaCapa header{text-align:center}
+#telaCapa .marcaTopo{position:absolute;top:30px;right:36px;z-index:5}
+#telaCapa .logo{width:210px;height:auto;color:var(--offwhite);display:block}
+#telaCapa h1{font-family:var(--display);font-size:clamp(28px,4.2vw,44px);font-weight:700;letter-spacing:-.05em;
+   margin-top:24px;line-height:1}
+#telaCapa .sub{font-size:14px;color:rgba(250,244,232,.72);margin-top:14px;line-height:1.6;max-width:520px;
+     margin-left:auto;margin-right:auto}
+#telaCapa .grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:20px;margin-top:48px}
+#telaCapa .cartao{
+  display:block;text-decoration:none;color:inherit;position:relative;
+  background:rgba(250,244,232,.055);border:1px solid rgba(238,227,209,.20);border-radius:5px;
+  overflow:hidden;transition:transform .2s ease, border-color .2s ease, background .2s ease;
+  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+}
+#telaCapa .cartao:hover{transform:translateY(-4px);border-color:rgba(238,227,209,.46);background:rgba(250,244,232,.10)}
+#telaCapa .cartao:focus-visible{outline:2px solid var(--areia);outline-offset:3px}
+#telaCapa .cartao.espera{cursor:default}
+#telaCapa .cartao.espera:hover{transform:none;border-color:rgba(238,227,209,.20);background:rgba(250,244,232,.055)}
+#telaCapa .capaCartao{height:118px;position:relative;border-bottom:1px solid rgba(238,227,209,.14)}
+#telaCapa .capaCartao svg{width:100%;height:100%;display:block}
+#telaCapa .selo{position:absolute;top:12px;right:12px;font-size:8.5px;font-weight:700;letter-spacing:.14em;
+      padding:5px 11px;border-radius:11px}
+#telaCapa .selo.ok{background:var(--vivo);color:#fff}
+#telaCapa .selo.breve{background:rgba(238,227,209,.16);color:var(--areia);border:1px solid rgba(238,227,209,.28)}
+#telaCapa .corpo{padding:20px 20px 22px}
+#telaCapa .corpo h2{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.03em}
+#telaCapa .corpo p{font-size:12.5px;color:rgba(250,244,232,.62);line-height:1.6;margin-top:9px;min-height:60px}
+#telaCapa .acao{font-size:11px;font-weight:600;letter-spacing:.04em;margin-top:16px;display:flex;align-items:center;gap:7px}
+#telaCapa .acao .seta{transition:transform .2s ease}
+#telaCapa .cartao:hover .acao .seta{transform:translateX(4px)}
+#telaCapa .espera .acao{color:rgba(250,244,232,.42)}
+#telaCapa footer{text-align:center;margin-top:44px;font-size:10.5px;letter-spacing:.1em;color:rgba(250,244,232,.42)}
+@media(max-width:900px){#telaCapa .marcaTopo{top:22px;right:22px}
+#telaCapa .logo{width:170px}}
+@media(max-width:640px){#telaCapa .scrim{padding:44px 16px 40px}
+#telaCapa .marcaTopo{position:static;margin:0 auto 26px;text-align:center}
+#telaCapa .logo{width:min(260px,70vw);margin:0 auto}
+#telaCapa .grade{gap:14px;margin-top:34px}
+#telaCapa .corpo p{min-height:0}
+body.modoCapa{background-attachment:scroll}}
+@media(prefers-reduced-motion:reduce){}
 </style>
 </head>
-<body>
-<a class="voltar" href="index.html"><span class="st">←</span> Menu</a>
+<body class="modoCapa">
+
+<div class="scrim" id="telaCapa">
+  <div class="marcaTopo"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="logo" viewBox="0 0 1012.61 356.665">
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 360.421875 206.132812 C 370.59375 206.132812 382.773438 201.171875 392 197.382812 L 386.914062 216.183594 C 379.816406 218.195312 371.3125 222.101562 354.046875 222.101562 C 327.5625 222.101562 315.621094 205.078125 322.832031 177.644531 C 329.925781 151.386719 351.085938 134.019531 377.570312 134.019531 C 394.835938 134.019531 401.332031 137.792969 407.367188 139.933594 L 402.394531 158.605469 C 395.183594 155.074219 385.609375 150.101562 375.433594 150.101562 C 359.832031 150.101562 348.484375 164.289062 344.707031 178.351562 C 340.804688 192.660156 344.816406 206.132812 360.421875 206.132812 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 431.335938 151.386719 L 411.246094 151.386719 L 415.378906 136.023438 L 435.480469 136.023438 Z M 409.230469 159.085938 L 429.332031 159.085938 L 412.894531 220.4375 L 392.914062 220.4375 Z M 409.230469 159.085938 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 453.4375 208.972656 C 459.949219 210.390625 465.855469 205.195312 465.855469 205.195312 L 474.492188 173.035156 C 474.492188 173.035156 470.585938 170.3125 465.617188 170.3125 C 453.320312 170.3125 448.597656 182.140625 446.230469 190.765625 C 444.101562 198.5625 443.507812 206.847656 453.4375 208.972656 M 482.054688 220.4375 L 461.949219 220.4375 L 462.542969 218.308594 C 462.542969 218.308594 456.398438 222.207031 448.828125 222.207031 C 424.59375 222.207031 422.585938 204.957031 426.132812 191.238281 C 431.339844 171.730469 443.398438 157.425781 465.738281 157.304688 C 486.664062 157.1875 497.179688 163.808594 497.179688 163.808594 Z M 482.054688 220.4375 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 529.125 150.570312 L 514.339844 205.421875 C 514.230469 205.539062 519.910156 206.722656 524.992188 206.609375 C 542.613281 206.609375 550.40625 196.789062 555.492188 178.121094 C 557.96875 168.78125 560.101562 149.503906 540.480469 149.394531 C 534.917969 149.394531 529.125 150.570312 529.125 150.570312 M 510.210938 138.980469 C 510.210938 139.21875 523.214844 134.019531 544.148438 134.132812 C 572.75 134.253906 584.457031 151.753906 577.476562 177.886719 C 570.03125 205.785156 552.644531 221.859375 521.328125 222.101562 C 506.191406 222.207031 488.933594 218.902344 488.933594 218.777344 Z M 510.210938 138.980469 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 606.054688 209.207031 C 615.988281 209.207031 621.074219 199.859375 623.789062 189.824219 C 626.632812 179.417969 626.511719 170.191406 616.578125 170.191406 C 606.773438 170.191406 601.683594 179.417969 598.839844 189.824219 C 596.128906 199.859375 596.128906 209.207031 606.054688 209.207031 M 620.003906 157.1875 C 640.34375 157.070312 648.617188 171.261719 643.78125 189.703125 C 638.8125 208.144531 622.964844 222.332031 602.632812 222.207031 C 582.417969 222.101562 574.253906 208.144531 579.105469 189.703125 C 583.953125 171.261719 599.789062 157.304688 620.003906 157.1875 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 696.53125 134.253906 C 709.421875 134.253906 719.941406 136.496094 725.738281 138.277344 C 725.859375 138.398438 720.300781 157.90625 720.300781 157.78125 C 715.808594 154 703.511719 150.214844 694.398438 150.214844 C 689.4375 150.214844 679.042969 149.984375 677.03125 157.304688 C 673.46875 170.3125 722.070312 166.652344 714.269531 195.617188 C 709.304688 214.296875 691.453125 222.207031 669.585938 222.207031 C 649.117188 222.207031 639.664062 217.722656 639.433594 217.597656 C 639.550781 217.722656 644.984375 197.382812 644.984375 197.382812 C 649.945312 200.347656 662.132812 206.257812 671.820312 206.257812 C 676.667969 206.257812 689.671875 205.90625 691.921875 197.628906 C 695.121094 185.332031 647.117188 188.75 655.039062 158.960938 C 659.882812 141.109375 681.753906 134.253906 696.53125 134.253906 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 748.191406 209.207031 C 758.117188 209.207031 763.199219 199.859375 765.921875 189.824219 C 768.761719 179.417969 768.644531 170.191406 758.714844 170.191406 C 748.902344 170.191406 743.820312 179.417969 740.984375 189.824219 C 738.261719 199.859375 738.261719 209.207031 748.191406 209.207031 M 762.144531 157.1875 C 782.46875 157.070312 790.746094 171.261719 785.894531 189.703125 C 780.941406 208.144531 765.09375 222.332031 744.75 222.207031 C 724.546875 222.101562 716.390625 208.144531 721.234375 189.703125 C 726.085938 171.261719 741.925781 157.304688 762.144531 157.1875 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 797.6875 163.808594 C 797.804688 163.808594 816.496094 157.304688 835.398438 157.304688 C 860.34375 157.304688 856.683594 172.210938 854.320312 181.078125 L 843.792969 220.4375 L 823.703125 220.4375 L 832.570312 187.34375 C 834.808594 178.945312 838.003906 170.429688 827.015625 170.429688 C 821.097656 170.429688 815.421875 173.269531 815.421875 173.269531 L 802.773438 220.4375 L 782.796875 220.4375 Z M 797.6875 163.808594 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 884.121094 209.207031 C 894.054688 209.207031 899.136719 199.859375 901.855469 189.824219 C 904.691406 179.417969 904.578125 170.191406 894.648438 170.191406 C 884.828125 170.191406 879.753906 179.417969 876.910156 189.824219 C 874.1875 199.859375 874.1875 209.207031 884.121094 209.207031 M 898.074219 157.1875 C 918.410156 157.070312 926.6875 171.261719 921.828125 189.703125 C 916.875 208.144531 901.03125 222.332031 880.699219 222.207031 C 860.472656 222.101562 852.316406 208.144531 857.167969 189.703125 C 862.011719 171.261719 877.863281 157.304688 898.074219 157.1875 "/>
+<path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 120.777344 210.316406 C 76.152344 149.417969 155.410156 78.382812 222.785156 98.824219 C 222.800781 98.824219 222.796875 98.851562 222.78125 98.851562 C 184.421875 94.96875 155.957031 108.703125 140.199219 127.648438 C 116.273438 156.398438 121.898438 185.308594 135.46875 195.964844 C 151.5 208.5625 173.828125 211.042969 206.847656 167.832031 C 219.542969 151.214844 230.222656 146.15625 242.675781 150.589844 C 258.660156 156.289062 264.617188 176.601562 254.253906 193.777344 C 218.03125 253.800781 145.796875 244.449219 120.777344 210.316406 M 283.886719 166.546875 C 280.285156 200.34375 252.59375 237.097656 194.648438 241.570312 C 194.632812 241.570312 194.625 241.546875 194.644531 241.542969 C 239.835938 232.621094 261.96875 206.570312 269.6875 185.324219 C 278.558594 160.886719 268.789062 133.0625 240.242188 131.125 C 221.207031 129.839844 212.613281 139.574219 194.609375 161.761719 C 173.496094 187.761719 159.367188 188.808594 148.207031 180.367188 C 134.207031 169.785156 135.816406 144.730469 155.347656 124.316406 C 174.652344 104.125 213.84375 96.71875 248.015625 106.933594 C 248.65625 107.125 249.234375 106.402344 248.476562 105.894531 C 178.003906 58.570312 80.816406 116.445312 90.714844 194.828125 C 103.722656 297.875 290.246094 292.726562 285.34375 166.578125 C 285.308594 165.699219 283.972656 165.679688 283.886719 166.546875 "/>
+</svg></div>
+  <div class="wrap">
+
+    <header>
+      <h1>Comercial CiaDoSono</h1>
+      <p class="sub">Todos os indicadores da operação em um só lugar, lidos direto do monday e atualizados em tempo real.</p>
+    </header>
+
+    <div class="grade">
+
+      <a class="cartao" href="#" id="irPainel">
+        <div class="capaCartao">
+          <svg viewBox="0 0 300 118" aria-hidden="true">
+            <g fill="#FAF4E8" opacity=".14">
+              <rect x="30" y="62" width="24" height="56" rx="2"/>
+              <rect x="66" y="44" width="24" height="74" rx="2"/>
+              <rect x="102" y="74" width="24" height="44" rx="2"/>
+              <rect x="174" y="52" width="24" height="66" rx="2"/>
+              <rect x="210" y="34" width="24" height="84" rx="2"/>
+              <rect x="246" y="66" width="24" height="52" rx="2"/>
+            </g>
+            <rect x="138" y="26" width="24" height="92" rx="2" fill="#17A34A" opacity=".92"/>
+            <line x1="20" y1="40" x2="280" y2="40" stroke="#FAF4E8" stroke-width="1.5" stroke-dasharray="5 4" opacity=".45"/>
+          </svg>
+          <span class="selo ok">NO AR</span>
+        </div>
+        <div class="corpo">
+          <h2>Faturamento Anual</h2>
+          <p>Faturamento mês a mês contra Meta, Super e Hiper Meta. Canal de venda, origem, geografia e comparativo entre anos.</p>
+          <div class="acao">Abrir painel <span class="seta">→</span></div>
+        </div>
+      </a>
+
+      <div class="cartao espera">
+        <div class="capaCartao">
+          <svg viewBox="0 0 300 118" aria-hidden="true">
+            <g fill="#FAF4E8" opacity=".16">
+              <path d="M46 22h208l-44 30H90z"/><path d="M96 60h108l-28 24H124z"/><path d="M130 92h40v20h-40z"/>
+            </g>
+            <circle cx="246" cy="84" r="14" fill="#EEE3D1" opacity=".28"/>
+            <circle cx="246" cy="84" r="6" fill="#FAF4E8" opacity=".55"/>
+          </svg>
+          <span class="selo breve">EM BREVE</span>
+        </div>
+        <div class="corpo">
+          <h2>Performance Comercial</h2>
+          <p>Funil por etapa, taxa de conversão, tempo até o fechamento, motivos de perda e desempenho por especialista.</p>
+          <div class="acao">Em construção</div>
+        </div>
+      </div>
+
+      <div class="cartao espera">
+        <div class="capaCartao">
+          <svg viewBox="0 0 300 118" aria-hidden="true">
+            <g stroke="#FAF4E8" fill="none" opacity=".18" stroke-width="1.5">
+              <path d="M28 96V36h54v60M82 56h52v40M134 44h58v52M192 68h52v28"/><path d="M16 96h268"/>
+            </g>
+            <g fill="none" stroke="#EEE3D1" stroke-width="2.5" opacity=".62">
+              <circle cx="130" cy="48" r="17"/><circle cx="156" cy="48" r="17"/>
+            </g>
+          </svg>
+          <span class="selo breve">EM BREVE</span>
+        </div>
+        <div class="corpo">
+          <h2>Clube CiaDoSono</h2>
+          <p>Arquitetos parceiros, projetos indicados, vendas por indicação e ranking de quem mais gera negócio.</p>
+          <div class="acao">Em construção</div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer>LEITURA DIRETA DO MONDAY · NADA É ESTIMADO</footer>
+  </div>
+</div>
+
+<div id="telaPainel" class="oculto">
+<a class="voltar" href="#" id="irCapa"><span class="st">←</span> Menu</a>
 
 <div class="wrap">
 
@@ -391,6 +541,7 @@ canvas{cursor:pointer}
   </div>
   <div class="corpo" id="gvCorpo"></div>
 </aside>
+</div>
 
 <script>
 (function(){
@@ -1383,8 +1534,17 @@ canvas{cursor:pointer}
     document.getElementById('falha').classList.add('oculto');
     fetch('/api/dados' + (fresco ? '?fresh=1&t=' + Date.now() : ''), {cache:'no-store'})
       .then(function(r){
-        if(!r.ok) throw new Error('A API respondeu com o código ' + r.status + '.');
-        return r.json();
+        // Le o corpo mesmo quando o codigo e de erro, para mostrar a mensagem real da API.
+        return r.text().then(function(txt){
+          var j = null;
+          try { j = JSON.parse(txt); } catch(e){}
+          if(!r.ok){
+            var det = (j && j.erro) ? j.erro : txt.slice(0, 400);
+            throw new Error('A API respondeu com o código ' + r.status + '.\n' + det);
+          }
+          if(!j) throw new Error('A API respondeu algo que não é dado válido.\n' + txt.slice(0, 400));
+          return j;
+        });
       })
       .then(function(j){
         if(j.erro) throw new Error(j.erro);
@@ -1396,7 +1556,7 @@ canvas{cursor:pointer}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 16  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 18  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
@@ -1404,7 +1564,10 @@ canvas{cursor:pointer}
         document.getElementById('carregando').classList.add('oculto');
         var f = document.getElementById('falha');
         f.classList.remove('oculto');
-        f.innerHTML = 'Não foi possível ler os dados do monday.<br>' + e.message +
+        f.innerHTML = 'Não foi possível ler os dados do monday.<br><br>' +
+          '<span style="font-family:monospace;font-size:11px;color:' + COR.marrom +
+          ';display:inline-block;max-width:640px;text-align:left;white-space:pre-wrap;background:' + COR.areia +
+          ';padding:12px 14px;border-radius:3px">' + escapar(e.message) + '</span>' +
           '<br><br>Confira se a variável MONDAY_TOKEN está cadastrada no Vercel e se o projeto foi republicado depois disso.';
         if(aoTerminar) aoTerminar();
       });
@@ -1467,8 +1630,37 @@ canvas{cursor:pointer}
     }, true);
   });
 
-  carregar();
+  window.iniciarPainel = function(){ carregar(); };
 })();
 </script>
+
+<script>
+(function(){
+  "use strict";
+  var capa = document.getElementById('telaCapa');
+  var painel = document.getElementById('telaPainel');
+  var jaCarregou = false;
+
+  function mostrarPainel(e){
+    if(e) e.preventDefault();
+    capa.classList.add('oculto');
+    painel.classList.remove('oculto');
+    document.body.classList.remove('modoCapa');
+    window.scrollTo(0, 0);
+    if(!jaCarregou){ jaCarregou = true; window.iniciarPainel(); }
+    else { window.dispatchEvent(new Event('resize')); }
+  }
+  function mostrarCapa(e){
+    if(e) e.preventDefault();
+    painel.classList.add('oculto');
+    capa.classList.remove('oculto');
+    document.body.classList.add('modoCapa');
+    window.scrollTo(0, 0);
+  }
+  document.getElementById('irPainel').addEventListener('click', mostrarPainel);
+  document.getElementById('irCapa').addEventListener('click', mostrarCapa);
+})();
+</script>
+
 </body>
 </html>
