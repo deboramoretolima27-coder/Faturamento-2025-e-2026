@@ -150,6 +150,15 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 #carregando,#falha{padding:64px 0;text-align:center;font-size:13px;color:var(--suave);letter-spacing:.04em}
 #falha{color:var(--marrom-medio);line-height:1.7}
 #painel{display:none}
+/* O painel usa a mesma foto da capa, com um veu claro para nao atrapalhar a leitura. */
+#telaPainel{position:relative;min-height:100vh;
+  background-image:
+  linear-gradient(rgba(250,244,232,.94) 0%, rgba(250,244,232,.96) 40%, rgba(250,244,232,.97) 100%),
+  url('fundo.jpg');
+  background-size:cover,cover;background-position:center,center 42%;
+  background-repeat:no-repeat,no-repeat;background-color:var(--offwhite);
+  background-attachment:scroll,fixed;
+  padding-top:1px}
 footer{margin-top:34px;padding-top:16px;border-top:1px solid var(--linha);font-size:11px;color:var(--suave);
        display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:center;line-height:1.6}
 footer button{background:transparent;border:1px solid var(--linha);border-radius:2px;padding:7px 15px;
@@ -1608,7 +1617,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 25  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 26  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
