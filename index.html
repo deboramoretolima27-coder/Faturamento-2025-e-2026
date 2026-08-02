@@ -1200,9 +1200,10 @@ body.modoCapa{min-height:100%}
       if(!v.n || !filtro(v)) return;
       var chave = v.n.trim().toLowerCase().replace(/\s+/g,' ');
       if(!chave) return;
-      if(!mapa[chave]) mapa[chave] = {nome:v.n.trim(), qtd:0, fat:0, a25:0, a26:0, q25:0, q26:0};
+      if(!mapa[chave]) mapa[chave] = {nome:v.n.trim(), qtd:0, fat:0, a25:0, a26:0, q25:0, q26:0, origens:{}};
       var c = mapa[chave];
       c.qtd += 1; c.fat += v.v;
+      if(v.o) c.origens[v.o] = (c.origens[v.o] || 0) + v.v;
       if(v.a === '2025'){ c.a25 += v.v; c.q25 += 1; }
       if(v.a === '2026'){ c.a26 += v.v; c.q26 += 1; }
     });
@@ -1230,8 +1231,8 @@ body.modoCapa{min-height:100%}
     if(!lista.length){ nota.textContent = 'SEM INFORMAÇÃO em ' + ano + '.'; svg.innerHTML = ''; return; }
 
     var fatMes = D.fat[ano] || [];
-    nota.textContent = 'Cada faixa é um cliente. À direita, o peso que ele teve no mês em que comprou. ' +
-      'Clique para ver as compras.';
+    nota.textContent = 'Cada faixa é um cliente, com a origem da venda em etiqueta ao lado do nome. ' +
+      'À direita, o peso que ele teve no mês em que comprou. Clique para ver as compras.';
 
     // Meses do cliente, do maior peso para o menor.
     function pesos(chave){
@@ -1263,10 +1264,30 @@ body.modoCapa{min-height:100%}
           }).join('  ·  ') + (ps.length > 2 ? '  ·  +' + (ps.length-2) : '')
         : 'mês não registrado';
 
+      // Origem que mais pesou nas compras do cliente, como etiqueta ao lado do nome.
+      var orig = Object.keys(c.origens || {}).sort(function(a,b){
+        return c.origens[b] - c.origens[a]; })[0] || null;
+      var etiqueta = '';
+      if(orig){
+        var larguraNome = String(c.nome).length * 6.6;
+        var xe = x + 14 + larguraNome + 10;
+        var we = String(orig).length * 5.4 + 14;
+        // so mostra se couber dentro da faixa sem encostar no valor
+        if(xe + we < x + w - 90){
+          etiqueta =
+            '<rect x="' + xe + '" y="' + (y + ALT/2 - 8) + '" width="' + we + '" height="16" rx="8" ' +
+              'fill="' + (i < 5 ? 'rgba(36,26,18,.14)' : 'rgba(250,244,232,.16)') + '"/>' +
+            '<text x="' + (xe + we/2) + '" y="' + (y + ALT/2 + 3.5) + '" text-anchor="middle" font-size="9" ' +
+              'font-weight="700" letter-spacing="0.4" fill="' + corTexto + '" opacity=".8" ' +
+              'font-family="' + ff + '">' + escapar(orig.toUpperCase()) + '</text>';
+        }
+      }
+
       html += '<g class="faixa" data-n="' + escapar(c.nome) + '">' +
         '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + ALT + '" rx="3" fill="' + corFundo + '"/>' +
         '<text x="' + (x + 14) + '" y="' + (y + ALT/2 + 4) + '" font-size="12.5" font-weight="600" ' +
           'fill="' + corTexto + '" font-family="' + ff + '">' + escapar(c.nome) + '</text>' +
+        etiqueta +
         '<text x="' + (x + w - 14) + '" y="' + (y + ALT/2 + 4) + '" text-anchor="end" font-size="12.5" ' +
           'font-weight="700" fill="' + corTexto + '" font-family="' + ff + '">' + brlCheio(c.fat) + '</text>' +
         '<text x="' + (x + w + 12) + '" y="' + (y + ALT/2 + 4) + '" font-size="10.5" ' +
@@ -1281,8 +1302,10 @@ body.modoCapa{min-height:100%}
         var c = lista.filter(function(x){ return x.nome === nome; })[0];
         if(c){
           var ps = pesos(c.chave);
+          var oo = Object.keys(c.origens || {}).sort(function(a,b){
+            return c.origens[b] - c.origens[a]; })[0];
           var t = c.nome + ' em ' + ano + ': ' + c.qtd + (c.qtd === 1 ? ' compra' : ' compras') +
-                  ', somando ' + brlCheio(c.fat) + '.';
+                  ', somando ' + brlCheio(c.fat) + (oo ? ', vindo de ' + oo : '') + '.';
           if(ps.length){
             t += ' ' + ps.map(function(o){
               return 'Em ' + MESL[o.mes] + ' fez ' + brlCheio(o.valor) + ', ' +
