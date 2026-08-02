@@ -398,6 +398,28 @@ body.modoCapa{min-height:100%}
 .funil .faixa{cursor:pointer;transition:opacity .15s}
 .funil .faixa:hover{opacity:.78}
 
+/* ---------- RETORNO DE CLIENTES ---------- */
+.recGrade{display:grid;grid-template-columns:minmax(260px,1fr) minmax(300px,1.25fr);gap:26px;align-items:start}
+.funilRet svg{width:100%;height:auto;display:block}
+.recCab{display:flex;justify-content:space-between;font-size:9px;font-weight:700;letter-spacing:.16em;
+  color:rgba(250,244,232,.45);padding:0 2px 10px;border-bottom:1px solid rgba(238,227,209,.16)}
+.trj{padding:13px 2px;border-bottom:1px solid rgba(238,227,209,.14);cursor:pointer;transition:background .15s}
+.trj:hover{background:rgba(250,244,232,.06)}
+.trjTopo{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.trjNome{font-size:12.5px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trjTag{font-size:8.5px;font-weight:700;letter-spacing:.09em;padding:3px 8px;border-radius:9px;
+  background:rgba(250,244,232,.14);color:rgba(250,244,232,.8);white-space:nowrap;flex:none}
+.trjVar{font-size:12.5px;font-weight:700;width:62px;text-align:right;white-space:nowrap}
+.trjBar{position:relative;height:22px}
+.trjBar .trilho{position:absolute;left:0;right:0;top:10px;height:2px;background:rgba(238,227,209,.12)}
+.trjBar .liga{position:absolute;top:10px;height:2px}
+.trjBar .pt{position:absolute;top:5px;width:12px;height:12px;border-radius:50%;border:2px solid #14100D}
+.trjBar .vl{position:absolute;top:0;font-size:10px;white-space:nowrap}
+#telaPainel .placar#placarRec{width:100%;margin-top:16px}
+#telaPainel .placar#placarRec div{flex:1}
+@media(max-width:900px){.recGrade{grid-template-columns:1fr;gap:20px}}
+@media(max-width:640px){.trjNome{font-size:12px}.trjVar{width:54px;font-size:11.5px}}
+
 /* ---------- RANKING DE CLIENTES ---------- */
 .rank{display:flex;flex-direction:column}
 .rkLinha{display:grid;grid-template-columns:26px 1fr auto auto;gap:12px;align-items:center;
@@ -618,7 +640,16 @@ body.modoCapa{min-height:100%}
             <h2>Clientes que voltaram</h2>
             <div class="nota" id="notaRec"></div>
           </div></div>
-          <div class="rank" id="listaRec"></div>
+          <div class="recGrade">
+            <div>
+              <div class="funilRet"><svg id="svgRet" role="img" aria-label="Funil de retorno de clientes"></svg></div>
+              <div class="placar" id="placarRec"></div>
+            </div>
+            <div>
+              <div class="recCab"><span>2025</span><span>2026</span></div>
+              <div id="listaRec"></div>
+            </div>
+          </div>
         </div>
 
         <div class="card c12">
@@ -1326,43 +1357,90 @@ body.modoCapa{min-height:100%}
   }
 
   function gRecorrentes(){
+    var svg = document.getElementById('svgRet');
     var alvo = document.getElementById('listaRec');
     var nota = document.getElementById('notaRec');
+    var placar = document.getElementById('placarRec');
     var mapa = porCliente(function(){ return true; });
-    // Recorrente de verdade e quem comprou nos dois anos.
-    var lista = Object.keys(mapa).map(function(k){ return mapa[k]; })
-                  .filter(function(c){ return c.q25 > 0 && c.q26 > 0; })
-                  .sort(function(a,b){ return (b.a25 + b.a26) - (a.a25 + a.a26); });
+    var todos = Object.keys(mapa).map(function(k){ return mapa[k]; });
+
+    var base25 = todos.filter(function(c){ return c.q25 > 0; }).length;
+    var lista = todos.filter(function(c){ return c.q25 > 0 && c.q26 > 0; })
+                     .sort(function(a,b){ return (b.a25 + b.a26) - (a.a25 + a.a26); });
+
+    var tot26 = (D.fat['2026']||[]).reduce(function(a,b){ return a+b; }, 0);
+    var vol26 = lista.reduce(function(a,b){ return a + b.a26; }, 0);
+    var taxa = base25 ? lista.length/base25*100 : 0;
+
+    nota.textContent = 'Do total que comprou em 2025, quantos voltaram em 2026 e quanto trouxeram de volta. ' +
+      'Clique num cliente para ver as compras.';
+
+    /* funil de tres etapas */
+    var LG = 340, ff = FONTE.replace(/"/g,"'");
+    var etapas = [
+      {rot:'COMPRARAM EM 2025', val:base25 + (base25 === 1 ? ' cliente' : ' clientes'),
+       cor:'#EEE3D1', txt:'#241A12', x1:10,  x2:330, y:12},
+      {rot:'VOLTARAM EM 2026', val:lista.length + (lista.length === 1 ? ' cliente' : ' clientes'),
+       cor:'#A89179', txt:'#241A12', x1:46,  x2:294, y:86},
+      {rot:'TROUXERAM DE VOLTA', val:brlCheio(vol26),
+       cor:'#3DDC84', txt:'#0E0D0C', x1:80,  x2:260, y:160}
+    ];
+    var proxima = [[44,296],[78,262],[108,232]];
+    var h = '<g font-family="' + ff + '">';
+    etapas.forEach(function(e, i){
+      var p = proxima[i];
+      h += '<path d="M' + e.x1 + ' ' + e.y + ' H' + e.x2 + ' L' + p[1] + ' ' + (e.y+62) +
+           ' H' + p[0] + ' Z" fill="' + e.cor + '"/>' +
+           '<text x="170" y="' + (e.y+22) + '" text-anchor="middle" font-size="9.5" font-weight="700" ' +
+             'fill="' + e.txt + '" letter-spacing="1.4">' + e.rot + '</text>' +
+           '<text x="170" y="' + (e.y+46) + '" text-anchor="middle" font-size="20" font-weight="700" ' +
+             'fill="' + e.txt + '">' + e.val + '</text>';
+    });
+    h += '</g>';
+    svg.setAttribute('viewBox', '0 0 ' + LG + ' 240');
+    svg.innerHTML = h;
+
+    placar.innerHTML =
+      '<div><div class="pn">TAXA DE RETORNO</div><div class="pv">' +
+        taxa.toFixed(1).replace('.',',') + '%</div></div>' +
+      '<div><div class="pn">DO FAT. DE 2026</div><div class="pv" style="color:' + COR.vivo + '">' +
+        (tot26 ? (vol26/tot26*100).toFixed(1).replace('.',',') : '0') + '%</div></div>';
 
     if(!lista.length){
-      nota.textContent = 'Nenhum cliente comprou nos dois anos.';
-      alvo.innerHTML = '<div class="nadaAqui">SEM INFORMAÇÃO</div>';
+      alvo.innerHTML = '<div class="nadaAqui">Nenhum cliente comprou nos dois anos</div>';
       return;
     }
 
-    var somaTot = lista.reduce(function(a,b){ return a + b.a25 + b.a26; }, 0);
-    var soma26  = lista.reduce(function(a,b){ return a + b.a26; }, 0);
-    var tot26   = (D.fat['2026']||[]).reduce(function(a,b){ return a+b; }, 0);
-    nota.textContent = lista.length + (lista.length === 1 ? ' cliente comprou' : ' clientes compraram') +
-      ' em 2025 e voltaram em 2026, somando ' + brlCheio(somaTot) + ' nos dois anos' +
-      (tot26 ? '. Em 2026 eles representam ' + Math.round(soma26/tot26*100) + '% do faturamento' : '') +
-      '. Clique para ver as compras.';
+    /* trajetoria de cada cliente, de 2025 para 2026 */
+    var maxV = 0;
+    lista.forEach(function(c){ maxV = Math.max(maxV, c.a25, c.a26); });
+    if(!maxV) maxV = 1;
 
-    alvo.innerHTML = lista.slice(0,15).map(function(c, i){
+    alvo.innerHTML = lista.slice(0,12).map(function(c){
       var d = c.a25 ? ((c.a26 - c.a25)/c.a25)*100 : null;
-      var cor = d === null ? COR.suave : (d >= 0 ? COR.verde : COR.medio);
+      var cor = d === null ? COR.suave : (d >= 0 ? COR.vivo : COR.medio);
+      var p1 = (c.a25/maxV)*100, p2 = (c.a26/maxV)*100;
       var orig = Object.keys(c.origens || {}).sort(function(a,b){
         return c.origens[b] - c.origens[a]; })[0];
-      var tag = orig ? '<span class="rkTag">' + escapar(orig.toUpperCase()) + '</span>' : '';
-      return '<div class="rkLinha" data-n="' + escapar(c.nome) + '">' +
-        '<span class="rkPos">' + (i+1) + '</span>' +
-        '<span class="rkNome"><span>' + escapar(c.nome) + '</span>' + tag + '</span>' +
-        '<span class="rkAnos"><span>2025 <b>' + brl(c.a25) + '</b></span>' +
-        '<span>2026 <b>' + brl(c.a26) + '</b></span></span>' +
-        '<span class="rkVar" style="color:' + cor + '">' + (d === null ? '—' : pct(d)) + '</span></div>';
+      function vlr(v){ return v ? brl(v) : 'sem compra'; }
+      return '<div class="trj" data-n="' + escapar(c.nome) + '">' +
+        '<div class="trjTopo">' +
+          '<span class="trjNome">' + escapar(c.nome) + '</span>' +
+          (orig ? '<span class="trjTag">' + escapar(orig.toUpperCase()) + '</span>' : '') +
+          '<span class="trjVar" style="color:' + cor + '">' + (d === null ? '—' : pct(d)) + '</span>' +
+        '</div>' +
+        '<div class="trjBar">' +
+          '<div class="trilho"></div>' +
+          '<div class="liga" style="background:' + cor + ';left:' + Math.min(p1,p2) + '%;width:' +
+            Math.abs(p2-p1) + '%"></div>' +
+          '<div class="pt" style="background:' + COR.medio + ';left:calc(' + p1 + '% - 6px)"></div>' +
+          '<div class="pt" style="background:' + cor + ';left:calc(' + p2 + '% - 6px)"></div>' +
+          '<span class="vl" style="color:' + COR.suave + ';left:calc(' + p1 + '% + 12px)">' + vlr(c.a25) + '</span>' +
+          '<span class="vl" style="font-weight:600;color:' + cor + ';left:calc(' + p2 + '% + 12px)">' + vlr(c.a26) + '</span>' +
+        '</div></div>';
     }).join('');
 
-    alvo.querySelectorAll('.rkLinha').forEach(function(el){
+    alvo.querySelectorAll('.trj').forEach(function(el){
       el.addEventListener('click', function(){
         var nome = el.dataset.n;
         var c = lista.filter(function(x){ return x.nome === nome; })[0];
