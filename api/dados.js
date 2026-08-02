@@ -1,6 +1,3 @@
-// api/dados.js  ·  ponte entre o Vercel e o quadro Analise Anual 2025 e 2026
-// O token nunca fica aqui. Ele vem da variavel MONDAY_TOKEN cadastrada no Vercel.
-
 const BOARD_ID = "18424710436";
 
 const COL = {
@@ -17,21 +14,14 @@ const COL = {
 
 const METAS = {
   "2026": {
-    meta:  [454577.04,323016.31,267805.03,298884.38,467056.16,407812.08,
-            297332.72,642585.48,425923.56,399516.48,460468.91,165424.84],
-    super: [511399.17,363393.35,301280.66,336244.93,525438.18,458788.59,
-            334499.31,722908.67,479164.01,449456.04,518027.52,186102.95],
-    hiper: [587162.01,417229.40,345914.83,386059.00,603280.88,526757.27,
-            384054.77,830006.25,550151.27,516042.12,594772.34,213673.76],
+    meta:  [454577.04,323016.31,267805.03,298884.38,467056.16,407812.08,297332.72,642585.48,425923.56,399516.48,460468.91,165424.84],
+    super: [511399.17,363393.35,301280.66,336244.93,525438.18,458788.59,334499.31,722908.67,479164.01,449456.04,518027.52,186102.95],
+    hiper: [587162.01,417229.40,345914.83,386059.00,603280.88,526757.27,384054.77,830006.25,550151.27,516042.12,594772.34,213673.76],
   },
 };
 
-const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho",
-               "Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-
+const MESES = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
 const ANOS = ["2025", "2026"];
-
-// Só as colunas que o painel usa. Pedir todas deixava a consulta pesada demais.
 const IDS = JSON.stringify(Object.keys(COL).map((k) => COL[k]));
 
 function num(t) {
@@ -69,113 +59,3 @@ function ranking(mapa, corte) {
     .sort((a, b) => b.qtd - a.qtd)
     .slice(0, corte);
 }
-
-export default async function handler(req, res) {
-  const fresco = req.query && (req.query.fresh === "1" || req.query.fresh === 1);
-  res.setHeader(
-    "Cache-Control",
-    fresco ? "no-store, max-age=0" : "s-maxage=180, stale-while-revalidate=600"
-  );
-
-  if (!process.env.MONDAY_TOKEN) {
-    return res.status(500).json({ erro: "MONDAY_TOKEN nao cadastrado no Vercel." });
-  }
-
-  try {
-    const primeira = `query {
-      boards(ids: ${BOARD_ID}) {
-        name
-        items_page(limit: 250) {
-          cursor
-          items { id name column_values(ids: ${IDS}) { id text } }
-        }
-      }
-    }`;
-
-    const d0 = await monday(primeira);
-    const board = d0.boards[0];
-    let itens = board.items_page.items;
-    let cursor = board.items_page.cursor;
-
-    const proxima = `query($c: String!) {
-      next_items_page(limit: 250, cursor: $c) {
-        cursor
-        items { id name column_values(ids: ${IDS}) { id text } }
-      }
-    }`;
-
-    while (cursor) {
-      const d = await monday(proxima, { c: cursor });
-      itens = itens.concat(d.next_items_page.items);
-      cursor = d.next_items_page.cursor;
-    }
-
-    const fat = {}, qtd = {}, canal = {};
-    const mapaOrigem = {}, mapaEstado = {}, mapaCidade = {}, mapaVendedor = {};
-    ANOS.forEach((a) => {
-      fat[a] = new Array(12).fill(0);
-      qtd[a] = new Array(12).fill(0);
-      canal[a] = Array.from({ length: 12 }, () => ({ l: 0, o: 0 }));
-      mapaOrigem[a] = {}; mapaEstado[a] = {}; mapaCidade[a] = {}; mapaVendedor[a] = {};
-    });
-
-    const semAno = { qtd: 0, fat: 0 };
-    const lista = [];
-    const semVendedor = { "2025": { qtd: 0, fat: 0 }, "2026": { qtd: 0, fat: 0 } };
-
-    function somar(mapa, chave, valor) {
-      if (!mapa[chave]) mapa[chave] = { qtd: 0, fat: 0 };
-      mapa[chave].qtd += 1;
-      mapa[chave].fat += valor;
-    }
-
-    itens.forEach((it) => {
-      const cv = {};
-      it.column_values.forEach((c) => (cv[c.id] = c.text));
-
-      const ano = (cv[COL.ano] || "").trim();
-      const valor = num(cv[COL.valor]);
-
-      if (ANOS.indexOf(ano) === -1) {
-        semAno.qtd += 1; semAno.fat += valor;
-        return;
-      }
-
-      const mi = MESES.indexOf((cv[COL.mes] || "").trim());
-      if (mi >= 0) {
-        fat[ano][mi] += valor;
-        qtd[ano][mi] += 1;
-        const c = (cv[COL.canal] || "").trim().toLowerCase();
-        if (c === "loja") canal[ano][mi].l += 1;
-        else if (c === "online") canal[ano][mi].o += 1;
-      }
-
-      lista.push({
-        n: it.name,
-        a: ano,
-        m: mi,
-        v: valor,
-        d: cv[COL.data] || "",
-        c: vazio(cv[COL.canal])    ? "" : cv[COL.canal].trim(),
-        o: vazio(cv[COL.origem])   ? "" : cv[COL.origem].trim(),
-        e: vazio(cv[COL.estado])   ? "" : cv[COL.estado].trim(),
-        ci: vazio(cv[COL.cidade])  ? "" : cv[COL.cidade].trim(),
-        vd: vazio(cv[COL.vendedor])? "" : cv[COL.vendedor].trim(),
-      });
-
-      if (!vazio(cv[COL.origem])) somar(mapaOrigem[ano], cv[COL.origem].trim(), valor);
-      if (!vazio(cv[COL.estado])) somar(mapaEstado[ano], cv[COL.estado].trim(), valor);
-      if (!vazio(cv[COL.cidade])) somar(mapaCidade[ano], cv[COL.cidade].trim(), valor);
-
-      if (vazio(cv[COL.vendedor])) {
-        semVendedor[ano].qtd += 1;
-        semVendedor[ano].fat += valor;
-      } else {
-        somar(mapaVendedor[ano], cv[COL.vendedor].trim(), valor);
-      }
-    });
-
-    const origens = {}, estados = {}, cidades = {}, vendedores = {};
-    ANOS.forEach((a) => {
-      origens[a]    = ranking(mapaOrigem[a], 12);
-      estados[a]    = ranking(mapaEstado[a], 10);
