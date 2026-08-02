@@ -191,6 +191,40 @@ canvas{cursor:pointer}
 /* ---------- CELULAR ---------- */
 @media(max-width:640px){
   .voltar{position:static;display:inline-flex;margin-bottom:16px}
+  /* rolagem lateral para graficos com muitos meses */
+  .tela.metagrafico,.tela.alta{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+  .tela.metagrafico canvas,.tela.alta canvas{min-width:660px}
+  .par{gap:22px}
+  /* abas ocupam a largura toda e ficam do tamanho do dedo */
+  .abas{gap:0}
+  .abas button{flex:1;padding:12px 6px;font-size:13px}
+  /* gaveta com area de fechar confortavel */
+  .gaveta .fechar{font-size:30px;padding:8px 12px;top:10px;right:10px}
+  .gaveta .busca{padding:11px 12px;font-size:14px}
+  .linhaCli{padding:14px 16px}
+  .linhaCli .nome{font-size:14px}
+  /* caixas de mes em uma coluna, sem apertar o texto */
+  .meses{grid-template-columns:1fr 1fr;gap:8px}
+  .mesBox{padding:12px 11px}
+  .mesBox .dif{font-size:15px}
+  .mesBox .par2{font-size:10.5px}
+  .mesBox .canais{margin-top:10px;padding-top:8px}
+  .mesBox .semreg{font-size:9.5px}
+  /* legenda da pizza mais legivel */
+  .legLinha{padding:10px 2px}
+  /* placar de metas quebra em duas linhas em vez de espremer */
+  .placar{width:100%}
+  .placar div{flex:1;min-width:0;padding:8px 4px}
+  .placar .pn{font-size:7.5px;letter-spacing:.08em}
+  .placar .pv{font-size:17px}
+  /* legenda das faixas em uma coluna */
+  .faixasLeg{grid-template-columns:1fr;gap:12px;margin-top:14px;padding-top:12px}
+}
+@media(max-width:400px){
+  .meses{grid-template-columns:1fr}
+  .tela.metagrafico canvas,.tela.alta canvas{min-width:560px}
+}
+@media(max-width:640px){
   h1{font-size:23px;margin-top:4px}
   .sub{font-size:12px;margin-top:9px}
   .meta{font-size:10px}
@@ -304,12 +338,26 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
 #telaCapa .rodape2{margin-top:34px;font-size:10px;letter-spacing:.16em;color:rgba(250,244,232,.36)}
 
 @media(max-width:640px){
-  #telaCapa{padding:38px 16px 40px;background-attachment:scroll,scroll}
-  #telaCapa .topo2{flex-direction:column;align-items:flex-start}
-  #telaCapa .carimbo{text-align:left;white-space:normal}
-  #telaCapa .ladoDir{align-items:flex-start;order:-1;width:100%}
-  #telaCapa .logo{width:min(230px,62vw)}
-  #telaCapa .tiles{gap:12px;margin-top:26px}
+  #telaCapa{padding:30px 15px 34px;background-attachment:scroll,scroll;justify-content:flex-start}
+  #telaCapa .topo2{flex-direction:column;align-items:stretch;gap:16px}
+  #telaCapa .ladoDir{align-items:flex-start;order:-1;width:100%;flex-direction:row;
+    justify-content:space-between;align-items:center;gap:12px}
+  #telaCapa .logo{width:min(170px,46vw)}
+  #telaCapa .carimbo{text-align:right;white-space:normal;font-size:10px;line-height:1.45}
+  #telaCapa h1{font-size:26px;margin-top:0}
+  #telaCapa .lead{font-size:12.5px;margin-top:9px}
+  #telaCapa .tiles{gap:11px;margin-top:22px;grid-template-columns:1fr}
+  #telaCapa .tile{padding:16px 16px 18px}
+  #telaCapa .tvalor{font-size:26px;margin-top:11px}
+  #telaCapa .tsub{font-size:11px}
+  #telaCapa .tacao{margin-top:13px}
+  /* os dois em construcao ficam compactos, sem ocupar meia tela cada */
+  #telaCapa .tile.espera{padding:13px 16px}
+  #telaCapa .tile.espera .tvalor,
+  #telaCapa .tile.espera .barra2{display:none}
+  #telaCapa .tile.espera .tsub{margin-top:6px}
+  #telaCapa .tile.espera .tacao{display:none}
+  #telaCapa .rodape2{margin-top:24px;font-size:9px}
 }
 </style>
 </head>
@@ -1537,7 +1585,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 23  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 24  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
