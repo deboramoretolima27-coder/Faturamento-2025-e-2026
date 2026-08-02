@@ -21,8 +21,17 @@
   --texto:'Helvetica Now Text','Helvetica Now Display','Inter',-apple-system,'Helvetica Neue',Arial,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--offwhite);color:var(--marrom);font-family:var(--texto);
-     -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;padding:44px 24px 64px}
+body{color:var(--offwhite);font-family:var(--texto);
+     -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;padding:44px 24px 64px;
+     background-color:#0E0D0C;
+     background-image:
+       linear-gradient(rgba(20,20,19,.80) 0%, rgba(20,20,19,.82) 50%, rgba(20,20,19,.86) 100%),
+       url('fundo.jpg');
+     background-size:cover,cover;
+     background-position:center,center 42%;
+     background-repeat:no-repeat,no-repeat;
+     background-attachment:fixed,fixed}
+html{background:#0E0D0C}
 @media(max-width:640px){body{padding:26px 14px 48px}}
 .wrap{max-width:1240px;margin:0 auto}
 
@@ -151,14 +160,7 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 #falha{color:var(--marrom-medio);line-height:1.7}
 #painel{display:none}
 /* O painel usa a mesma foto da capa, com um veu claro para nao atrapalhar a leitura. */
-#telaPainel{position:relative;min-height:100vh;
-  background-image:
-  linear-gradient(rgba(20,20,19,.80) 0%, rgba(20,20,19,.82) 50%, rgba(20,20,19,.86) 100%),
-  url('fundo.jpg');
-  background-size:cover,cover;background-position:center,center 42%;
-  background-repeat:no-repeat,no-repeat;background-color:#0E0D0C;
-  background-attachment:scroll,fixed;
-  padding-top:1px}
+#telaPainel{position:relative;min-height:100vh;padding-top:1px}
 
 /* Sobre o fundo escuro, o que e texto solto clareia. O que vive dentro de card continua escuro. */
 #telaPainel h1{color:var(--offwhite)}
@@ -320,15 +322,8 @@ canvas{cursor:pointer}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* ---------- CAPA ---------- */
-body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
-#telaCapa{position:relative;min-height:100vh;
-  background-image:
-  linear-gradient(rgba(20,20,19,.80) 0%, rgba(20,20,19,.82) 50%, rgba(20,20,19,.86) 100%),
-  url('fundo.jpg');
-  background-size:cover,cover;background-position:center,center 42%;
-  background-repeat:no-repeat,no-repeat;background-color:#0E0D0C;
-  background-attachment:scroll,fixed;
-  display:flex;flex-direction:column;justify-content:center;padding:56px 30px 52px}
+body.modoCapa{min-height:100%}
+#telaCapa{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:56px 30px 52px}
 #telaCapa .dentro{max-width:1120px;margin:0 auto;width:100%}
 
 #telaCapa .topo2{display:flex;justify-content:space-between;align-items:flex-start;gap:28px;flex-wrap:wrap}
@@ -373,7 +368,8 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
 #telaCapa .rodape2{margin-top:34px;font-size:10px;letter-spacing:.16em;color:rgba(250,244,232,.36)}
 
 @media(max-width:640px){
-  #telaCapa{padding:30px 15px 34px;background-attachment:scroll,scroll;justify-content:flex-start}
+  body{background-attachment:scroll,scroll;padding:26px 14px 48px}
+  #telaCapa{padding:30px 15px 34px;justify-content:flex-start}
   #telaCapa .topo2{flex-direction:column;align-items:stretch;gap:16px}
   #telaCapa .ladoDir{align-items:flex-start;order:-1;width:100%;flex-direction:row;
     justify-content:space-between;align-items:center;gap:12px}
@@ -394,6 +390,63 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
   #telaCapa .tile.espera .tacao{display:none}
   #telaCapa .rodape2{margin-top:24px;font-size:9px}
 }
+
+/* ---------- PAINEL EM TEMA ESCURO ---------- */
+#telaPainel .card,#telaPainel .kpi{
+  background:rgba(20,20,19,.82);border:1px solid rgba(238,227,209,.20);
+  box-shadow:0 10px 30px rgba(0,0,0,.34);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--offwhite)}
+#telaPainel .card h2{color:var(--offwhite)}
+#telaPainel .card .nota,#telaPainel .kpi .sub{color:rgba(250,244,232,.55)}
+#telaPainel .kpi .rot{color:rgba(250,244,232,.5)}
+#telaPainel .kpi .val{color:var(--offwhite)}
+#telaPainel .kpi .dl .ano{color:rgba(250,244,232,.45)}
+#telaPainel .kpi .dl .mes{color:var(--offwhite)}
+#telaPainel .kpi .dl .vlr{color:rgba(250,244,232,.55)}
+
+#telaPainel .mini{border-color:rgba(238,227,209,.24)}
+#telaPainel .mini button{color:rgba(250,244,232,.55)}
+#telaPainel .mini button+button{border-left-color:rgba(238,227,209,.24)}
+#telaPainel .mini button.on{background:var(--offwhite);color:var(--marrom)}
+
+#telaPainel .placar{border-color:rgba(238,227,209,.24)}
+#telaPainel .placar div+div{border-left-color:rgba(238,227,209,.24)}
+#telaPainel .placar .pn{color:rgba(250,244,232,.5)}
+#telaPainel .placar .pv{color:var(--offwhite)}
+
+#telaPainel .faixasLeg{border-top-color:rgba(238,227,209,.18)}
+#telaPainel .faixaIt .dd{color:rgba(250,244,232,.55)}
+#telaPainel .legenda{border-top-color:rgba(238,227,209,.18)}
+#telaPainel .legLinha{border-bottom-color:rgba(238,227,209,.14)}
+#telaPainel .legLinha:hover{background:rgba(250,244,232,.06)}
+#telaPainel .legLinha .lf,#telaPainel .legLinha .lp{color:var(--offwhite)}
+#telaPainel .legLinha .lq{color:rgba(250,244,232,.5)}
+
+#telaPainel .vazio{background:transparent;color:rgba(250,244,232,.5)}
+#telaPainel .aviso{background:rgba(250,244,232,.08);color:rgba(250,244,232,.75)}
+
+#telaPainel .mesBox{border-color:rgba(238,227,209,.2);background:rgba(250,244,232,.04)}
+#telaPainel .mesBox:hover{border-color:rgba(238,227,209,.5);background:rgba(250,244,232,.09)}
+#telaPainel .mesBox.curso{background:rgba(250,244,232,.02)}
+#telaPainel .mesBox .mn{color:rgba(250,244,232,.5)}
+#telaPainel .mesBox .par2{color:rgba(250,244,232,.5)}
+#telaPainel .mesBox .par2 b{color:var(--offwhite)}
+#telaPainel .mesBox .abs,#telaPainel .mesBox .semreg{color:rgba(250,244,232,.5)}
+#telaPainel .mesBox .cl .nome{color:rgba(250,244,232,.5)}
+#telaPainel .mesBox .cl .num{color:var(--offwhite)}
+#telaPainel .mesBox .canais{border-top-color:rgba(238,227,209,.16)}
+
+/* gaveta de clientes tambem escura */
+.gaveta{background:#171513;border-left-color:rgba(238,227,209,.18);color:var(--offwhite)}
+.gaveta .cabeca{border-bottom-color:rgba(238,227,209,.18)}
+.gaveta h3{color:var(--offwhite)}
+.gaveta .eyebrow,.gaveta .resumo,.gaveta .fechar{color:rgba(250,244,232,.6)}
+.gaveta .busca{background:rgba(250,244,232,.07);border-color:rgba(238,227,209,.22);color:var(--offwhite)}
+.gaveta .busca::placeholder{color:rgba(250,244,232,.4)}
+.linhaCli{border-bottom-color:rgba(238,227,209,.14)}
+.linhaCli .nome,.linhaCli .valor{color:var(--offwhite)}
+.linhaCli .sub{color:rgba(250,244,232,.5)}
+.nadaAqui{color:rgba(250,244,232,.5)}
 </style>
 </head>
 <body class="modoCapa">
@@ -615,9 +668,11 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
 
   var MES  = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
   var MESL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-  var COR = {marrom:'#2E1E11', medio:'#73573F', suave:'#8C7563', areia:'#EEE3D1',
-             linha:'#E3D8C6', preto:'#141413', verde:'#3F7A3F', vivo:'#17A34A'};
-  var RAMPA = ['#2E1E11','#4A3524','#73573F','#8C7563','#A89179','#C0AC93','#D5C6AE','#EEE3D1'];
+  // Paleta para fundo escuro: os dados sao claros, o fundo e a foto.
+  var COR = {marrom:'#EEE3D1', medio:'#A89179', suave:'rgba(250,244,232,.55)',
+             areia:'rgba(250,244,232,.20)', linha:'rgba(238,227,209,.13)',
+             preto:'#0E0D0C', verde:'#3DDC84', vivo:'#3DDC84', claro:'#FAF4E8'};
+  var RAMPA = ['#EEE3D1','#D5C6AE','#C0AC93','#A89179','#8C7563','#73573F','#5A4230','#3E2C1D'];
   var FONTE = "'Helvetica Now Text','Inter','Helvetica Neue',Arial,sans-serif";
 
   var D = null, ano = '2026', modoCanal = '2026', modoOrigem = 'pizza', aba = 'geral', modoComp = 'fat';
@@ -754,7 +809,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
   /* ---------- graficos: base ---------- */
   var BASE = {
     responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{display:false}, tooltip:{ backgroundColor:COR.preto, padding:12, cornerRadius:3,
+    plugins:{ legend:{display:false}, tooltip:{ backgroundColor:'#0E0D0C', borderColor:'rgba(238,227,209,.25)', borderWidth:1, padding:12, cornerRadius:3,
       titleFont:{family:FONTE,size:12}, bodyFont:{family:FONTE,size:12} }},
     scales:{
       x:{grid:{display:false}, ticks:{color:COR.suave, font:{family:FONTE,size:11}}},
@@ -816,7 +871,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
         chart.getDatasetMeta(0).data.forEach(function(el,i){
           if(percentuais[i] < 6) return;
           var p = el.tooltipPosition();
-          ctx.fillStyle = i < 3 ? '#FAF4E8' : '#2E1E11';
+          ctx.fillStyle = i < 4 ? '#241A12' : '#FAF4E8';
           ctx.font = '700 12px ' + FONTE;
           ctx.fillText(percentuais[i].toFixed(0) + '%', p.x, p.y);
         });
@@ -930,7 +985,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           var x = chart.scales.x.getPixelForValue(corte - 0.5);
           var a2 = chart.chartArea, ctx = chart.ctx;
           ctx.save();
-          ctx.strokeStyle = COR.linha; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+          ctx.strokeStyle = 'rgba(238,227,209,.3)'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
           ctx.beginPath(); ctx.moveTo(x, a2.top); ctx.lineTo(x, a2.bottom); ctx.stroke();
           ctx.setLineDash([]);
           ctx.fillStyle = COR.suave; ctx.font = '600 10px ' + FONTE;
@@ -966,7 +1021,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
         data:{labels:rotulos, datasets:[
           {label:'Loja', data:serieLoja, borderColor:COR.marrom, backgroundColor:'rgba(46,30,17,.06)',
            borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:COR.marrom, fill:true, tension:.28},
-          {label:'Online', data:serieOn, borderColor:COR.vivo, backgroundColor:'rgba(23,163,74,.07)',
+          {label:'Online', data:serieOn, borderColor:COR.vivo, backgroundColor:'rgba(61,220,132,.12)',
            borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:COR.vivo, fill:true, tension:.28},
           {label:'Sem canal registrado', data:serieSem, borderColor:COR.suave, borderDash:[4,4],
            borderWidth:1.5, pointRadius:0, fill:false, tension:.28}
@@ -1156,20 +1211,20 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           var yS = y.getPixelForValue(mt['super'][i]);
           var yH = y.getPixelForValue(mt.hiper[i]);
           ctx.save(); ctx.lineCap = 'round';
-          ctx.strokeStyle = '#C4B39F'; ctx.lineWidth = 1.5; ctx.setLineDash([4,4]);
+          ctx.strokeStyle = 'rgba(238,227,209,.45)'; ctx.lineWidth = 1.5; ctx.setLineDash([4,4]);
           ctx.beginPath(); ctx.moveTo(cx - w/2, yH); ctx.lineTo(cx + w/2, yH); ctx.stroke();
           ctx.strokeStyle = COR.medio; ctx.lineWidth = 2; ctx.setLineDash([1.5,3.5]);
           ctx.beginPath(); ctx.moveTo(cx - w/2, yS); ctx.lineTo(cx + w/2, yS); ctx.stroke();
-          ctx.setLineDash([]); ctx.strokeStyle = COR.preto; ctx.lineWidth = 2.5;
+          ctx.setLineDash([]); ctx.strokeStyle = COR.claro; ctx.lineWidth = 2.5;
           ctx.beginPath(); ctx.moveTo(cx - w/2, yM); ctx.lineTo(cx + w/2, yM); ctx.stroke();
           if(MINI){
             // Em tela pequena as tres etiquetas nao cabem. Fica so a Meta.
-            desenhaFlag(ctx, cx, yM, yM, 'META', mil(mt.meta[i]), COR.preto, '#FAF4E8', .6, w/2);
+            desenhaFlag(ctx, cx, yM, yM, 'META', mil(mt.meta[i]), COR.claro, '#141413', .6, w/2);
           } else {
             var aM = yM, aS = Math.min(yS, aM - GAP), aH = Math.min(yH, aS - GAP);
-            desenhaFlag(ctx, cx, aH, yH, 'HIPER', mil(mt.hiper[i]), COR.areia, COR.marrom, .55, w/2);
-            desenhaFlag(ctx, cx, aS, yS, 'SUPER', mil(mt['super'][i]), COR.medio, '#FAF4E8', .6, w/2);
-            desenhaFlag(ctx, cx, aM, yM, 'META',  mil(mt.meta[i]),  COR.preto, '#FAF4E8', .6, w/2);
+            desenhaFlag(ctx, cx, aH, yH, 'HIPER', mil(mt.hiper[i]), 'rgba(250,244,232,.18)', '#FAF4E8', .55, w/2);
+            desenhaFlag(ctx, cx, aS, yS, 'SUPER', mil(mt['super'][i]), COR.medio, '#241A12', .6, w/2);
+            desenhaFlag(ctx, cx, aM, yM, 'META',  mil(mt.meta[i]),  COR.claro, '#141413', .6, w/2);
           }
           ctx.restore();
         }
@@ -1199,9 +1254,9 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
             var cp = MINI ? 11 : 13, alt = MINI ? 19 : 21, sobe = MINI ? 34 : 40;
             ctx.font = '700 ' + cp + 'px ' + FONTE;
             var lw = ctx.measureText(txt).width + (MINI ? 13 : 18);
-            ctx.fillStyle = ok ? COR.vivo : '#F2EADC';
+            ctx.fillStyle = ok ? COR.vivo : 'rgba(250,244,232,.16)';
             ctx.beginPath(); ctx.roundRect(el.x - lw/2, topo - sobe, lw, alt, alt/2); ctx.fill();
-            ctx.fillStyle = ok ? '#FFFFFF' : COR.marrom; ctx.textBaseline = 'middle';
+            ctx.fillStyle = ok ? '#0E0D0C' : COR.claro; ctx.textBaseline = 'middle';
             ctx.fillText(txt, el.x, topo - sobe + alt/2);
             ctx.textBaseline = 'alphabetic';
             ctx.fillStyle = COR.suave; ctx.font = '600 ' + (MINI ? 9.5 : 11) + 'px ' + FONTE;
@@ -1216,7 +1271,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
               var sy = MINI ? base + 46 : base + 52, sh = MINI ? 16 : 19;
               ctx.fillStyle = COR.vivo;
               ctx.beginPath(); ctx.roundRect(el.x - sw/2, sy, sw, sh, sh/2); ctx.fill();
-              ctx.fillStyle = '#FFFFFF'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+              ctx.fillStyle = '#0E0D0C'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
               ctx.fillText(nv, el.x, sy + sh/2);
               ctx.textBaseline = 'alphabetic';
             }
@@ -1256,15 +1311,15 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
          backgroundColor:fat.map(function(v,i){ return v >= mt.meta[i] ? COR.vivo : COR.marrom; }),
          stack:'s', maxBarThickness:62},
         {label:'Faltou', data:fat.map(function(v,i){ return Math.max(mt.meta[i]-v,0); }),
-         backgroundColor:'#F4EDE2', stack:'s', maxBarThickness:62},
+         backgroundColor:'rgba(250,244,232,.13)', stack:'s', maxBarThickness:62},
         {label:'Acima', data:fat.map(function(v,i){ return Math.max(Math.min(v,mt['super'][i])-mt.meta[i],0); }),
          backgroundColor:COR.vivo, stack:'s', maxBarThickness:62},
         {label:'z1', data:fat.map(function(v,i){ return Math.max(mt['super'][i]-Math.max(v,mt.meta[i]),0); }),
-         backgroundColor:'#FAF5EC', stack:'s', maxBarThickness:62},
+         backgroundColor:'rgba(250,244,232,.07)', stack:'s', maxBarThickness:62},
         {label:'Acima2', data:fat.map(function(v,i){ return Math.max(Math.min(v,mt.hiper[i])-mt['super'][i],0); }),
          backgroundColor:COR.vivo, stack:'s', maxBarThickness:62},
         {label:'z2', data:fat.map(function(v,i){ return Math.max(mt.hiper[i]-Math.max(v,mt['super'][i]),0); }),
-         backgroundColor:'#FDFAF5', stack:'s', maxBarThickness:62,
+         backgroundColor:'rgba(250,244,232,.035)', stack:'s', maxBarThickness:62,
          borderRadius:{topLeft:3, topRight:3}}
       ];
     } else {
@@ -1277,7 +1332,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
     op.scales.x.ticks.color = COR.marrom;
     op.scales.x.ticks.font = {family:FONTE, size:12, weight:'600'};
     op.scales.x.ticks.padding = mt ? (MINI ? 28 : 34) : 22;
-    op.scales.y.grid = {color:'#F0E9DE'};
+    op.scales.y.grid = {color:'rgba(238,227,209,.12)'};
     op.scales.y.ticks.padding = 6;
     op.scales.y.ticks.callback = function(v){ return brl(v); };
     op.plugins.tooltip.filter = function(c){ return c.datasetIndex === 0; };
@@ -1482,7 +1537,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
     var op = {
       responsive:true, maintainAspectRatio:false,
       plugins:{ legend:{display:false},
-        tooltip:{ backgroundColor:COR.preto, padding:12, cornerRadius:3,
+        tooltip:{ backgroundColor:'#0E0D0C', borderColor:'rgba(238,227,209,.25)', borderWidth:1, padding:12, cornerRadius:3,
           titleFont:{family:FONTE,size:12}, bodyFont:{family:FONTE,size:12},
           callbacks:{ label:function(c){
             var v = lista[c.dataIndex];
@@ -1498,7 +1553,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
       type:'pie',
       data:{labels:lista.map(function(x){ return x.nome; }),
             datasets:[{data:lista.map(function(x){ return x.qtd; }),
-                       backgroundColor:cores, borderColor:'#FFFFFF', borderWidth:2}]},
+                       backgroundColor:cores, borderColor:'rgba(20,20,19,.85)', borderWidth:2}]},
       options:op, plugins:[rotuloPizza(perc)]
     });
 
@@ -1640,7 +1695,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 27  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 29  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
