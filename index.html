@@ -392,6 +392,31 @@ body.modoCapa{min-height:100%}
   #telaCapa .rodape2{margin-top:22px;font-size:13px}
 }
 
+/* ---------- RANKING DE CLIENTES ---------- */
+.rank{display:flex;flex-direction:column}
+.rkLinha{display:grid;grid-template-columns:26px 1fr auto auto;gap:12px;align-items:center;
+  padding:11px 4px;border-bottom:1px solid var(--linha);cursor:pointer;transition:background .15s}
+.rkLinha:last-child{border-bottom:0}
+.rkLinha:hover{background:var(--offwhite)}
+.rkPos{font-family:var(--display);font-size:13px;font-weight:700;color:var(--suave);text-align:right}
+.rkNome{font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.rkQtd{font-size:11px;color:var(--suave);white-space:nowrap}
+.rkFat{font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:-.02em;white-space:nowrap}
+.rkAnos{display:flex;gap:10px;font-size:11px;color:var(--suave);white-space:nowrap}
+.rkAnos b{font-weight:600}
+.rkVar{font-family:var(--display);font-size:13px;font-weight:700;width:64px;text-align:right;white-space:nowrap}
+#telaPainel .rkLinha{border-bottom-color:rgba(238,227,209,.14)}
+#telaPainel .rkLinha:hover{background:rgba(250,244,232,.06)}
+#telaPainel .rkNome,#telaPainel .rkFat{color:var(--offwhite)}
+#telaPainel .rkPos,#telaPainel .rkQtd,#telaPainel .rkAnos{color:rgba(250,244,232,.55)}
+#telaPainel .rkAnos b{color:var(--offwhite)}
+@media(max-width:640px){
+  .rkLinha{grid-template-columns:22px 1fr auto;gap:9px;padding:10px 2px}
+  .rkQtd{display:none}
+  .rkNome{white-space:normal;font-size:12.5px}
+  .rkAnos{flex-direction:column;gap:2px;text-align:right}
+}
+
 /* ---------- PAINEL EM TEMA ESCURO ---------- */
 #telaPainel .card,#telaPainel .kpi{
   background:rgba(20,20,19,.82);border:1px solid rgba(238,227,209,.20);
@@ -579,6 +604,14 @@ body.modoCapa{min-height:100%}
         </div>
         <div class="card c12">
           <div class="topo"><div>
+            <h2>Clientes que voltaram</h2>
+            <div class="nota" id="notaRec"></div>
+          </div></div>
+          <div class="rank" id="listaRec"></div>
+        </div>
+
+        <div class="card c12">
+          <div class="topo"><div>
             <h2>Diferença por mês</h2>
             <div class="nota">Quanto cada mês de 2026 rendeu a mais ou a menos que o mesmo mês de 2025, e como o canal de venda se moveu entre os dois anos.</div>
           </div></div>
@@ -630,6 +663,11 @@ body.modoCapa{min-height:100%}
           <div class="legenda" id="legOrigem"></div>
         </div>
         <div id="oMes" class="tela alta oculto"><canvas id="gOrigemMes"></canvas></div>
+      </div>
+
+      <div class="card c12">
+        <div class="topo"><div><h2>Maiores clientes do ano</h2><div class="nota" id="notaTop"></div></div></div>
+        <div class="rank" id="listaTop"></div>
       </div>
 
       <div class="card c12">
@@ -1038,6 +1076,7 @@ body.modoCapa{min-height:100%}
               (onFim > onIni ? 'O online cresceu' : 'O online recuou') + ' e ' +
               (lojaFim > lojaIni ? 'a loja cresceu' : 'a loja recuou') + ' no período.');
       montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial);
+      gRecorrentes();
       return;
     }
 
@@ -1058,6 +1097,7 @@ body.modoCapa{min-height:100%}
     });
 
     montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial);
+    gRecorrentes();
 
     leitura('De 1º de janeiro a ' + diaMes() + ': 2026 fez ' + brlCheio(sA) + ' contra ' + brlCheio(sB) +
             ' de 2025, ' + pct(varTotal).replace('▲ ','alta de ').replace('▼ ','queda de ') +
@@ -1141,6 +1181,107 @@ body.modoCapa{min-height:100%}
     var semA = Math.max((qA[i]||0) - cA.l - cA.o, 0), semB = Math.max((qB[i]||0) - cB.l - cB.o, 0);
     if(semA || semB) t += ' Outras ' + (semB + semA) + ' vendas do período estão sem canal registrado no quadro.';
     leitura(t);
+  }
+
+
+  /* ---------- clientes ---------- */
+  // Junta as vendas por cliente. O nome e a chave, entao normaliza espacos e caixa.
+  function porCliente(filtro){
+    var mapa = {};
+    (D.vendas || []).forEach(function(v){
+      if(!v.n || !filtro(v)) return;
+      var chave = v.n.trim().toLowerCase().replace(/\s+/g,' ');
+      if(!chave) return;
+      if(!mapa[chave]) mapa[chave] = {nome:v.n.trim(), qtd:0, fat:0, a25:0, a26:0, q25:0, q26:0};
+      var c = mapa[chave];
+      c.qtd += 1; c.fat += v.v;
+      if(v.a === '2025'){ c.a25 += v.v; c.q25 += 1; }
+      if(v.a === '2026'){ c.a26 += v.v; c.q26 += 1; }
+    });
+    return mapa;
+  }
+
+  function gTopClientes(){
+    var alvo = document.getElementById('listaTop');
+    var nota = document.getElementById('notaTop');
+    var mapa = porCliente(function(v){ return v.a === ano; });
+    var lista = Object.keys(mapa).map(function(k){ return mapa[k]; })
+                  .sort(function(a,b){ return b.fat - a.fat; }).slice(0,10);
+    if(!lista.length){ nota.textContent = 'SEM INFORMAÇÃO em ' + ano + '.'; alvo.innerHTML = ''; return; }
+
+    var totalAno = (D.fat[ano]||[]).reduce(function(a,b){ return a+b; }, 0);
+    var soma = lista.reduce(function(a,b){ return a + b.fat; }, 0);
+    nota.textContent = 'Os dez maiores em ' + ano + ' somam ' + brlCheio(soma) +
+      (totalAno ? ', ' + Math.round(soma/totalAno*100) + '% do faturamento do ano' : '') +
+      '. Clique para ver as compras.';
+
+    alvo.innerHTML = lista.map(function(c, i){
+      return '<div class="rkLinha" data-n="' + escapar(c.nome) + '">' +
+        '<span class="rkPos">' + (i+1) + '</span>' +
+        '<span class="rkNome">' + escapar(c.nome) + '</span>' +
+        '<span class="rkQtd">' + c.qtd + (c.qtd === 1 ? ' compra' : ' compras') + '</span>' +
+        '<span class="rkFat">' + brlCheio(c.fat) + '</span></div>';
+    }).join('');
+
+    alvo.querySelectorAll('.rkLinha').forEach(function(el){
+      el.addEventListener('click', function(){
+        var nome = el.dataset.n;
+        var c = lista.filter(function(x){ return x.nome === nome; })[0];
+        if(c) leitura(c.nome + ' em ' + ano + ': ' + c.qtd + (c.qtd === 1 ? ' compra' : ' compras') +
+              ', somando ' + brlCheio(c.fat) + ', ticket médio de ' + brlCheio(c.fat/c.qtd) + '.');
+        abrirDetalhe('Cliente · ' + ano, nome, function(v){
+          return v.a === ano && v.n && v.n.trim() === nome; });
+      });
+    });
+  }
+
+  function gRecorrentes(){
+    var alvo = document.getElementById('listaRec');
+    var nota = document.getElementById('notaRec');
+    var mapa = porCliente(function(){ return true; });
+    // Recorrente de verdade e quem comprou nos dois anos.
+    var lista = Object.keys(mapa).map(function(k){ return mapa[k]; })
+                  .filter(function(c){ return c.q25 > 0 && c.q26 > 0; })
+                  .sort(function(a,b){ return (b.a25 + b.a26) - (a.a25 + a.a26); });
+
+    if(!lista.length){
+      nota.textContent = 'Nenhum cliente comprou nos dois anos.';
+      alvo.innerHTML = '<div class="nadaAqui">SEM INFORMAÇÃO</div>';
+      return;
+    }
+
+    var somaTot = lista.reduce(function(a,b){ return a + b.a25 + b.a26; }, 0);
+    var soma26  = lista.reduce(function(a,b){ return a + b.a26; }, 0);
+    var tot26   = (D.fat['2026']||[]).reduce(function(a,b){ return a+b; }, 0);
+    nota.textContent = lista.length + (lista.length === 1 ? ' cliente comprou' : ' clientes compraram') +
+      ' em 2025 e voltaram em 2026, somando ' + brlCheio(somaTot) + ' nos dois anos' +
+      (tot26 ? '. Em 2026 eles representam ' + Math.round(soma26/tot26*100) + '% do faturamento' : '') +
+      '. Clique para ver as compras.';
+
+    alvo.innerHTML = lista.slice(0,15).map(function(c, i){
+      var d = c.a25 ? ((c.a26 - c.a25)/c.a25)*100 : null;
+      var cor = d === null ? COR.suave : (d >= 0 ? COR.verde : COR.medio);
+      return '<div class="rkLinha" data-n="' + escapar(c.nome) + '">' +
+        '<span class="rkPos">' + (i+1) + '</span>' +
+        '<span class="rkNome">' + escapar(c.nome) + '</span>' +
+        '<span class="rkAnos"><span>2025 <b>' + brl(c.a25) + '</b></span>' +
+        '<span>2026 <b>' + brl(c.a26) + '</b></span></span>' +
+        '<span class="rkVar" style="color:' + cor + '">' + (d === null ? '—' : pct(d)) + '</span></div>';
+    }).join('');
+
+    alvo.querySelectorAll('.rkLinha').forEach(function(el){
+      el.addEventListener('click', function(){
+        var nome = el.dataset.n;
+        var c = lista.filter(function(x){ return x.nome === nome; })[0];
+        if(c){
+          leitura(c.nome + ': ' + c.q25 + (c.q25 === 1 ? ' compra' : ' compras') + ' em 2025 somando ' +
+            brlCheio(c.a25) + ', e ' + c.q26 + (c.q26 === 1 ? ' compra' : ' compras') + ' em 2026 somando ' +
+            brlCheio(c.a26) + '. No total, ' + brlCheio(c.a25 + c.a26) + ' com a marca.');
+        }
+        abrirDetalhe('Cliente recorrente', nome, function(v){
+          return v.n && v.n.trim() === nome; });
+      });
+    });
   }
 
   /* ---------- KPIs ---------- */
@@ -1654,7 +1795,7 @@ body.modoCapa{min-height:100%}
   /* ---------- desenhar ---------- */
   function desenhar(){
     if(aba === 'comp'){ desenharComparativo(); return; }
-    montarKPIs(); gFaturamento(); gCanal(); gOrigem();
+    montarKPIs(); gFaturamento(); gCanal(); gOrigem(); gTopClientes();
     document.getElementById('notaGeo').textContent =
       'Quantidade de vendas por estado e cidade em ' + ano + '. Clique para ver os clientes.';
     gGeo('gEstados','vEstados', (D.estados||{})[ano], 'estados', COR.marrom, 'e', 'Estado');
