@@ -1,5 +1,5 @@
 {
-  "name": "ciadosono-painel",
-  "version": "1.0.0",
-  "private": true
+  "name": "faturamento-ciadosono",
+  "private": true,
+  "type": "module"
 }
