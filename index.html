@@ -287,15 +287,19 @@ body.modoCapa{
 #telaCapa .grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:20px;margin-top:48px}
 #telaCapa .cartao{
   display:block;text-decoration:none;color:inherit;position:relative;
-  background:rgba(250,244,232,.055);border:1px solid rgba(238,227,209,.20);border-radius:5px;
-  overflow:hidden;transition:transform .2s ease, border-color .2s ease, background .2s ease;
-  backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);
+  background:rgba(20,20,19,.88);border:1px solid rgba(238,227,209,.24);border-radius:5px;
+  overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.34);
+  transition:transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
 }
-#telaCapa .cartao:hover{transform:translateY(-4px);border-color:rgba(238,227,209,.46);background:rgba(250,244,232,.10)}
+#telaCapa .cartao:hover{transform:translateY(-4px);border-color:rgba(238,227,209,.55);
+  background:rgba(20,20,19,.94);box-shadow:0 14px 38px rgba(0,0,0,.42)}
 #telaCapa .cartao:focus-visible{outline:2px solid var(--areia);outline-offset:3px}
 #telaCapa .cartao.espera{cursor:default}
-#telaCapa .cartao.espera:hover{transform:none;border-color:rgba(238,227,209,.20);background:rgba(250,244,232,.055)}
-#telaCapa .capaCartao{height:118px;position:relative;border-bottom:1px solid rgba(238,227,209,.14)}
+#telaCapa .cartao.espera:hover{transform:none;border-color:rgba(238,227,209,.24);
+  background:rgba(20,20,19,.88);box-shadow:0 10px 30px rgba(0,0,0,.34)}
+#telaCapa .capaCartao{height:118px;position:relative;background:rgba(46,30,17,.72);
+  border-bottom:1px solid rgba(238,227,209,.16)}
 #telaCapa .capaCartao svg{width:100%;height:100%;display:block}
 #telaCapa .selo{position:absolute;top:12px;right:12px;font-size:8.5px;font-weight:700;letter-spacing:.14em;
       padding:5px 11px;border-radius:11px}
@@ -303,11 +307,11 @@ body.modoCapa{
 #telaCapa .selo.breve{background:rgba(238,227,209,.16);color:var(--areia);border:1px solid rgba(238,227,209,.28)}
 #telaCapa .corpo{padding:20px 20px 22px}
 #telaCapa .corpo h2{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.03em}
-#telaCapa .corpo p{font-size:12.5px;color:rgba(250,244,232,.62);line-height:1.6;margin-top:9px;min-height:60px}
+#telaCapa .corpo p{font-size:12.5px;color:rgba(250,244,232,.76);line-height:1.6;margin-top:9px;min-height:60px}
 #telaCapa .acao{font-size:11px;font-weight:600;letter-spacing:.04em;margin-top:16px;display:flex;align-items:center;gap:7px}
 #telaCapa .acao .seta{transition:transform .2s ease}
 #telaCapa .cartao:hover .acao .seta{transform:translateX(4px)}
-#telaCapa .espera .acao{color:rgba(250,244,232,.42)}
+#telaCapa .espera .acao{color:rgba(250,244,232,.55)}
 #telaCapa footer{text-align:center;margin-top:44px;font-size:10.5px;letter-spacing:.1em;color:rgba(250,244,232,.42)}
 @media(max-width:900px){#telaCapa .marcaTopo{top:22px;right:22px}
 #telaCapa .logo{width:170px}}
@@ -1565,7 +1569,7 @@ body.modoCapa{background-attachment:scroll}}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 19  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 20  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         desenhar();
         if(aoTerminar) aoTerminar();
       })
