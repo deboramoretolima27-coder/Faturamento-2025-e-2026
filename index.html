@@ -365,7 +365,8 @@ body.modoCapa{min-height:100%}
 #telaCapa .tacao .st{transition:transform .2s ease}
 #telaCapa .tile.viva:hover .tacao .st{transform:translateX(5px)}
 #telaCapa .tile.espera .tacao{color:rgba(250,244,232,.42)}
-#telaCapa .rodape2{margin-top:34px;font-size:10px;letter-spacing:.16em;color:rgba(250,244,232,.36)}
+#telaCapa .rodape2{margin-top:34px;font-family:var(--display);font-size:15px;font-weight:500;
+  letter-spacing:-.01em;color:rgba(250,244,232,.62)}
 
 @media(max-width:640px){
   body{background-attachment:scroll,scroll;padding:26px 14px 48px}
@@ -388,7 +389,7 @@ body.modoCapa{min-height:100%}
   #telaCapa .tile.espera .barra2{display:none}
   #telaCapa .tile.espera .tsub{margin-top:6px}
   #telaCapa .tile.espera .tacao{display:none}
-  #telaCapa .rodape2{margin-top:24px;font-size:9px}
+  #telaCapa .rodape2{margin-top:22px;font-size:13px}
 }
 
 /* ---------- PAINEL EM TEMA ESCURO ---------- */
@@ -513,7 +514,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">LEITURA DIRETA DO MONDAY · NADA É ESTIMADO</p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo.</p>
   </div>
 </div>
 
@@ -1694,8 +1695,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').textContent =
-          'Painel versão 29  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+        document.getElementById('fonte').textContent = 'Nós vamos mudar o sono do mundo.';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
