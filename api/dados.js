@@ -58,4 +58,109 @@ function ranking(mapa, corte) {
     .map((nome) => ({ nome, qtd: mapa[nome].qtd, fat: Math.round(mapa[nome].fat) }))
     .sort((a, b) => b.qtd - a.qtd)
     .slice(0, corte);
+}export default async function handler(req, res) {
+  const fresco = req.query && (req.query.fresh === "1" || req.query.fresh === 1);
+  res.setHeader("Cache-Control", fresco ? "no-store, max-age=0" : "s-maxage=180, stale-while-revalidate=600");
+
+  if (!process.env.MONDAY_TOKEN) {
+    return res.status(500).json({ erro: "MONDAY_TOKEN nao cadastrado no Vercel." });
+  }
+
+  try {
+    const primeira = `query { boards(ids: ${BOARD_ID}) { name items_page(limit: 250) { cursor items { id name column_values(ids: ${IDS}) { id text } } } } }`;
+    const d0 = await monday(primeira);
+    const board = d0.boards[0];
+    let itens = board.items_page.items;
+    let cursor = board.items_page.cursor;
+
+    const proxima = `query($c: String!) { next_items_page(limit: 250, cursor: $c) { cursor items { id name column_values(ids: ${IDS}) { id text } } } }`;
+
+    while (cursor) {
+      const d = await monday(proxima, { c: cursor });
+      itens = itens.concat(d.next_items_page.items);
+      cursor = d.next_items_page.cursor;
+    }
+
+    const fat = {}, qtd = {}, canal = {};
+    const mOrigem = {}, mEstado = {}, mCidade = {}, mVendedor = {};
+    ANOS.forEach((a) => {
+      fat[a] = new Array(12).fill(0);
+      qtd[a] = new Array(12).fill(0);
+      canal[a] = Array.from({ length: 12 }, () => ({ l: 0, o: 0 }));
+      mOrigem[a] = {}; mEstado[a] = {}; mCidade[a] = {}; mVendedor[a] = {};
+    });
+
+    const semAno = { qtd: 0, fat: 0 };
+    const lista = [];
+    const semVendedor = { "2025": { qtd: 0, fat: 0 }, "2026": { qtd: 0, fat: 0 } };
+
+    function somar(mapa, chave, valor) {
+      if (!mapa[chave]) mapa[chave] = { qtd: 0, fat: 0 };
+      mapa[chave].qtd += 1;
+      mapa[chave].fat += valor;
+    }
+
+    itens.forEach((it) => {
+      const cv = {};
+      it.column_values.forEach((c) => (cv[c.id] = c.text));
+      const ano = (cv[COL.ano] || "").trim();
+      const valor = num(cv[COL.valor]);
+
+      if (ANOS.indexOf(ano) === -1) {
+        semAno.qtd += 1; semAno.fat += valor;
+        return;
+      }
+
+      const mi = MESES.indexOf((cv[COL.mes] || "").trim());
+      if (mi >= 0) {
+        fat[ano][mi] += valor;
+        qtd[ano][mi] += 1;
+        const c = (cv[COL.canal] || "").trim().toLowerCase();
+        if (c === "loja") canal[ano][mi].l += 1;
+        else if (c === "online") canal[ano][mi].o += 1;
+      }
+
+      lista.push({
+        n: it.name, a: ano, m: mi, v: valor, d: cv[COL.data] || "",
+        c: vazio(cv[COL.canal]) ? "" : cv[COL.canal].trim(),
+        o: vazio(cv[COL.origem]) ? "" : cv[COL.origem].trim(),
+        e: vazio(cv[COL.estado]) ? "" : cv[COL.estado].trim(),
+        ci: vazio(cv[COL.cidade]) ? "" : cv[COL.cidade].trim(),
+        vd: vazio(cv[COL.vendedor]) ? "" : cv[COL.vendedor].trim(),
+      });
+
+      if (!vazio(cv[COL.origem])) somar(mOrigem[ano], cv[COL.origem].trim(), valor);
+      if (!vazio(cv[COL.estado])) somar(mEstado[ano], cv[COL.estado].trim(), valor);
+      if (!vazio(cv[COL.cidade])) somar(mCidade[ano], cv[COL.cidade].trim(), valor);
+
+      if (vazio(cv[COL.vendedor])) {
+        semVendedor[ano].qtd += 1;
+        semVendedor[ano].fat += valor;
+      } else {
+        somar(mVendedor[ano], cv[COL.vendedor].trim(), valor);
+      }
+    });
+
+    const origens = {}, estados = {}, cidades = {}, vendedores = {};
+    ANOS.forEach((a) => {
+      origens[a] = ranking(mOrigem[a], 12);
+      estados[a] = ranking(mEstado[a], 10);
+      cidades[a] = ranking(mCidade[a], 8);
+      vendedores[a] = ranking(mVendedor[a], 12);
+    });
+
+    res.status(200).json({
+      quadro: board.name,
+      atualizado: new Date().toISOString(),
+      total: itens.length,
+      fat, qtd, canal,
+      origens, estados, cidades, vendedores,
+      metas: METAS,
+      vendas: lista,
+      sem_vendedor: semVendedor,
+      sem_ano: semAno,
+    });
+  } catch (e) {
+    res.status(500).json({ erro: String(e.message || e) });
+  }
 }
