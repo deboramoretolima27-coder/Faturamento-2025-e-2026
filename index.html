@@ -131,6 +131,7 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .rot{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--suave);
      text-align:center;margin-bottom:8px}
 .oculto{display:none!important}
+.dica{display:none}
 .vazio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;
        font-weight:500;letter-spacing:.14em;color:var(--suave);background:var(--branco);text-align:center;
        padding:0 24px;line-height:2}
@@ -192,7 +193,9 @@ canvas{cursor:pointer}
 @media(max-width:640px){
   .voltar{position:static;display:inline-flex;margin-bottom:16px}
   /* rolagem lateral para graficos com muitos meses */
-  .tela.metagrafico,.tela.alta{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch}
+  .tela.metagrafico,.tela.alta{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+    scrollbar-width:thin}
+  .dica{display:block;font-size:10px;color:var(--suave);letter-spacing:.04em;margin-top:8px;text-align:center}
   .tela.metagrafico canvas,.tela.alta canvas{min-width:660px}
   .par{gap:22px}
   /* abas ocupam a largura toda e ficam do tamanho do dedo */
@@ -486,6 +489,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
             </div>
           </div>
           <div class="tela alta"><canvas id="gComp"></canvas></div>
+          <span class="dica">deslize o gráfico para o lado</span>
         </div>
         <div class="card c12">
           <div class="topo"><div>
@@ -506,6 +510,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
         </div>
         <div class="placar" id="placarMeta"></div></div>
         <div class="tela metagrafico"><canvas id="gFat"></canvas><div class="vazio oculto" id="vFat"></div></div>
+        <span class="dica">deslize o gráfico para o lado</span>
         <div class="faixasLeg" id="legFaixas"></div>
       </div>
 
@@ -519,6 +524,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           </div>
         </div>
         <div id="canalUnico" class="tela alta"><canvas id="gCanal"></canvas></div>
+        <span class="dica">deslize o gráfico para o lado</span>
         <div id="canalDuplo" class="oculto"><div class="par">
           <div><div class="rot">Loja</div><div class="tela"><canvas id="gLoja"></canvas></div></div>
           <div><div class="rot">Online</div><div class="tela"><canvas id="gOnline"></canvas></div></div>
@@ -583,6 +589,15 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
   var FONTE = "'Helvetica Now Text','Inter','Helvetica Neue',Arial,sans-serif";
 
   var D = null, ano = '2026', modoCanal = '2026', modoOrigem = 'pizza', aba = 'geral', modoComp = 'fat';
+  function telaPequena(){
+    if(window.matchMedia) return window.matchMedia('(max-width:640px)').matches;
+    return (window.innerWidth || 1200) <= 640;
+  }
+  var MINI = telaPequena();
+  window.addEventListener('resize', function(){
+    var agora = telaPequena();
+    if(agora !== MINI){ MINI = agora; if(D) desenhar(); }
+  });
   var ANO_META = '2026';
 
   /* Metas oficiais CiaDoSono. Usadas se a API nao devolver a tabela. */
@@ -1102,7 +1117,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
   function faixasMeta(mt, u){
     return { id:'fx' + Math.random().toString(36).slice(2),
       afterDatasetsDraw:function(chart){
-        var ctx = chart.ctx, x = chart.scales.x, y = chart.scales.y, w = 62, GAP = 20;
+        var ctx = chart.ctx, x = chart.scales.x, y = chart.scales.y, w = MINI ? 46 : 62, GAP = 20;
         for(var i = 0; i <= u; i++){
           var cx = x.getPixelForValue(i);
           var yM = y.getPixelForValue(mt.meta[i]);
@@ -1115,10 +1130,15 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           ctx.beginPath(); ctx.moveTo(cx - w/2, yS); ctx.lineTo(cx + w/2, yS); ctx.stroke();
           ctx.setLineDash([]); ctx.strokeStyle = COR.preto; ctx.lineWidth = 2.5;
           ctx.beginPath(); ctx.moveTo(cx - w/2, yM); ctx.lineTo(cx + w/2, yM); ctx.stroke();
-          var aM = yM, aS = Math.min(yS, aM - GAP), aH = Math.min(yH, aS - GAP);
-          desenhaFlag(ctx, cx, aH, yH, 'HIPER', mil(mt.hiper[i]), COR.areia, COR.marrom, .55, w/2);
-          desenhaFlag(ctx, cx, aS, yS, 'SUPER', mil(mt['super'][i]), COR.medio, '#FAF4E8', .6, w/2);
-          desenhaFlag(ctx, cx, aM, yM, 'META',  mil(mt.meta[i]),  COR.preto, '#FAF4E8', .6, w/2);
+          if(MINI){
+            // Em tela pequena as tres etiquetas nao cabem. Fica so a Meta.
+            desenhaFlag(ctx, cx, yM, yM, 'META', mil(mt.meta[i]), COR.preto, '#FAF4E8', .6, w/2);
+          } else {
+            var aM = yM, aS = Math.min(yS, aM - GAP), aH = Math.min(yH, aS - GAP);
+            desenhaFlag(ctx, cx, aH, yH, 'HIPER', mil(mt.hiper[i]), COR.areia, COR.marrom, .55, w/2);
+            desenhaFlag(ctx, cx, aS, yS, 'SUPER', mil(mt['super'][i]), COR.medio, '#FAF4E8', .6, w/2);
+            desenhaFlag(ctx, cx, aM, yM, 'META',  mil(mt.meta[i]),  COR.preto, '#FAF4E8', .6, w/2);
+          }
           ctx.restore();
         }
       }};
@@ -1144,25 +1164,28 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           if(mt){
             var p = v/mt.meta[i]*100, ok = v >= mt.meta[i];
             var txt = p.toFixed(0) + '%';
-            ctx.font = '700 13px ' + FONTE;
-            var lw = ctx.measureText(txt).width + 18;
+            var cp = MINI ? 11 : 13, alt = MINI ? 19 : 21, sobe = MINI ? 34 : 40;
+            ctx.font = '700 ' + cp + 'px ' + FONTE;
+            var lw = ctx.measureText(txt).width + (MINI ? 13 : 18);
             ctx.fillStyle = ok ? COR.vivo : '#F2EADC';
-            ctx.beginPath(); ctx.roundRect(el.x - lw/2, topo - 40, lw, 21, 10.5); ctx.fill();
+            ctx.beginPath(); ctx.roundRect(el.x - lw/2, topo - sobe, lw, alt, alt/2); ctx.fill();
             ctx.fillStyle = ok ? '#FFFFFF' : COR.marrom; ctx.textBaseline = 'middle';
-            ctx.fillText(txt, el.x, topo - 29);
+            ctx.fillText(txt, el.x, topo - sobe + alt/2);
             ctx.textBaseline = 'alphabetic';
-            ctx.fillStyle = COR.suave; ctx.font = '600 11px ' + FONTE;
-            ctx.fillText('R$ ' + mil(v), el.x, topo - 48);
+            ctx.fillStyle = COR.suave; ctx.font = '600 ' + (MINI ? 9.5 : 11) + 'px ' + FONTE;
+            ctx.fillText('R$ ' + mil(v), el.x, topo - sobe - 5);
             var nv = v >= mt.hiper[i] ? 'HIPER META'
                    : (v >= mt['super'][i] ? 'SUPER META'
                    : (v >= mt.meta[i] ? 'META BATIDA' : null));
             if(nv){
-              ctx.font = '700 9px ' + FONTE;
-              var sw = ctx.measureText(nv).width + 18;
+              if(MINI) nv = nv.replace(' META','').replace('META BATIDA','META');
+              ctx.font = '700 ' + (MINI ? 8 : 9) + 'px ' + FONTE;
+              var sw = ctx.measureText(nv).width + (MINI ? 12 : 18);
+              var sy = MINI ? base + 46 : base + 52, sh = MINI ? 16 : 19;
               ctx.fillStyle = COR.vivo;
-              ctx.beginPath(); ctx.roundRect(el.x - sw/2, base + 52, sw, 19, 9.5); ctx.fill();
+              ctx.beginPath(); ctx.roundRect(el.x - sw/2, sy, sw, sh, sh/2); ctx.fill();
               ctx.fillStyle = '#FFFFFF'; ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
-              ctx.fillText(nv, el.x, base + 62);
+              ctx.fillText(nv, el.x, sy + sh/2);
               ctx.textBaseline = 'alphabetic';
             }
           } else {
@@ -1217,11 +1240,11 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
     }
 
     var op = clone(BASE);
-    op.layout = {padding:{top: mt ? 70 : 36, bottom: mt ? 80 : 22}};
+    op.layout = {padding:{top: mt ? (MINI ? 52 : 70) : 36, bottom: mt ? (MINI ? 68 : 80) : 22}};
     op.scales.x.stacked = !!mt; op.scales.y.stacked = !!mt;
     op.scales.x.ticks.color = COR.marrom;
     op.scales.x.ticks.font = {family:FONTE, size:12, weight:'600'};
-    op.scales.x.ticks.padding = mt ? 34 : 22;
+    op.scales.x.ticks.padding = mt ? (MINI ? 28 : 34) : 22;
     op.scales.y.grid = {color:'#F0E9DE'};
     op.scales.y.ticks.padding = 6;
     op.scales.y.ticks.callback = function(v){ return brl(v); };
@@ -1585,7 +1608,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 24  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 25  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
