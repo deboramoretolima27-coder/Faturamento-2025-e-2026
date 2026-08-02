@@ -674,7 +674,6 @@ body.modoCapa{min-height:100%}
       <div class="card c12">
         <div class="topo">
           <div><h2>Maiores clientes do ano</h2><div class="nota" id="notaTop"></div></div>
-          <div class="placar" id="placarTop"></div>
         </div>
         <div class="funil"><svg id="svgTop" role="img" aria-label="Funil dos maiores clientes do ano"></svg></div>
       </div>
@@ -1213,32 +1212,41 @@ body.modoCapa{min-height:100%}
   function gTopClientes(){
     var svg = document.getElementById('svgTop');
     var nota = document.getElementById('notaTop');
-    var placar = document.getElementById('placarTop');
     var mapa = porCliente(function(v){ return v.a === ano; });
-    var lista = Object.keys(mapa).map(function(k){ return mapa[k]; })
-                  .sort(function(a,b){ return b.fat - a.fat; }).slice(0,10);
 
-    if(!lista.length){
-      nota.textContent = 'SEM INFORMAÇÃO em ' + ano + '.';
-      svg.innerHTML = ''; placar.innerHTML = '';
-      return;
+    // Alem do total, guarda quanto o cliente pesou em cada mes que comprou.
+    var porMes = {};
+    (D.vendas || []).forEach(function(v){
+      if(v.a !== ano || !v.n || v.m < 0) return;
+      var k = v.n.trim().toLowerCase().replace(/\s+/g,' ');
+      if(!porMes[k]) porMes[k] = {};
+      porMes[k][v.m] = (porMes[k][v.m] || 0) + v.v;
+    });
+
+    var lista = Object.keys(mapa).map(function(k){
+      var c = mapa[k]; c.chave = k; return c;
+    }).sort(function(a,b){ return b.fat - a.fat; }).slice(0,10);
+
+    if(!lista.length){ nota.textContent = 'SEM INFORMAÇÃO em ' + ano + '.'; svg.innerHTML = ''; return; }
+
+    var fatMes = D.fat[ano] || [];
+    nota.textContent = 'Cada faixa é um cliente. À direita, o peso que ele teve no mês em que comprou. ' +
+      'Clique para ver as compras.';
+
+    // Meses do cliente, do maior peso para o menor.
+    function pesos(chave){
+      var m = porMes[chave] || {};
+      return Object.keys(m).map(function(i){
+        i = parseInt(i,10);
+        return {mes:i, valor:m[i], p: fatMes[i] ? m[i]/fatMes[i]*100 : 0};
+      }).sort(function(a,b){ return b.p - a.p; });
     }
 
-    var totalAno = (D.fat[ano]||[]).reduce(function(a,b){ return a+b; }, 0) || 1;
-    var soma = lista.reduce(function(a,b){ return a + b.fat; }, 0);
-    nota.textContent = 'Cada faixa é um cliente e a largura é o quanto ele faturou em ' + ano +
-      '. Clique para ver as compras.';
-
-    placar.innerHTML =
-      '<div><div class="pn">TOP 10</div><div class="pv">' + Math.round(soma/totalAno*100) + '%</div></div>' +
-      '<div><div class="pn">MAIOR CLIENTE</div><div class="pv">' +
-        (lista[0].fat/totalAno*100).toFixed(1).replace('.',',') + '%</div></div>';
-
-    // O nome fica dentro da faixa, entao ele nunca e cortado.
-    var LARG = 820, TOPO = 14, ALT = 34, GAP = 10, CENTRO = 410, LMAX = 700;
+    var LARG = 820, TOPO = 14, ALT = 34, GAP = 10, CENTRO = 360, LMAX = 620;
     var maxV = lista[0].fat;
     var altura = TOPO * 2 + lista.length * (ALT + GAP);
     svg.setAttribute('viewBox', '0 0 ' + LARG + ' ' + altura);
+    var ff = FONTE.replace(/"/g,"'");
 
     var html = '';
     lista.forEach(function(c, i){
@@ -1247,17 +1255,22 @@ body.modoCapa{min-height:100%}
       var x = CENTRO - w/2;
       var corFundo = RAMPA[i % RAMPA.length];
       var corTexto = i < 5 ? '#241A12' : '#FAF4E8';
+
+      var ps = pesos(c.chave);
+      var txt = ps.length
+        ? ps.slice(0,2).map(function(o){
+            return MES[o.mes] + ' ' + o.p.toFixed(1).replace('.',',') + '% do mês';
+          }).join('  ·  ') + (ps.length > 2 ? '  ·  +' + (ps.length-2) : '')
+        : 'mês não registrado';
+
       html += '<g class="faixa" data-n="' + escapar(c.nome) + '">' +
         '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + ALT + '" rx="3" fill="' + corFundo + '"/>' +
         '<text x="' + (x + 14) + '" y="' + (y + ALT/2 + 4) + '" font-size="12.5" font-weight="600" ' +
-          'fill="' + corTexto + '" font-family="' + FONTE.replace(/"/g,"'") + '">' + escapar(c.nome) + '</text>' +
+          'fill="' + corTexto + '" font-family="' + ff + '">' + escapar(c.nome) + '</text>' +
         '<text x="' + (x + w - 14) + '" y="' + (y + ALT/2 + 4) + '" text-anchor="end" font-size="12.5" ' +
-          'font-weight="700" fill="' + corTexto + '" font-family="' + FONTE.replace(/"/g,"'") + '">' +
-          brlCheio(c.fat) + '</text>' +
+          'font-weight="700" fill="' + corTexto + '" font-family="' + ff + '">' + brlCheio(c.fat) + '</text>' +
         '<text x="' + (x + w + 12) + '" y="' + (y + ALT/2 + 4) + '" font-size="10.5" ' +
-          'fill="rgba(250,244,232,.5)" font-family="' + FONTE.replace(/"/g,"'") + '">' +
-          (c.fat/totalAno*100).toFixed(1).replace('.',',') + '% · ' + c.qtd +
-          (c.qtd === 1 ? ' compra' : ' compras') + '</text>' +
+          'fill="rgba(250,244,232,.55)" font-family="' + ff + '">' + escapar(txt) + '</text>' +
         '</g>';
     });
     svg.innerHTML = html;
@@ -1266,9 +1279,18 @@ body.modoCapa{min-height:100%}
       g.addEventListener('click', function(){
         var nome = g.dataset.n;
         var c = lista.filter(function(x){ return x.nome === nome; })[0];
-        if(c) leitura(c.nome + ' em ' + ano + ': ' + c.qtd + (c.qtd === 1 ? ' compra' : ' compras') +
-              ', somando ' + brlCheio(c.fat) + ', ' + (c.fat/totalAno*100).toFixed(1).replace('.',',') +
-              '% do faturamento do ano, com ticket médio de ' + brlCheio(c.fat/c.qtd) + '.');
+        if(c){
+          var ps = pesos(c.chave);
+          var t = c.nome + ' em ' + ano + ': ' + c.qtd + (c.qtd === 1 ? ' compra' : ' compras') +
+                  ', somando ' + brlCheio(c.fat) + '.';
+          if(ps.length){
+            t += ' ' + ps.map(function(o){
+              return 'Em ' + MESL[o.mes] + ' fez ' + brlCheio(o.valor) + ', ' +
+                     o.p.toFixed(1).replace('.',',') + '% do faturamento do mês';
+            }).join('. ') + '.';
+          }
+          leitura(t);
+        }
         abrirDetalhe('Cliente · ' + ano, nome, function(v){
           return v.a === ano && v.n && v.n.trim() === nome; });
       });
