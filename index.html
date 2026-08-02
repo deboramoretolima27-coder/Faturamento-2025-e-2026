@@ -262,23 +262,26 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
   display:flex;flex-direction:column;justify-content:center;padding:56px 30px 52px}
 #telaCapa .dentro{max-width:1120px;margin:0 auto;width:100%}
 
-#telaCapa .topo2{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+#telaCapa .topo2{display:flex;justify-content:space-between;align-items:flex-start;gap:28px;flex-wrap:wrap}
+#telaCapa .ladoEsq{min-width:0;flex:1 1 320px}
+#telaCapa .ladoDir{display:flex;flex-direction:column;align-items:flex-end;gap:14px;flex:none}
 #telaCapa .logo{width:190px;height:auto;color:var(--offwhite);display:block}
 #telaCapa h1{font-family:var(--display);font-size:clamp(28px,4vw,40px);font-weight:700;
-  letter-spacing:-.05em;line-height:1;color:var(--offwhite);margin-top:16px}
+  letter-spacing:-.05em;line-height:1;color:var(--offwhite);margin-top:4px}
 #telaCapa .lead{font-size:13.5px;line-height:1.6;color:rgba(250,244,232,.62);margin-top:12px;max-width:430px}
 #telaCapa .carimbo{font-size:11px;color:rgba(250,244,232,.48);text-align:right;line-height:1.7;white-space:nowrap}
 #telaCapa .carimbo b{color:rgba(250,244,232,.8);font-weight:600}
 
 #telaCapa .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:18px;margin-top:38px}
 #telaCapa .tile{display:block;text-decoration:none;color:inherit;
-  background:rgba(20,20,19,.86);border:1px solid rgba(238,227,209,.20);border-radius:4px;
-  padding:20px 20px 22px;box-shadow:0 10px 30px rgba(0,0,0,.30);
+  background:#141413;border:1px solid rgba(238,227,209,.22);border-radius:4px;
+  padding:20px 20px 22px;box-shadow:0 12px 34px rgba(0,0,0,.46);
   transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease}
-#telaCapa .tile.viva:hover{transform:translateY(-3px);border-color:rgba(238,227,209,.52);
-  box-shadow:0 14px 38px rgba(0,0,0,.4)}
+#telaCapa .tile.viva:hover{transform:translateY(-3px);border-color:rgba(238,227,209,.55);
+  background:#1C1A17;box-shadow:0 18px 44px rgba(0,0,0,.55)}
 #telaCapa .tile.viva:focus-visible{outline:2px solid var(--areia);outline-offset:3px}
-#telaCapa .tile.espera{opacity:.5}
+#telaCapa .tile.espera{opacity:.72;background:rgba(20,20,19,.92)}
+#telaCapa .tile.espera .tvalor,#telaCapa .tile.espera .tsub{opacity:.62}
 
 #telaCapa .tcab{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #telaCapa .tnome{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(250,244,232,.55)}
@@ -304,6 +307,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
   #telaCapa{padding:38px 16px 40px;background-attachment:scroll,scroll}
   #telaCapa .topo2{flex-direction:column;align-items:flex-start}
   #telaCapa .carimbo{text-align:left;white-space:normal}
+  #telaCapa .ladoDir{align-items:flex-start;order:-1;width:100%}
   #telaCapa .logo{width:min(230px,62vw)}
   #telaCapa .tiles{gap:12px;margin-top:26px}
 }
@@ -315,7 +319,11 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
   <div class="dentro">
 
     <div class="topo2">
-      <div>
+      <div class="ladoEsq">
+        <h1>Comercial CiaDoSono</h1>
+        <p class="lead">Todos os indicadores da operação em um só lugar, lidos direto do monday e atualizados em tempo real.</p>
+      </div>
+      <div class="ladoDir">
         <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="logo" viewBox="0 0 1012.61 356.665">
 <path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 360.421875 206.132812 C 370.59375 206.132812 382.773438 201.171875 392 197.382812 L 386.914062 216.183594 C 379.816406 218.195312 371.3125 222.101562 354.046875 222.101562 C 327.5625 222.101562 315.621094 205.078125 322.832031 177.644531 C 329.925781 151.386719 351.085938 134.019531 377.570312 134.019531 C 394.835938 134.019531 401.332031 137.792969 407.367188 139.933594 L 402.394531 158.605469 C 395.183594 155.074219 385.609375 150.101562 375.433594 150.101562 C 359.832031 150.101562 348.484375 164.289062 344.707031 178.351562 C 340.804688 192.660156 344.816406 206.132812 360.421875 206.132812 "/>
 <path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 431.335938 151.386719 L 411.246094 151.386719 L 415.378906 136.023438 L 435.480469 136.023438 Z M 409.230469 159.085938 L 429.332031 159.085938 L 412.894531 220.4375 L 392.914062 220.4375 Z M 409.230469 159.085938 "/>
@@ -328,10 +336,8 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
 <path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 884.121094 209.207031 C 894.054688 209.207031 899.136719 199.859375 901.855469 189.824219 C 904.691406 179.417969 904.578125 170.191406 894.648438 170.191406 C 884.828125 170.191406 879.753906 179.417969 876.910156 189.824219 C 874.1875 199.859375 874.1875 209.207031 884.121094 209.207031 M 898.074219 157.1875 C 918.410156 157.070312 926.6875 171.261719 921.828125 189.703125 C 916.875 208.144531 901.03125 222.332031 880.699219 222.207031 C 860.472656 222.101562 852.316406 208.144531 857.167969 189.703125 C 862.011719 171.261719 877.863281 157.304688 898.074219 157.1875 "/>
 <path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 120.777344 210.316406 C 76.152344 149.417969 155.410156 78.382812 222.785156 98.824219 C 222.800781 98.824219 222.796875 98.851562 222.78125 98.851562 C 184.421875 94.96875 155.957031 108.703125 140.199219 127.648438 C 116.273438 156.398438 121.898438 185.308594 135.46875 195.964844 C 151.5 208.5625 173.828125 211.042969 206.847656 167.832031 C 219.542969 151.214844 230.222656 146.15625 242.675781 150.589844 C 258.660156 156.289062 264.617188 176.601562 254.253906 193.777344 C 218.03125 253.800781 145.796875 244.449219 120.777344 210.316406 M 283.886719 166.546875 C 280.285156 200.34375 252.59375 237.097656 194.648438 241.570312 C 194.632812 241.570312 194.625 241.546875 194.644531 241.542969 C 239.835938 232.621094 261.96875 206.570312 269.6875 185.324219 C 278.558594 160.886719 268.789062 133.0625 240.242188 131.125 C 221.207031 129.839844 212.613281 139.574219 194.609375 161.761719 C 173.496094 187.761719 159.367188 188.808594 148.207031 180.367188 C 134.207031 169.785156 135.816406 144.730469 155.347656 124.316406 C 174.652344 104.125 213.84375 96.71875 248.015625 106.933594 C 248.65625 107.125 249.234375 106.402344 248.476562 105.894531 C 178.003906 58.570312 80.816406 116.445312 90.714844 194.828125 C 103.722656 297.875 290.246094 292.726562 285.34375 166.578125 C 285.308594 165.699219 283.972656 165.679688 283.886719 166.546875 "/>
 </svg>
-        <h1>Comercial CiaDoSono</h1>
-        <p class="lead">Todos os indicadores da operação em um só lugar, lidos direto do monday e atualizados em tempo real.</p>
+        <div class="carimbo" id="carimboCapa">carregando os números…</div>
       </div>
-      <div class="carimbo" id="carimboCapa">carregando os números…</div>
     </div>
 
     <div class="tiles">
@@ -1531,7 +1537,7 @@ body.modoCapa{min-height:100%;background:#0E0D0C;color:var(--offwhite)}
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
         document.getElementById('fonte').textContent =
-          'Painel versão 22  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
+          'Painel versão 23  ·  Leitura direta do monday. Nada é estimado. Onde a informação não existe, o painel mostra SEM INFORMAÇÃO.';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
