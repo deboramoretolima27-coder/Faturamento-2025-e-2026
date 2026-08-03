@@ -74,16 +74,18 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .abas button:focus-visible{outline:2px solid var(--marrom-medio);outline-offset:-4px}
 .aviso{background:var(--areia);border-radius:3px;padding:13px 18px;font-size:12px;color:var(--marrom);
        line-height:1.55;margin-bottom:20px;text-align:center}
-.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
-.mesBox .chd{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;font-size:7.5px;font-weight:700;
-  letter-spacing:.12em;color:rgba(250,244,232,.35);padding-bottom:6px}
-.mesBox .chd span:nth-child(n+2){text-align:right}
-.mesBox .crow{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;align-items:baseline;padding:6px 0;
-  border-bottom:1px solid rgba(238,227,209,.08);font-size:11px}
-.mesBox .crow:last-of-type{border-bottom:0}
-.mesBox .crow .cn{font-weight:600;color:var(--offwhite)}
-.mesBox .crow .cv{text-align:right;color:rgba(250,244,232,.55);font-variant-numeric:tabular-nums;white-space:nowrap}
-.mesBox .crow .cv b{color:var(--offwhite);font-weight:600}
+.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:10px}
+.mesBox .cn1{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:11px}
+.mesBox .cn1:first-of-type{margin-top:0}
+.mesBox .cnNome{display:flex;align-items:center;gap:8px;min-width:0}
+.mesBox .cnNome .nm{font-size:11.5px;font-weight:700;letter-spacing:.06em;color:var(--offwhite)}
+.mesBox .tagSt{font-size:8px;font-weight:700;letter-spacing:.1em;padding:3px 8px;border-radius:9px;white-space:nowrap}
+.mesBox .cnQtd{font-size:11px;color:rgba(250,244,232,.5);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mesBox .cn2{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:5px;
+  padding-bottom:9px;border-bottom:1px solid rgba(238,227,209,.09)}
+.mesBox .cnVal{font-size:11.5px;color:rgba(250,244,232,.55);font-variant-numeric:tabular-nums}
+.mesBox .cnVal b{color:var(--offwhite);font-weight:600}
+.mesBox .cnDif{font-size:12px;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
 .mesBox .par2{display:flex;justify-content:space-between;font-size:11px;margin-top:9px;color:var(--suave)}
 .mesBox .par2 b{font-weight:600;color:var(--marrom)}
 .mesBox .dif{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.03em;margin-top:10px}
@@ -849,7 +851,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v64</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v65</span></p>
   </div>
 </div>
 
@@ -1756,13 +1758,27 @@ body.modoCapa{min-height:100%}
       var semB = Math.max((qB[k] || 0) - cB.l - cB.o, 0);
 
       var vA = vcA[k] || {l:0,o:0,s:0}, vB = vcB[k] || {l:0,o:0,s:0};
+      // O status de cada canal segue o faturamento, nao a quantidade.
       function linhaCn(nome, q25, q26, f25, f26){
-        var subiu = f26 >= f25;
-        return '<div class="crow"><span class="cn">' + nome + '</span>' +
-               '<span class="cv">' + q25 + ' → <b>' + q26 + '</b></span>' +
-               '<span class="cv">' + brlCheio(f25) + ' → <b style="color:' +
-                 (emCurso ? COR.suave : (subiu ? COR.vivo : COR.medio)) + '">' +
-                 brlCheio(f26) + '</b></span></div>';
+        var dv = f26 - f25, subiu = dv >= 0;
+        var corC = emCurso ? COR.suave : (subiu ? COR.vivo : '#E0B23C');
+        var fundo = emCurso ? 'rgba(250,244,232,.10)'
+                  : (subiu ? 'rgba(61,220,132,.16)' : 'rgba(224,178,60,.16)');
+        var rotulo = emCurso ? 'EM CURSO' : (subiu ? '▲ AUMENTOU' : '▼ DIMINUIU');
+        var pctT = (!emCurso && f25) ? '  ·  ' + (subiu ? '+' : '−') +
+                    Math.abs(dv/f25*100).toFixed(0) + '%' : '';
+        return '<div class="cn1">' +
+                 '<span class="cnNome"><span class="nm">' + nome + '</span>' +
+                 '<span class="tagSt" style="background:' + fundo + ';color:' + corC + '">' +
+                   rotulo + '</span></span>' +
+                 '<span class="cnQtd">' + q25 + ' → ' + q26 + ' vendas</span>' +
+               '</div>' +
+               '<div class="cn2">' +
+                 '<span class="cnVal">' + brlCheio(f25) + ' → <b>' + brlCheio(f26) + '</b></span>' +
+                 '<span class="cnDif" style="color:' + corC + '">' +
+                   (emCurso ? '—' : (subiu ? '+' : '−') + brlCheio(Math.abs(dv)) + pctT) +
+                 '</span>' +
+               '</div>';
       }
 
       caixas += '<div class="mesBox' + (emCurso ? ' curso' : '') + '" data-m="' + k + '">' +
@@ -1778,9 +1794,8 @@ body.modoCapa{min-height:100%}
                     : '2026 fez ' + brlCheio(b - a) + ' a menos'))) +
         '</div>' +
         '<div class="canais">' +
-          '<div class="chd"><span>CANAL</span><span>VENDAS</span><span>FATURAMENTO</span></div>' +
-          linhaCn('Loja', cB.l, cA.l, vB.l, vA.l) +
-          linhaCn('Online', cB.o, cA.o, vB.o, vA.o) +
+          linhaCn('LOJA', cB.l, cA.l, vB.l, vA.l) +
+          linhaCn('ONLINE', cB.o, cA.o, vB.o, vA.o) +
           ((semA || semB)
             ? '<div class="semreg">Canal não registrado: ' + semB + ' venda' + (semB === 1 ? '' : 's') +
               ' em 2025 (' + brlCheio(vB.s) + ') e ' + semA + ' em 2026 (' + brlCheio(vA.s) +
@@ -2785,7 +2800,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v64</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v65</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
