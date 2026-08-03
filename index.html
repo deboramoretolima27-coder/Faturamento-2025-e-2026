@@ -787,7 +787,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v52</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v53</span></p>
   </div>
 </div>
 
@@ -2609,7 +2609,10 @@ body.modoCapa{min-height:100%}
     if(u < 0){ leitura(ano + ': SEM INFORMAÇÃO no quadro.'); return; }
     var fat = (D.fat[ano]||[]).slice(0,u+1).reduce(function(a,b){return a+b;},0);
     var qtd = (D.qtd[ano]||[]).slice(0,u+1).reduce(function(a,b){return a+b;},0);
-    leitura(ano + ' até ' + MESL[u] + ': ' + brlCheio(fat) + ' em ' + qtd +
+    // No ano corrente a leitura fala do agora. Em ano fechado, do periodo inteiro.
+    var hoje3 = new Date();
+    var corrente = (String(hoje3.getFullYear()) === ano);
+    leitura(ano + (corrente ? ' até o momento' : ', ano fechado') + ': ' + brlCheio(fat) + ' em ' + qtd +
             ' vendas. Clique em qualquer barra para ver os clientes.');
   }
 
@@ -2643,7 +2646,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v52</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v53</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
