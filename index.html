@@ -851,7 +851,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v69</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v70</span></p>
   </div>
 </div>
 
@@ -2712,7 +2712,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v69</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v70</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -3016,8 +3016,10 @@ body.modoCapa{min-height:100%}
     var abertas = L.filter(function(l){ return l.s === 'aberto'; });
     var fatG = ganhas.reduce(function(a,b){ return a + b.v; }, 0);
     var fatA = abertas.reduce(function(a,b){ return a + b.v; }, 0);
+    // Conversao sobre tudo que entrou, nao so sobre o que ja foi decidido.
+    var conv = L.length ? ganhas.length/L.length*100 : 0;
     var decididos = ganhas.length + perdidas.length;
-    var conv = decididos ? ganhas.length/decididos*100 : 0;
+    var fechamento = decididos ? ganhas.length/decididos*100 : 0;
 
     function card(rot, val, sub){
       return '<div class="kpi"><div class="rot">' + rot + '</div><div class="val">' + val + '</div>' +
@@ -3027,7 +3029,8 @@ body.modoCapa{min-height:100%}
       card('Leads no período', L.length,
            abertas.length + ' em aberto, ' + ganhas.length + ' ganhas e ' + perdidas.length + ' perdidas') +
       card('Vendas ganhas', ganhas.length,
-           'Conversão de ' + conv.toFixed(1).replace('.',',') + '% sobre os negócios decididos') +
+           'Conversão de ' + conv.toFixed(1).replace('.',',') + '% sobre os ' + L.length +
+           ' leads que entraram') +
       card('Faturamento ganho', brlCheio(fatG),
            ganhas.length ? 'Ticket médio de ' + brlCheio(fatG/ganhas.length) : '') +
       card('Pipeline aberto', brlCheio(fatA),
@@ -3039,8 +3042,8 @@ body.modoCapa{min-height:100%}
       ? 'Ano de ' + hj.getFullYear() + ' até ' + MESL[hj.getMonth()].toLowerCase()
       : 'Mês de ' + MESL[hj.getMonth()] + ' de ' + hj.getFullYear();
     document.getElementById('pfLeitura').textContent =
-      rotuloPeriodo + ': ' + L.length +
-      ' leads, ' + ganhas.length + ' viraram venda somando ' + brlCheio(fatG) + '. ' +
+      rotuloPeriodo + ': ' + L.length + ' leads, ' + ganhas.length + ' viraram venda somando ' +
+      brlCheio(fatG) + ', conversão de ' + conv.toFixed(1).replace('.',',') + '%. ' +
       brlCheio(fatA) + ' seguem em aberto e ' + brlCheio(perdidoV) + ' foram perdidos.';
   }
 
