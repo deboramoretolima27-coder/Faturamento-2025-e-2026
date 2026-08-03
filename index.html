@@ -871,7 +871,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v77</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v74</span></p>
   </div>
 </div>
 
@@ -1323,8 +1323,7 @@ body.modoCapa{min-height:100%}
     } else {
       var ordenada = lista.slice().sort(function(a,b){ return (b.v||0) - (a.v||0); });
       filtroAtual = ordenada.map(function(l){
-        var nm = (!l.n || /^\d+$/.test(String(l.n).trim())) ? 'Cliente sem nome' : l.n;
-        return {n:nm, d:l.e, c:l.md, vd:l.vd, o:l.o, ci:l.ci, e:'', v:l.v || 0, st:l.st};
+        return {n:l.n, d:l.e, c:l.md, vd:l.vd, o:l.o, ci:l.ci, e:'', v:l.v || 0, st:l.st};
       });
       corpo.innerHTML = filtroAtual.map(function(v){
         var det = [];
@@ -2745,7 +2744,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v77</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v74</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2992,7 +2991,7 @@ body.modoCapa{min-height:100%}
               'Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
   var F = null;                 // dados do funil
-  var MESREF = new Date().getMonth();   // ajustado depois para o ultimo mes com movimento
+  var MESREF = new Date().getMonth();   // o relatorio e sempre do mes corrente
   var eixoOrigem = 'ganho';
   var ordemFila = 'valor';
   var graficos = {};
@@ -3005,12 +3004,6 @@ body.modoCapa{min-height:100%}
   function brlCheio(v){
     return (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
   }
-  // Se vier so numero, e o codigo do monday, nao o nome do cliente.
-  function nomeCliente(t){
-    var v = String(t == null ? '' : t).trim();
-    return (!v || /^\d+$/.test(v)) ? 'Cliente sem nome' : v;
-  }
-
   function esc(t){
     return String(t == null ? '' : t)
       .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -3033,19 +3026,6 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- recorte do periodo ---------- */
-  // Se o mes corrente ainda nao teve movimento, o painel mostra o ultimo mes com dado.
-  function ajustarMes(){
-    if(!F || !F.leads.length) return;
-    var tem = function(m){
-      return F.leads.some(function(l){ return l.me === m || l.mf === m; });
-    };
-    if(tem(MESREF)) return;
-    var atual = new Date().getMonth();
-    for(var m = atual; m >= 0; m--){
-      if(tem(m)){ MESREF = m; return; }
-    }
-  }
-
   // Entra no relatorio quem chegou no mes ou quem fechou no mes, mesmo tendo entrado antes.
   function recorte(){
     if(!F) return [];
@@ -3401,7 +3381,7 @@ body.modoCapa{min-height:100%}
 
     alvo.innerHTML = lista.map(function(p){
       var linhas = p.itens.slice().sort(function(a,b){ return b.v - a.v; }).slice(0, 6).map(function(l){
-        return '<div><b>' + esc(nomeCliente(l.n)) + '</b><span>' + (l.v ? brlCheio(l.v) : '—') + '</span></div>';
+        return '<div><b>' + esc(l.n) + '</b><span>' + (l.v ? brlCheio(l.v) : '—') + '</span></div>';
       }).join('');
       var resto = p.itens.length > 6
         ? '<div><b>+ ' + (p.itens.length - 6) + ' clientes</b><span>—</span></div>' : '';
@@ -3483,7 +3463,7 @@ body.modoCapa{min-height:100%}
       if(l.o) tags.push(l.o);
       if(l.vd) tags.push(l.vd);
       return '<div class="ng" data-id="' + l.id + '">' +
-        '<div><div class="nn">' + esc(nomeCliente(l.n)) + '</div>' +
+        '<div><div class="nn">' + esc(l.n) + '</div>' +
           '<div class="nt">' + tags.map(function(t){ return '<span>' + esc(t) + '</span>'; }).join('') +
           (l.parado ? '<span>' + l.parado + ' dias parado</span>' : '') + '</div></div>' +
         '<span class="ne" style="background:' + cor + ';color:' + corT + '">' +
@@ -3494,7 +3474,7 @@ body.modoCapa{min-height:100%}
     document.getElementById('pfFila').querySelectorAll('.ng').forEach(function(el){
       el.addEventListener('click', function(){
         var l = abertas.filter(function(x){ return x.id === el.dataset.id; })[0];
-        if(l) abrir(nomeCliente(l.n), l.st + ' · ' + brlCheio(l.v), [l]);
+        if(l) abrir(l.n, l.st + ' · ' + brlCheio(l.v), [l]);
       });
     });
   }
@@ -3524,12 +3504,6 @@ body.modoCapa{min-height:100%}
         document.getElementById('pfCarregando').classList.add('oculto');
         document.getElementById('pfFalha').classList.add('oculto');
         document.getElementById('pfConteudo').classList.remove('oculto');
-        ajustarMes();
-        var st = document.getElementById('pfSubtitulo');
-        if(st){
-          st.innerHTML = MESL[MESREF] + ' de ' + new Date().getFullYear() +
-            ' · funil, origem, conversão e motivos de perda';
-        }
         var ns = document.getElementById('pfNotaSafra');
         if(ns) ns.textContent = 'De qual mês vieram os negócios que estão em ' + MESL[MESREF] +
           '. Quem entrou antes e fechou agora aparece na safra do mês de entrada. Clique para ver os clientes.';
@@ -3563,6 +3537,12 @@ body.modoCapa{min-height:100%}
       b.classList.add('on'); ordemFila = b.dataset.f; fila(recorte());
     });
   });
+  (function(){
+    var st = document.getElementById('pfSubtitulo');
+    if(st) st.textContent = MESL[MESREF] + ' de ' + new Date().getFullYear() +
+      ' · funil, origem, conversão e motivos de perda';
+  })();
+
   var bAt = document.getElementById('pfAtualizar');
   if(bAt) bAt.addEventListener('click', function(){
     var b = this, rot = b.querySelector('.txt'), t0 = Date.now();
