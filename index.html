@@ -851,7 +851,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v67</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v68</span></p>
   </div>
 </div>
 
@@ -1018,6 +1018,9 @@ body.modoCapa{min-height:100%}
 </div>
 
 
+
+</div>
+
 <div class="fundo" id="fundo"></div>
 <aside class="gaveta" id="gaveta" aria-hidden="true">
   <div class="cabeca">
@@ -1029,7 +1032,6 @@ body.modoCapa{min-height:100%}
   </div>
   <div class="corpo" id="gvCorpo"></div>
 </aside>
-</div>
 
 <div id="telaPerf" class="oculto">
 <a class="voltar" href="#" id="irCapa2"><span class="st">←</span> Menu</a>
@@ -1049,206 +1051,90 @@ body.modoCapa{min-height:100%}
 <path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 120.777344 210.316406 C 76.152344 149.417969 155.410156 78.382812 222.785156 98.824219 C 222.800781 98.824219 222.796875 98.851562 222.78125 98.851562 C 184.421875 94.96875 155.957031 108.703125 140.199219 127.648438 C 116.273438 156.398438 121.898438 185.308594 135.46875 195.964844 C 151.5 208.5625 173.828125 211.042969 206.847656 167.832031 C 219.542969 151.214844 230.222656 146.15625 242.675781 150.589844 C 258.660156 156.289062 264.617188 176.601562 254.253906 193.777344 C 218.03125 253.800781 145.796875 244.449219 120.777344 210.316406 M 283.886719 166.546875 C 280.285156 200.34375 252.59375 237.097656 194.648438 241.570312 C 194.632812 241.570312 194.625 241.546875 194.644531 241.542969 C 239.835938 232.621094 261.96875 206.570312 269.6875 185.324219 C 278.558594 160.886719 268.789062 133.0625 240.242188 131.125 C 221.207031 129.839844 212.613281 139.574219 194.609375 161.761719 C 173.496094 187.761719 159.367188 188.808594 148.207031 180.367188 C 134.207031 169.785156 135.816406 144.730469 155.347656 124.316406 C 174.652344 104.125 213.84375 96.71875 248.015625 106.933594 C 248.65625 107.125 249.234375 106.402344 248.476562 105.894531 C 178.003906 58.570312 80.816406 116.445312 90.714844 194.828125 C 103.722656 297.875 290.246094 292.726562 285.34375 166.578125 C 285.308594 165.699219 283.972656 165.679688 283.886719 166.546875 "/>
 </svg>
     <h1>Performance Comercial</h1>
-    <div class="sub">Funil, origem da venda, cabeceiras e ritmo do mês</div>
-    <div class="meta"><span id="perfTitulo">—</span> · estrutura de exemplo</div>
+    <div class="sub">Funil de vendas, origem, conversão e motivos de perda</div>
+    <div class="meta" id="pfCarimbo">carregando…</div>
     <div class="controles">
-      <div class="anos">
-        <button class="on" id="perfBotao">—</button>
+      <div class="anos" id="pfPeriodo">
+        <button data-p="ano" class="on">Ano de 2026</button>
+        <button data-p="mes" id="pfBotaoMes">Mês</button>
       </div>
+      <button class="btnTopo" id="pfAtualizar"><span class="giro">↻</span> <span class="txt">Atualizar dados</span></button>
     </div>
   </header>
 
-  <div class="obra">
-    <b>Esta tela ainda não está ligada ao monday.</b> Os números abaixo são de exemplo, servem para aprovar a
-    estrutura. Quando o quadro de funil estiver definido, eles passam a ser lidos ao vivo, como no Faturamento Anual.
-  </div>
+  <div id="pfCarregando" style="padding:64px 0;text-align:center;font-size:13px;color:rgba(250,244,232,.5)">
+    Carregando o funil…</div>
+  <div id="pfFalha" class="oculto" style="padding:64px 0;text-align:center;font-size:13px;color:#E0B23C;line-height:1.7"></div>
 
-  <div class="leitura"><span class="tag">Leitura</span>
-    <span>Julho até 26/07: R$ 260.021 faturados, 87% da meta. Faltam R$ 37.312 em 5 dias úteis, com R$ 519 mil vivos no pipeline.</span>
-  </div>
+  <div id="pfConteudo" class="oculto">
+    <div class="leitura"><span class="tag">Leitura</span><span id="pfLeitura"></span></div>
 
-  <div class="kpis">
-    <div class="kpi"><div class="rot">Leads no mês</div><div class="val">100</div>
-      <div class="sub">01 a 26/07, funil ativo</div></div>
-    <div class="kpi"><div class="rot">Vendas ganhas</div><div class="val">24</div>
-      <div class="sub">Conversão de 24,0% sobre o funil</div></div>
-    <div class="kpi"><div class="rot">Faturamento</div><div class="val">R$ 260.021</div>
-      <div class="sub">Somente vendas ganhas</div></div>
-    <div class="kpi"><div class="rot">Pipeline aberto</div><div class="val">R$ 519 mil</div>
-      <div class="sub">18 propostas, 3 negociações, 6 longo prazo e 25 em qualificação</div></div>
-  </div>
+    <div class="kpis" id="pfKpis"></div>
 
-  <div class="grade">
+    <div class="grade">
 
-    <div class="card c12">
-      <div class="topo"><div><h2>Ritmo do mês</h2>
-        <div class="nota">Faturamento e leads por semana, produtos vendidos e ticket médio por tipo de venda.</div>
-      </div></div>
-      <div class="semanas">
-        <div class="semBox"><div class="st1"><span>SEM 1</span><span>01 A 07</span></div>
-          <div class="sv">R$ 87.262</div><div class="sl">32 leads</div></div>
-        <div class="semBox"><div class="st1"><span>SEM 2</span><span>08 A 14</span></div>
-          <div class="sv">R$ 69.025</div><div class="sl">31 leads</div></div>
-        <div class="semBox"><div class="st1"><span>SEM 3</span><span>15 A 21</span></div>
-          <div class="sv">R$ 73.480</div><div class="sl">27 leads</div></div>
-        <div class="semBox"><div class="st1"><span>SEM 4</span><span>22 A 31</span></div>
-          <div class="sv">R$ 30.254</div><div class="sl">10 leads · parcial</div></div>
+      <div class="card c12">
+        <div class="topo"><div><h2>Funil de vendas</h2>
+          <div class="nota">Cada etapa com quantidade de negócios e valor. Clique para ver os clientes.</div>
+        </div></div>
+        <div class="funil"><svg id="pfFunil" role="img" aria-label="Funil por etapa"></svg></div>
       </div>
-      <div class="prods">
-        <div class="prodBox"><div class="pq">23</div><div class="pl">TRAVESSEIROS</div></div>
-        <div class="prodBox"><div class="pq">14</div><div class="pl">COLCHÕES</div></div>
-        <div class="prodBox"><div class="pq">2</div><div class="pl">CAMAS</div></div>
-        <div class="prodBox"><div class="pq">1</div><div class="pl">BOX</div></div>
-        <div class="prodBox"><div class="pq">2</div><div class="pl">OUTROS</div></div>
-      </div>
-      <div class="tick">
-        <div class="tickBox"><div><div class="tl">APENAS COLCHÃO</div><div class="td">2 vendas</div></div>
-          <div class="tv">R$ 12.137</div></div>
-        <div class="tickBox"><div><div class="tl">APENAS TRAVESSEIRO</div><div class="td">7 vendas · R$ 6.102</div></div>
-          <div class="tv">R$ 872</div></div>
-        <div class="tickBox"><div><div class="tl">COMBO COLCHÃO + CAMA</div><div class="td">2 vendas</div></div>
-          <div class="tv">R$ 18.690</div></div>
-      </div>
-    </div>
 
-    <div class="card c12">
-      <div class="topo"><div><h2>De onde vem a venda</h2>
-        <div class="nota">Origem por faturamento, modalidade e desempenho por especialista.</div>
-      </div></div>
-      <div class="par">
-        <div><div class="rot">Origem</div><div class="tela alta"><canvas id="pfOrigem"></canvas></div></div>
-        <div><div class="rot">Especialista, loja contra online</div><div class="tela alta"><canvas id="pfVend"></canvas></div></div>
-      </div>
-    </div>
-
-    <div class="card c12">
-      <div class="topo"><div><h2>Quem indicou</h2>
-        <div class="nota">Parceiros por trás das vendas. 8 vendas, R$ 150.767, indicações são 64% do faturamento.</div>
-      </div></div>
-      <div class="parceiros">
-        <div class="parcBox">
-          <div class="ph"><span>ARQUITETOS</span><span>5 vendas · R$ 84.058</span></div>
-          <div class="pr"><span>Carol Dal Molin</span><b>R$ 53.000</b></div>
-          <div class="pr"><span>Adriana Coradini</span><b>R$ 25.000</b></div>
-          <div class="pr"><span>Nathalia Loreiro</span><b>R$ 4.948</b></div>
-          <div class="pr"><span>Bibi Picon Arq.</span><b>R$ 666</b></div>
-          <div class="pr"><span>Kamila Witt</span><b>R$ 444</b></div>
-        </div>
-        <div class="parcBox">
-          <div class="ph"><span>TURISMO DO SONO</span><span>2 vendas · R$ 34.018</span></div>
-          <div class="pr"><span>Hotel Colline de France</span><b>R$ 19.325</b></div>
-          <div class="pr"><span>Hotel Wood</span><b>R$ 14.693</b></div>
-        </div>
-        <div class="parcBox">
-          <div class="ph"><span>ÁREA DA SAÚDE</span><span>1 venda · R$ 32.691</span></div>
-          <div class="pr"><span>Dr. André · Florianópolis</span><b>R$ 32.691</b></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="card c12">
-      <div class="topo"><div><h2>Cabeceiras, coleção Carol Dal Molin</h2>
-        <div class="nota">36 interessados · R$ 82 mil em jogo · 9 ativos e 27 perdidos.</div>
-      </div></div>
-      <div class="modelos">
-        <div class="modBox"><div class="mq">19</div><div class="ml">AFROS</div></div>
-        <div class="modBox"><div class="mq">6</div><div class="ml">BELLE</div></div>
-        <div class="modBox"><div class="mq">4</div><div class="ml">ARLES</div></div>
-        <div class="modBox"><div class="mq">2</div><div class="ml">SIENA</div></div>
-      </div>
-      <div class="rot" style="text-align:left">EM JOGO · 9 ATIVOS</div>
-      <div class="negs">
-        <div class="ng"><div><div class="nn">Amanda Carrera</div>
-          <div class="nt"><span>São Paulo</span><span>Instagram</span><span>Belle</span></div></div>
-          <span class="ne" style="background:rgba(115,87,63,.5);color:#FAF4E8">EM NEGOCIAÇÃO</span>
-          <span class="nv">R$ 19.146</span></div>
-        <div class="ng"><div><div class="nn">Fernanda</div>
-          <div class="nt"><span>Instagram</span><span>Afros + Belle</span></div></div>
-          <span class="ne" style="background:rgba(61,220,132,.22);color:#3DDC84">PROPOSTA ENVIADA</span>
-          <span class="nv">R$ 18.200</span></div>
-        <div class="ng"><div><div class="nn">Bárbara Grechi</div>
-          <div class="nt"><span>Instagram</span><span>Arles + Afros</span></div></div>
-          <span class="ne" style="background:rgba(61,220,132,.22);color:#3DDC84">PROPOSTA ENVIADA</span>
-          <span class="nv">R$ 17.832</span></div>
-        <div class="ng"><div><div class="nn">Nathiele</div>
-          <div class="nt"><span>Porto Alegre</span><span>Instagram</span></div></div>
-          <span class="ne" style="background:rgba(61,220,132,.22);color:#3DDC84">PROPOSTA ENVIADA</span>
-          <span class="nv">R$ 14.693</span></div>
-        <div class="ng"><div><div class="nn">Claudia</div>
-          <div class="nt"><span>Porto Alegre</span><span>Instagram</span><span>Afros</span></div></div>
-          <span class="ne" style="background:rgba(250,244,232,.14);color:rgba(250,244,232,.7)">EM QUALIFICAÇÃO</span>
-          <span class="nv">—</span></div>
-      </div>
-    </div>
-
-    <div class="card c12">
-      <div class="topo"><div><h2>O que travou nas cabeceiras</h2>
-        <div class="nota">27 perdidos, R$ 343 mil que não avançaram. Preço e silêncio lideram.</div>
-      </div></div>
-      <div class="perdas">
-        <div class="perdaCol">
-          <div class="perdaCab"><span class="pp">44%</span><div class="pn2">12</div>
-            <div class="pt2">PAROU DE RESPONDER</div></div>
-          <div class="perdaLista">
-            <div><b>Rebeca</b><span>R$ 22.510</span></div>
-            <div><b>Luanna Ponce</b><span>R$ 22.510</span></div>
-            <div><b>Giovanna</b><span>R$ 18.200</span></div>
-            <div><b>Mariana</b><span>R$ 17.832</span></div>
-            <div><b>+ 8 sem valor registrado</b><span>—</span></div>
+      <div class="card c6">
+        <div class="topo">
+          <div><h2>Origem do lead</h2><div class="nota" id="pfNotaOrigem"></div></div>
+          <div class="mini" id="pfSelOrigem">
+            <button data-o="ganho" class="on">Faturamento</button>
+            <button data-o="leads">Leads</button>
+            <button data-o="conv">Conversão</button>
           </div>
         </div>
-        <div class="perdaCol">
-          <div class="perdaCab"><span class="pp">41%</span><div class="pn2">11</div>
-            <div class="pt2">PREÇO · TICKET ALTO</div></div>
-          <div class="perdaLista">
-            <div><b>Naide</b><span>R$ 22.510</span></div>
-            <div><b>Marina</b><span>R$ 22.510</span></div>
-            <div><b>Ana Luiza</b><span>R$ 22.510</span></div>
-            <div><b>Elisa</b><span>R$ 20.700</span></div>
-            <div><b>+ 7 clientes</b><span>R$ 96.615</span></div>
+        <div class="tela alta"><canvas id="pfOrigem"></canvas></div>
+      </div>
+
+      <div class="card c6">
+        <div class="topo"><div><h2>Especialista e modalidade</h2>
+          <div class="nota">Faturamento ganho por especialista, dividido entre loja e online.</div>
+        </div></div>
+        <div class="tela alta"><canvas id="pfVend"></canvas></div>
+      </div>
+
+      <div class="card c12">
+        <div class="topo"><div><h2>Motivos de perda</h2><div class="nota" id="pfNotaPerda"></div></div></div>
+        <div class="perdas" id="pfPerdas"></div>
+      </div>
+
+      <div class="card c6">
+        <div class="topo"><div><h2>Produtos vendidos</h2>
+          <div class="nota">Unidades nas vendas ganhas, somando todos os itens de cada negócio.</div>
+        </div></div>
+        <div class="prods" id="pfProdutos"></div>
+      </div>
+
+      <div class="card c6">
+        <div class="topo"><div><h2>Tempo até fechar</h2>
+          <div class="nota">Dias entre a entrada do lead e a venda ganha.</div>
+        </div></div>
+        <div class="tela"><canvas id="pfTempo"></canvas></div>
+      </div>
+
+      <div class="card c12">
+        <div class="topo">
+          <div><h2>Fila de ação</h2><div class="nota" id="pfNotaFila"></div></div>
+          <div class="mini" id="pfSelFila">
+            <button data-f="valor" class="on">Maior valor</button>
+            <button data-f="tempo">Mais parado</button>
           </div>
         </div>
-        <div class="perdaCol">
-          <div class="perdaCab"><span class="pp">15%</span><div class="pn2">4</div>
-            <div class="pt2">NECESSIDADE INDEFINIDA</div></div>
-          <div class="perdaLista">
-            <div><b>Luciana</b><span>R$ 8.295</span></div>
-            <div><b>Júlia</b><span>—</span></div>
-            <div><b>Marianna</b><span>—</span></div>
-            <div><b>Sophia</b><span>—</span></div>
-          </div>
-        </div>
+        <div class="negs" id="pfFila"></div>
       </div>
-      <div class="obra" style="margin:18px 0 0;text-align:left">
-        <b>Ticket alto é o padrão das perdas.</b> A maioria fica entre R$ 18 mil e R$ 22 mil. Doze pararam de responder
-        e onze saíram por preço. Cadência de retorno e uma porta de entrada mais acessível podem recuperar parte.
-      </div>
+
     </div>
 
-    <div class="card c12">
-      <div class="topo"><div><h2>Meta contra realizado</h2>
-        <div class="nota">Faturamento acumulado do mês contra as três faixas, dia a dia.</div>
-      </div></div>
-      <div class="metaLado">
-        <div>
-          <div class="mBloco"><div class="mRot">REALIZADO</div><div class="mVal">R$ 260.021</div>
-            <div class="mSub">87% da meta · 01 a 26/07</div></div>
-          <div class="mBloco"><div class="mRot">META DO MÊS</div><div class="mVal">R$ 297.333</div>
-            <div class="mSub">R$ 11.012 por dia útil · 27 dias</div></div>
-          <div class="mBloco"><div class="mRot">FALTA PARA A META</div>
-            <div class="mVal" style="color:#3DDC84">R$ 37 mil</div>
-            <div class="mSub">5 dias úteis · R$ 7.462 por dia<br>Super: R$ 14.896 por dia<br>Hiper: R$ 24.807 por dia</div></div>
-        </div>
-        <div class="tela metagrafico" style="height:380px"><canvas id="pfRitmo"></canvas></div>
-      </div>
-    </div>
-
+    <footer><span id="pfFonte">Nós vamos mudar o sono do mundo.</span></footer>
   </div>
-
-  <footer><span>Nós vamos mudar o sono do mundo. <span style="opacity:.45">estrutura v1</span></span></footer>
 </div>
 </div>
-
 
 <script>
 (function(){
@@ -1392,6 +1278,40 @@ body.modoCapa{min-height:100%}
     document.getElementById('gaveta').setAttribute('aria-hidden','true');
     document.getElementById('fundo').classList.remove('on');
   }
+  // A tela de Performance usa a mesma gaveta, com campos proprios do funil.
+  window.gavetaFunil = function(titulo, sub, lista){
+    filtroAtual = null;
+    document.getElementById('gvEyebrow').textContent = 'Performance Comercial';
+    document.getElementById('gvTitulo').textContent = titulo;
+    document.getElementById('gvResumo').textContent = sub || '';
+    document.getElementById('gvBusca').value = '';
+    var corpo = document.getElementById('gvCorpo');
+    if(!lista || !lista.length){
+      corpo.innerHTML = '<div class="nadaAqui">SEM INFORMAÇÃO</div>';
+    } else {
+      var ordenada = lista.slice().sort(function(a,b){ return (b.v||0) - (a.v||0); });
+      filtroAtual = ordenada.map(function(l){
+        return {n:l.n, d:l.e, c:l.md, vd:l.vd, o:l.o, ci:l.ci, e:'', v:l.v || 0, st:l.st};
+      });
+      corpo.innerHTML = filtroAtual.map(function(v){
+        var det = [];
+        if(v.d) det.push(dataCurta(v.d));
+        if(v.st) det.push(v.st);
+        if(v.c) det.push(v.c);
+        if(v.vd) det.push(v.vd);
+        if(v.o) det.push(v.o);
+        if(v.ci) det.push(v.ci);
+        return '<div class="linhaCli"><div><div class="nome">' + escapar(v.n) +
+               '</div><div class="sub">' + escapar(det.join('  ·  ')) + '</div></div>' +
+               '<div class="valor">' + (v.v ? brlCheio(v.v) : '—') + '</div></div>';
+      }).join('');
+      corpo.scrollTop = 0;
+    }
+    document.getElementById('gaveta').classList.add('on');
+    document.getElementById('gaveta').setAttribute('aria-hidden','false');
+    document.getElementById('fundo').classList.add('on');
+  };
+
   document.getElementById('btnFechar').addEventListener('click', fecharDetalhe);
   document.getElementById('fundo').addEventListener('click', fecharDetalhe);
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') fecharDetalhe(); });
@@ -2792,7 +2712,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v67</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v68</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -3023,22 +2943,46 @@ body.modoCapa{min-height:100%}
 
 
 <script>
-/* Tela de Performance Comercial. Estrutura de exemplo, ainda sem ligacao com o monday. */
+/* Tela de Performance Comercial, lendo o quadro Performance Comercial 2026. */
 (function(){
   "use strict";
   var capa = document.getElementById('telaCapa');
   var perf = document.getElementById('telaPerf');
   var painel = document.getElementById('telaPainel');
-  var desenhou = false;
 
   var COR = {claro:'#EEE3D1', medio:'#A89179', suave:'rgba(250,244,232,.55)',
-             linha:'rgba(238,227,209,.13)', vivo:'#3DDC84', preto:'#0E0D0C'};
+             linha:'rgba(238,227,209,.13)', vivo:'#3DDC84', ambar:'#E0B23C',
+             perda:'#C2603F', preto:'#0E0D0C'};
+  var RAMPA = ['#EEE3D1','#D5C6AE','#C0AC93','#A89179','#8C7563','#73573F','#5A4230','#3E2C1D'];
   var FONTE = "'Helvetica Now Text','Inter','Helvetica Neue',Arial,sans-serif";
+  var MESL = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho',
+              'Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
+  var F = null;                 // dados do funil
+  var periodo = 'ano';          // ano ou mes
+  var eixoOrigem = 'ganho';
+  var ordemFila = 'valor';
+  var graficos = {};
+
   function brl(v){
     if(v >= 1000000) return 'R$ ' + (v/1000000).toFixed(2).replace('.',',') + ' mi';
     if(v >= 1000) return 'R$ ' + Math.round(v/1000) + ' mil';
     return 'R$ ' + Math.round(v);
   }
+  function brlCheio(v){
+    return (v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+  }
+  function esc(t){
+    return String(t == null ? '' : t)
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function dataBR(d){
+    if(!d) return '';
+    var p = String(d).split('-');
+    return p.length === 3 ? p[2] + '/' + p[1] + '/' + p[0] : String(d);
+  }
+  function destruir(k){ if(graficos[k]){ graficos[k].destroy(); delete graficos[k]; } }
+
   function base(){
     return {responsive:true, maintainAspectRatio:false,
       plugins:{legend:{display:false}, tooltip:{backgroundColor:COR.preto,
@@ -3049,111 +2993,424 @@ body.modoCapa{min-height:100%}
                  ticks:{color:COR.suave, font:{family:FONTE,size:10}}}}};
   }
 
-  function desenhar(){
-    if(desenhou || typeof Chart === 'undefined') return;
-    desenhou = true;
-
-    /* origem da venda */
-    var org = [['Indicação · Arquitetos',84058,5],['Recompra',42714,9],['Turismo do Sono',34018,2],
-               ['Indicação · Área da Saúde',32691,1],['Indicação · CEO',13223,1],
-               ['Indicação de cliente',10742,2],['Fluxo Espontâneo',1735,2],['Site',1580,2]];
-    var o1 = base();
-    o1.indexAxis = 'y';
-    o1.scales.x = {grid:{color:COR.linha}, border:{display:false},
-      ticks:{color:COR.suave, font:{family:FONTE,size:10}, callback:function(v){ return brl(v); }}};
-    o1.scales.y = {grid:{display:false}, ticks:{color:COR.claro, font:{family:FONTE,size:11}}};
-    o1.plugins.tooltip.callbacks = {label:function(c){
-      return brl(c.parsed.x) + '  ·  ' + org[c.dataIndex][2] + ' vendas'; }};
-    new Chart(document.getElementById('pfOrigem'), {
-      type:'bar',
-      data:{labels:org.map(function(x){return x[0];}),
-            datasets:[{data:org.map(function(x){return x[1];}),
-              backgroundColor:org.map(function(x,i){ return i < 5 ? COR.claro : COR.medio; }),
-              borderRadius:2, maxBarThickness:18}]},
-      options:o1});
-
-    /* especialista, loja contra online */
-    var o2 = base();
-    o2.indexAxis = 'y';
-    o2.scales.x = {stacked:true, grid:{color:COR.linha}, border:{display:false},
-      ticks:{color:COR.suave, font:{family:FONTE,size:10}, callback:function(v){ return brl(v); }}};
-    o2.scales.y = {stacked:true, grid:{display:false}, ticks:{color:COR.claro, font:{family:FONTE,size:11}}};
-    o2.plugins.legend = {display:true, position:'bottom',
-      labels:{color:COR.suave, boxWidth:10, boxHeight:10, font:{family:FONTE,size:10}}};
-    o2.plugins.tooltip.callbacks = {label:function(c){
-      return c.dataset.label + ': ' + brl(c.parsed.x); }};
-    new Chart(document.getElementById('pfVend'), {
-      type:'bar',
-      data:{labels:['Felipe Pedroso','Ana Júlia Vargas','Débora Lima'],
-        datasets:[
-          {label:'Loja', data:[68091,56450,0], backgroundColor:COR.claro, borderRadius:2, maxBarThickness:24},
-          {label:'Online', data:[44691,50789,740], backgroundColor:COR.vivo, borderRadius:2, maxBarThickness:24}
-        ]},
-      options:o2});
-
-    /* ritmo acumulado contra as tres faixas */
-    var dias = [], real = [], meta = [], sup = [], hip = [];
-    var acumulado = [0,0,0,0,0,86000,106000,137000,137200,137200,137200,137200,138200,154200,208200,
-                     208200,208200,208200,209200,229200,230100,230100,231100,231900,243900,260021];
-    for(var d = 1; d <= 31; d++){
-      dias.push(String(d).length < 2 ? '0' + d : String(d));
-      real.push(d <= 26 ? acumulado[d-1] : null);
-      meta.push(297333/31*d); sup.push(335000/31*d); hip.push(384000/31*d);
-    }
-    var o3 = base();
-    o3.plugins.legend = {display:true, position:'bottom',
-      labels:{color:COR.suave, boxWidth:12, boxHeight:2, font:{family:FONTE,size:10}}};
-    o3.scales.y.ticks.callback = function(v){ return brl(v); };
-    o3.scales.x.ticks.font = {family:FONTE, size:9};
-    o3.plugins.tooltip.callbacks = {label:function(c){
-      return c.dataset.label + ': ' + brl(c.parsed.y); }};
-    new Chart(document.getElementById('pfRitmo'), {
-      type:'line',
-      data:{labels:dias, datasets:[
-        {label:'Realizado', data:real, borderColor:COR.claro, backgroundColor:'rgba(238,227,209,.10)',
-         borderWidth:2.5, pointRadius:0, fill:true, tension:.15},
-        {label:'Meta', data:meta, borderColor:'#FAF4E8', borderDash:[6,4], borderWidth:2,
-         pointRadius:0, fill:false},
-        {label:'Super', data:sup, borderColor:COR.medio, borderDash:[2,3], borderWidth:1.5,
-         pointRadius:0, fill:false},
-        {label:'Hiper', data:hip, borderColor:'rgba(238,227,209,.4)', borderDash:[1,4], borderWidth:1.5,
-         pointRadius:0, fill:false}
-      ]}, options:o3});
+  /* ---------- recorte do periodo ---------- */
+  function recorte(){
+    if(!F) return [];
+    if(periodo === 'ano') return F.leads;
+    var m = new Date().getMonth();
+    return F.leads.filter(function(l){
+      return (l.s === 'aberto' ? l.me : (l.mf >= 0 ? l.mf : l.me)) === m;
+    });
   }
 
-  function abrir(e){
+  /* ---------- gaveta reaproveitada do painel ---------- */
+  function abrir(titulo, sub, lista){
+    if(!window.gavetaFunil) return;
+    window.gavetaFunil(titulo, sub, lista);
+  }
+
+  /* ---------- KPIs ---------- */
+  function kpis(L){
+    var ganhas = L.filter(function(l){ return l.s === 'ganha'; });
+    var perdidas = L.filter(function(l){ return l.s === 'perdida'; });
+    var abertas = L.filter(function(l){ return l.s === 'aberto'; });
+    var fatG = ganhas.reduce(function(a,b){ return a + b.v; }, 0);
+    var fatA = abertas.reduce(function(a,b){ return a + b.v; }, 0);
+    var decididos = ganhas.length + perdidas.length;
+    var conv = decididos ? ganhas.length/decididos*100 : 0;
+
+    function card(rot, val, sub){
+      return '<div class="kpi"><div class="rot">' + rot + '</div><div class="val">' + val + '</div>' +
+             (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
+    }
+    document.getElementById('pfKpis').innerHTML =
+      card('Leads no período', L.length,
+           abertas.length + ' em aberto, ' + ganhas.length + ' ganhas e ' + perdidas.length + ' perdidas') +
+      card('Vendas ganhas', ganhas.length,
+           'Conversão de ' + conv.toFixed(1).replace('.',',') + '% sobre os negócios decididos') +
+      card('Faturamento ganho', brlCheio(fatG),
+           ganhas.length ? 'Ticket médio de ' + brlCheio(fatG/ganhas.length) : '') +
+      card('Pipeline aberto', brlCheio(fatA),
+           abertas.length + ' negócios ainda vivos');
+
+    var perdidoV = perdidas.reduce(function(a,b){ return a + b.v; }, 0);
+    document.getElementById('pfLeitura').textContent =
+      (periodo === 'ano' ? 'Ano de 2026' : MESL[new Date().getMonth()]) + ': ' + L.length +
+      ' leads, ' + ganhas.length + ' viraram venda somando ' + brlCheio(fatG) + '. ' +
+      brlCheio(fatA) + ' seguem em aberto e ' + brlCheio(perdidoV) + ' foram perdidos.';
+  }
+
+  /* ---------- funil por etapa ---------- */
+  function funil(L){
+    var svg = document.getElementById('pfFunil');
+    // Ordem do funil, do topo para a base.
+    var ordem = [
+      ['Em qualificação',  function(l){ return /qualifica/i.test(l.st); }],
+      ['ExperiênCia agendada', function(l){ return /exp do sono|experi/i.test(l.st); }],
+      ['Proposta enviada', function(l){ return /proposta/i.test(l.st); }],
+      ['Em negociação',    function(l){ return /negocia/i.test(l.st); }],
+      ['Venda ganha',      function(l){ return l.s === 'ganha'; }]
+    ];
+    var etapas = ordem.map(function(o){
+      var itens = L.filter(o[1]);
+      return {nome:o[0], qtd:itens.length,
+              valor:itens.reduce(function(a,b){ return a + b.v; }, 0), itens:itens};
+    }).filter(function(e){ return e.qtd > 0; });
+
+    if(!etapas.length){ svg.innerHTML = ''; return; }
+
+    var LG = 900, ALT = 44, GAP = 9, TOPO = 10;
+    var maxQ = Math.max.apply(null, etapas.map(function(e){ return e.qtd; }));
+    var alturaTotal = TOPO*2 + etapas.length*(ALT + GAP);
+    svg.setAttribute('viewBox', '0 0 ' + LG + ' ' + alturaTotal);
+    var ff = FONTE.replace(/"/g,"'");
+
+    var html = '';
+    etapas.forEach(function(e, i){
+      var y = TOPO + i*(ALT + GAP);
+      var w = Math.max((e.qtd/maxQ) * 620, 210);
+      var x = (LG - 250)/2 - w/2 + 60;
+      var cor = e.nome === 'Venda ganha' ? COR.vivo : RAMPA[i % RAMPA.length];
+      var corTxt = (e.nome === 'Venda ganha' || i < 4) ? '#241A12' : '#FAF4E8';
+      html += '<g class="faixa" data-i="' + i + '">' +
+        '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + ALT + '" rx="3" fill="' + cor + '"/>' +
+        '<text x="' + (x + 16) + '" y="' + (y + ALT/2 + 5) + '" font-size="13" font-weight="600" fill="' +
+          corTxt + '" font-family="' + ff + '">' + esc(e.nome) + '</text>' +
+        '<text x="' + (x + w - 16) + '" y="' + (y + ALT/2 + 5) + '" text-anchor="end" font-size="13" ' +
+          'font-weight="700" fill="' + corTxt + '" font-family="' + ff + '">' + e.qtd + '</text>' +
+        '<text x="' + (x + w + 14) + '" y="' + (y + ALT/2 + 5) + '" font-size="11.5" ' +
+          'fill="rgba(250,244,232,.6)" font-family="' + ff + '">' + brlCheio(e.valor) + '</text>' +
+        '</g>';
+    });
+    svg.innerHTML = html;
+    svg.querySelectorAll('.faixa').forEach(function(g){
+      g.addEventListener('click', function(){
+        var e = etapas[parseInt(g.dataset.i, 10)];
+        abrir(e.nome, e.qtd + ' negócios · ' + brlCheio(e.valor), e.itens);
+      });
+    });
+  }
+
+  /* ---------- origem ---------- */
+  function origem(L){
+    destruir('origem');
+    var mapa = {};
+    L.forEach(function(l){
+      var o = l.o || 'Não informada';
+      if(!mapa[o]) mapa[o] = {leads:0, ganhas:0, ganho:0};
+      mapa[o].leads += 1;
+      if(l.s === 'ganha'){ mapa[o].ganhas += 1; mapa[o].ganho += l.v; }
+    });
+    var lista = Object.keys(mapa).map(function(k){
+      var m = mapa[k];
+      return {nome:k, leads:m.leads, ganhas:m.ganhas, ganho:m.ganho,
+              conv: m.leads ? m.ganhas/m.leads*100 : 0};
+    });
+    var campo = eixoOrigem === 'leads' ? 'leads' : (eixoOrigem === 'conv' ? 'conv' : 'ganho');
+    lista.sort(function(a,b){ return b[campo] - a[campo]; });
+    lista = lista.slice(0, 12);
+
+    document.getElementById('pfNotaOrigem').textContent =
+      eixoOrigem === 'ganho' ? 'Faturamento das vendas ganhas por origem. Clique para ver os clientes.'
+      : eixoOrigem === 'leads' ? 'Quantidade de leads recebidos por origem.'
+      : 'Percentual de leads que viraram venda em cada origem.';
+
+    var op = base();
+    op.indexAxis = 'y';
+    op.scales.x = {grid:{color:COR.linha}, border:{display:false},
+      ticks:{color:COR.suave, font:{family:FONTE,size:10},
+             callback:function(v){ return eixoOrigem === 'ganho' ? brl(v)
+                                        : (eixoOrigem === 'conv' ? v + '%' : v); }}};
+    op.scales.y = {grid:{display:false}, ticks:{color:COR.claro, font:{family:FONTE,size:11}}};
+    op.plugins.tooltip.callbacks = { label:function(c){
+      var o = lista[c.dataIndex];
+      return [o.leads + ' leads · ' + o.ganhas + ' ganhas',
+              brlCheio(o.ganho) + ' · conversão ' + o.conv.toFixed(0) + '%']; }};
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var o = lista[els[0].index];
+      abrir(o.nome, o.leads + ' leads · ' + o.ganhas + ' ganhas · ' + brlCheio(o.ganho),
+            L.filter(function(l){ return (l.o || 'Não informada') === o.nome; }));
+    };
+    graficos.origem = new Chart(document.getElementById('pfOrigem'), {
+      type:'bar',
+      data:{labels:lista.map(function(x){ return x.nome; }),
+            datasets:[{data:lista.map(function(x){ return x[campo]; }),
+                       backgroundColor:lista.map(function(x,i){ return RAMPA[i % RAMPA.length]; }),
+                       borderRadius:2, maxBarThickness:18}]},
+      options:op});
+  }
+
+  /* ---------- especialista e modalidade ---------- */
+  function vendedores(L){
+    destruir('vend');
+    var mapa = {};
+    L.filter(function(l){ return l.s === 'ganha'; }).forEach(function(l){
+      var v = l.vd || 'Sem especialista';
+      if(!mapa[v]) mapa[v] = {loja:0, online:0, qtd:0};
+      mapa[v].qtd += 1;
+      if(/loja/i.test(l.md)) mapa[v].loja += l.v;
+      else if(/online/i.test(l.md)) mapa[v].online += l.v;
+      else mapa[v].loja += l.v;
+    });
+    var lista = Object.keys(mapa).map(function(k){
+      var m = mapa[k]; return {nome:k, loja:m.loja, online:m.online, qtd:m.qtd, tot:m.loja + m.online};
+    }).sort(function(a,b){ return b.tot - a.tot; });
+
+    var op = base();
+    op.indexAxis = 'y';
+    op.scales.x = {stacked:true, grid:{color:COR.linha}, border:{display:false},
+      ticks:{color:COR.suave, font:{family:FONTE,size:10}, callback:function(v){ return brl(v); }}};
+    op.scales.y = {stacked:true, grid:{display:false}, ticks:{color:COR.claro, font:{family:FONTE,size:11}}};
+    op.plugins.legend = {display:true, position:'bottom',
+      labels:{color:COR.suave, boxWidth:10, boxHeight:10, font:{family:FONTE,size:10}}};
+    op.plugins.tooltip.callbacks = { label:function(c){
+      return c.dataset.label + ': ' + brlCheio(c.parsed.x); }};
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var v = lista[els[0].index];
+      abrir(v.nome, v.qtd + ' vendas ganhas · ' + brlCheio(v.tot),
+            L.filter(function(l){ return l.s === 'ganha' && (l.vd || 'Sem especialista') === v.nome; }));
+    };
+    graficos.vend = new Chart(document.getElementById('pfVend'), {
+      type:'bar',
+      data:{labels:lista.map(function(x){ return x.nome; }), datasets:[
+        {label:'Loja', data:lista.map(function(x){ return x.loja; }),
+         backgroundColor:COR.claro, borderRadius:2, maxBarThickness:24},
+        {label:'Online', data:lista.map(function(x){ return x.online; }),
+         backgroundColor:COR.vivo, borderRadius:2, maxBarThickness:24}
+      ]}, options:op});
+  }
+
+  /* ---------- motivos de perda ---------- */
+  function perdas(L){
+    var perdidas = L.filter(function(l){ return l.s === 'perdida'; });
+    var alvo = document.getElementById('pfPerdas');
+    if(!perdidas.length){
+      document.getElementById('pfNotaPerda').textContent = 'Nenhuma perda registrada no período.';
+      alvo.innerHTML = ''; return;
+    }
+    var mapa = {};
+    perdidas.forEach(function(l){
+      var m = l.mo || 'Não informado';
+      if(!mapa[m]) mapa[m] = {qtd:0, valor:0, itens:[]};
+      mapa[m].qtd += 1; mapa[m].valor += l.v; mapa[m].itens.push(l);
+    });
+    var lista = Object.keys(mapa).map(function(k){
+      return {nome:k, qtd:mapa[k].qtd, valor:mapa[k].valor, itens:mapa[k].itens};
+    }).sort(function(a,b){ return b.qtd - a.qtd; });
+
+    var totalV = perdidas.reduce(function(a,b){ return a + b.v; }, 0);
+    document.getElementById('pfNotaPerda').textContent =
+      perdidas.length + ' negócios perdidos, somando ' + brlCheio(totalV) +
+      ' que não avançaram. Clique num motivo para ver os clientes.';
+
+    alvo.innerHTML = lista.map(function(p){
+      var linhas = p.itens.slice().sort(function(a,b){ return b.v - a.v; }).slice(0, 6).map(function(l){
+        return '<div><b>' + esc(l.n) + '</b><span>' + (l.v ? brlCheio(l.v) : '—') + '</span></div>';
+      }).join('');
+      var resto = p.itens.length > 6
+        ? '<div><b>+ ' + (p.itens.length - 6) + ' clientes</b><span>—</span></div>' : '';
+      return '<div class="perdaCol" data-m="' + esc(p.nome) + '" style="cursor:pointer">' +
+        '<div class="perdaCab"><span class="pp">' + Math.round(p.qtd/perdidas.length*100) + '%</span>' +
+          '<div class="pn2">' + p.qtd + '</div><div class="pt2">' + esc(p.nome.toUpperCase()) + '</div></div>' +
+        '<div class="perdaLista">' + linhas + resto + '</div></div>';
+    }).join('');
+
+    alvo.querySelectorAll('.perdaCol').forEach(function(el){
+      el.addEventListener('click', function(){
+        var nome = el.dataset.m;
+        var p = lista.filter(function(x){ return x.nome === nome; })[0];
+        if(p) abrir('Perdido por ' + p.nome, p.qtd + ' negócios · ' + brlCheio(p.valor), p.itens);
+      });
+    });
+  }
+
+  /* ---------- produtos ---------- */
+  function produtos(L){
+    var mapa = {};
+    L.filter(function(l){ return l.s === 'ganha'; }).forEach(function(l){
+      (l.p || []).forEach(function(p){
+        mapa[p.tipo] = (mapa[p.tipo] || 0) + p.qtd;
+      });
+    });
+    var lista = Object.keys(mapa).map(function(k){ return {tipo:k, qtd:mapa[k]}; })
+                  .sort(function(a,b){ return b.qtd - a.qtd; });
+    document.getElementById('pfProdutos').innerHTML = lista.length
+      ? lista.map(function(p){
+          return '<div class="prodBox"><div class="pq">' + p.qtd + '</div>' +
+                 '<div class="pl">' + esc(p.tipo.toUpperCase()) + '</div></div>';
+        }).join('')
+      : '<div class="nadaAqui">SEM INFORMAÇÃO de produto</div>';
+  }
+
+  /* ---------- tempo ate fechar ---------- */
+  function tempo(L){
+    destruir('tempo');
+    var ganhas = L.filter(function(l){ return l.s === 'ganha' && l.d > 0; });
+    var faixas = [['Até 7 dias',0,7],['8 a 15',8,15],['16 a 30',16,30],
+                  ['31 a 60',31,60],['61 a 90',61,90],['Mais de 90',91,99999]];
+    var dados = faixas.map(function(f){
+      return ganhas.filter(function(l){ return l.d >= f[1] && l.d <= f[2]; }).length;
+    });
+    var op = base();
+    op.plugins.tooltip.callbacks = { label:function(c){
+      return c.parsed.y + (c.parsed.y === 1 ? ' venda' : ' vendas'); }};
+    op.scales.y.title = {display:true, text:'vendas ganhas', color:COR.suave, font:{family:FONTE,size:10}};
+    graficos.tempo = new Chart(document.getElementById('pfTempo'), {
+      type:'bar',
+      data:{labels:faixas.map(function(f){ return f[0]; }),
+            datasets:[{data:dados, backgroundColor:COR.claro, borderRadius:2, maxBarThickness:38}]},
+      options:op});
+  }
+
+  /* ---------- fila de acao ---------- */
+  function fila(L){
+    var abertas = L.filter(function(l){ return l.s === 'aberto'; });
+    var hoje = new Date();
+    abertas.forEach(function(l){
+      var d = l.e ? new Date(l.e + 'T12:00:00') : null;
+      l.parado = d ? Math.round((hoje - d)/86400000) : 0;
+    });
+    if(ordemFila === 'valor') abertas.sort(function(a,b){ return b.v - a.v; });
+    else abertas.sort(function(a,b){ return b.parado - a.parado; });
+
+    var total = abertas.reduce(function(a,b){ return a + b.v; }, 0);
+    document.getElementById('pfNotaFila').textContent =
+      abertas.length + ' negócios em aberto, somando ' + brlCheio(total) +
+      '. Clique para ver o histórico do cliente.';
+
+    document.getElementById('pfFila').innerHTML = abertas.slice(0, 20).map(function(l){
+      var cor = /negocia/i.test(l.st) ? 'rgba(115,87,63,.5)'
+              : (/proposta/i.test(l.st) ? 'rgba(61,220,132,.22)' : 'rgba(250,244,232,.12)');
+      var corT = /proposta/i.test(l.st) ? COR.vivo : 'rgba(250,244,232,.75)';
+      var tags = [];
+      if(l.ci) tags.push(l.ci);
+      if(l.o) tags.push(l.o);
+      if(l.vd) tags.push(l.vd);
+      return '<div class="ng" data-id="' + l.id + '">' +
+        '<div><div class="nn">' + esc(l.n) + '</div>' +
+          '<div class="nt">' + tags.map(function(t){ return '<span>' + esc(t) + '</span>'; }).join('') +
+          (l.parado ? '<span>' + l.parado + ' dias parado</span>' : '') + '</div></div>' +
+        '<span class="ne" style="background:' + cor + ';color:' + corT + '">' +
+          esc(l.st.toUpperCase()) + '</span>' +
+        '<span class="nv">' + (l.v ? brlCheio(l.v) : '—') + '</span></div>';
+    }).join('');
+
+    document.getElementById('pfFila').querySelectorAll('.ng').forEach(function(el){
+      el.addEventListener('click', function(){
+        var l = abertas.filter(function(x){ return x.id === el.dataset.id; })[0];
+        if(l) abrir(l.n, l.st + ' · ' + brlCheio(l.v), [l]);
+      });
+    });
+  }
+
+  /* ---------- desenhar tudo ---------- */
+  function desenhar(){
+    if(!F || typeof Chart === 'undefined') return;
+    var L = recorte();
+    kpis(L); funil(L); origem(L); vendedores(L); perdas(L); produtos(L); tempo(L); fila(L);
+  }
+
+  /* ---------- carregar ---------- */
+  function carregar(aoTerminar, fresco){
+    fetch('/api/funil' + (fresco ? '?fresh=1&t=' + Date.now() : ''), {cache:'no-store'})
+      .then(function(r){
+        return r.text().then(function(txt){
+          var j = null;
+          try { j = JSON.parse(txt); } catch(e){}
+          if(!r.ok) throw new Error((j && j.erro) ? j.erro : 'código ' + r.status);
+          if(!j) throw new Error('resposta inválida da API');
+          return j;
+        });
+      })
+      .then(function(j){
+        if(j.erro) throw new Error(j.erro);
+        F = j;
+        document.getElementById('pfCarregando').classList.add('oculto');
+        document.getElementById('pfFalha').classList.add('oculto');
+        document.getElementById('pfConteudo').classList.remove('oculto');
+        var q = new Date(j.atualizado || Date.now());
+        document.getElementById('pfCarimbo').textContent =
+          'Quadro ' + (j.quadro || 'monday') + '  ·  ' + (j.total || 0) + ' leads  ·  leitura de ' +
+          q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+        desenhar();
+        if(aoTerminar) aoTerminar();
+      })
+      .catch(function(e){
+        document.getElementById('pfCarregando').classList.add('oculto');
+        var f = document.getElementById('pfFalha');
+        f.classList.remove('oculto');
+        f.innerHTML = 'Não foi possível ler o funil do monday.<br><br>' + esc(e.message) +
+          '<br><br>Confira se o arquivo api/funil.mjs está publicado e se o MONDAY_TOKEN está no Vercel.';
+        if(aoTerminar) aoTerminar();
+      });
+  }
+
+  /* ---------- controles ---------- */
+  var bMes = document.getElementById('pfBotaoMes');
+  if(bMes) bMes.textContent = MESL[new Date().getMonth()];
+
+  document.querySelectorAll('#pfPeriodo button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#pfPeriodo button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); periodo = b.dataset.p; desenhar();
+    });
+  });
+  document.querySelectorAll('#pfSelOrigem button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#pfSelOrigem button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); eixoOrigem = b.dataset.o; origem(recorte());
+    });
+  });
+  document.querySelectorAll('#pfSelFila button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#pfSelFila button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on'); ordemFila = b.dataset.f; fila(recorte());
+    });
+  });
+  var bAt = document.getElementById('pfAtualizar');
+  if(bAt) bAt.addEventListener('click', function(){
+    var b = this, rot = b.querySelector('.txt'), t0 = Date.now();
+    b.classList.add('girando'); b.disabled = true;
+    rot.textContent = 'Lendo o monday…';
+    carregar(function(){
+      rot.textContent = 'Atualizado em ' + ((Date.now()-t0)/1000).toFixed(1).replace('.',',') + 's';
+      b.classList.remove('girando'); b.disabled = false;
+      setTimeout(function(){ rot.textContent = 'Atualizar dados'; }, 4000);
+    }, true);
+  });
+
+  /* ---------- troca de telas ---------- */
+  var carregou = false;
+  function abrirTela(e){
     if(e) e.preventDefault();
     capa.classList.add('oculto');
     painel.classList.add('oculto');
     perf.classList.remove('oculto');
     document.body.classList.remove('modoCapa');
-    window.scrollTo(0,0);
-    desenhar();
-    window.dispatchEvent(new Event('resize'));
+    window.scrollTo(0, 0);
+    if(!carregou){ carregou = true; carregar(); }
+    else { desenhar(); }
   }
   function voltar(e){
     if(e) e.preventDefault();
     perf.classList.add('oculto');
     capa.classList.remove('oculto');
     document.body.classList.add('modoCapa');
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
   }
   var btn = document.getElementById('irPerf');
-  if(btn) btn.addEventListener('click', abrir);
-
-  // Mes corrente no cartao da capa e no cabecalho da tela.
-  (function(){
-    var M = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
-             'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-    var h = new Date();
-    var titulo = M[h.getMonth()] + ' / ' + h.getFullYear();
-    var a1 = document.getElementById('perfMes');    if(a1) a1.textContent = titulo;
-    var a2 = document.getElementById('perfTitulo'); if(a2) a2.textContent = titulo;
-    var a3 = document.getElementById('perfBotao');  if(a3) a3.textContent = titulo;
-    var a4 = document.getElementById('clubeMes');   if(a4) a4.textContent = 'Indicações de ' + h.getFullYear();
-  })();
+  if(btn) btn.addEventListener('click', abrirTela);
   var vlt = document.getElementById('irCapa2');
   if(vlt) vlt.addEventListener('click', voltar);
+
+  (function(){
+    var h = new Date();
+    var titulo = MESL[h.getMonth()] + ' / ' + h.getFullYear();
+    var a1 = document.getElementById('perfMes');    if(a1) a1.textContent = titulo;
+    var a4 = document.getElementById('clubeMes');   if(a4) a4.textContent = 'Indicações de ' + h.getFullYear();
+  })();
 })();
 </script>
 </body>
