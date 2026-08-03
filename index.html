@@ -851,7 +851,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v65</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v66</span></p>
   </div>
 </div>
 
@@ -1765,8 +1765,7 @@ body.modoCapa{min-height:100%}
         var fundo = emCurso ? 'rgba(250,244,232,.10)'
                   : (subiu ? 'rgba(61,220,132,.16)' : 'rgba(224,178,60,.16)');
         var rotulo = emCurso ? 'EM CURSO' : (subiu ? '▲ AUMENTOU' : '▼ DIMINUIU');
-        var pctT = (!emCurso && f25) ? '  ·  ' + (subiu ? '+' : '−') +
-                    Math.abs(dv/f25*100).toFixed(0) + '%' : '';
+        var pctT = '';
         return '<div class="cn1">' +
                  '<span class="cnNome"><span class="nm">' + nome + '</span>' +
                  '<span class="tagSt" style="background:' + fundo + ';color:' + corC + '">' +
@@ -1786,12 +1785,13 @@ body.modoCapa{min-height:100%}
         '<div class="par2"><span>2025</span><b>' + (b ? brlCheio(b) : 'sem venda') + '</b></div>' +
         '<div class="par2"><span>2026</span><b>' + (a ? brlCheio(a) : 'sem venda') + '</b></div>' +
         '<div class="dif" style="color:' + cor + '">' +
-          (emCurso ? 'MÊS EM CURSO' : (d2 === null ? 'SEM BASE' : pct(d2))) + '</div>' +
-        '<div class="abs"' + (!emCurso && d2 !== null && d2 >= 0 ? ' style="color:' + COR.verde + '"' : '') + '>' +
+          (emCurso ? 'MÊS EM CURSO'
+          : (d2 === null ? 'SEM BASE'
+          : (a >= b ? '+' + brlCheio(a - b) : '−' + brlCheio(b - a)))) + '</div>' +
+        '<div class="abs">' +
           (emCurso ? 'Comparação só quando ' + MESL[k] + ' fechar'
           : (d2 === null ? '2025 não teve venda neste mês'
-          : (a >= b ? '2026 fez ' + brlCheio(a - b) + ' a mais, melhor que 2025'
-                    : '2026 fez ' + brlCheio(b - a) + ' a menos'))) +
+          : (a >= b ? '2026 faturou mais que 2025' : '2026 faturou menos que 2025'))) +
         '</div>' +
         '<div class="canais">' +
           linhaCn('LOJA', cB.l, cA.l, vB.l, vA.l) +
@@ -2800,7 +2800,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v65</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v66</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
