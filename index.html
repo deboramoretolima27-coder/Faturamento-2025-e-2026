@@ -74,7 +74,16 @@ h1{font-family:var(--display);font-size:38px;font-weight:700;line-height:1;lette
 .abas button:focus-visible{outline:2px solid var(--marrom-medio);outline-offset:-4px}
 .aviso{background:var(--areia);border-radius:3px;padding:13px 18px;font-size:12px;color:var(--marrom);
        line-height:1.55;margin-bottom:20px;text-align:center}
-.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(212px,1fr));gap:10px}
+.meses{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:10px}
+.mesBox .chd{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;font-size:7.5px;font-weight:700;
+  letter-spacing:.12em;color:rgba(250,244,232,.35);padding-bottom:6px}
+.mesBox .chd span:nth-child(n+2){text-align:right}
+.mesBox .crow{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;align-items:baseline;padding:6px 0;
+  border-bottom:1px solid rgba(238,227,209,.08);font-size:11px}
+.mesBox .crow:last-of-type{border-bottom:0}
+.mesBox .crow .cn{font-weight:600;color:var(--offwhite)}
+.mesBox .crow .cv{text-align:right;color:rgba(250,244,232,.55);font-variant-numeric:tabular-nums;white-space:nowrap}
+.mesBox .crow .cv b{color:var(--offwhite);font-weight:600}
 .mesBox .par2{display:flex;justify-content:space-between;font-size:11px;margin-top:9px;color:var(--suave)}
 .mesBox .par2 b{font-weight:600;color:var(--marrom)}
 .mesBox .dif{font-family:var(--display);font-size:17px;font-weight:700;letter-spacing:-.03em;margin-top:10px}
@@ -840,7 +849,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v63</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v64</span></p>
   </div>
 </div>
 
@@ -1719,7 +1728,21 @@ body.modoCapa{min-height:100%}
            '<span class="var" style="color:' + cor + '">' + seta + '</span></div>';
   }
 
+  // Faturamento por canal em cada mes, somado das vendas individuais.
+  function fatPorCanal(anoRef){
+    var mapa = {};
+    (D.vendas || []).forEach(function(v){
+      if(v.a !== anoRef || v.m < 0) return;
+      var c = (v.c || '').toLowerCase();
+      var chave = c === 'loja' ? 'l' : (c === 'online' ? 'o' : 's');
+      if(!mapa[v.m]) mapa[v.m] = {l:0, o:0, s:0};
+      mapa[v.m][chave] += v.v;
+    });
+    return mapa;
+  }
+
   function montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial){
+    var vcA = fatPorCanal(A), vcB = fatPorCanal(B);
     var caixas = '';
     for(var k = 0; k < 12; k++){
       var a = fA[k] || 0, b = fB[k] || 0;
@@ -1732,24 +1755,36 @@ body.modoCapa{min-height:100%}
       var semA = Math.max((qA[k] || 0) - cA.l - cA.o, 0);
       var semB = Math.max((qB[k] || 0) - cB.l - cB.o, 0);
 
+      var vA = vcA[k] || {l:0,o:0,s:0}, vB = vcB[k] || {l:0,o:0,s:0};
+      function linhaCn(nome, q25, q26, f25, f26){
+        var subiu = f26 >= f25;
+        return '<div class="crow"><span class="cn">' + nome + '</span>' +
+               '<span class="cv">' + q25 + ' → <b>' + q26 + '</b></span>' +
+               '<span class="cv">' + brlCheio(f25) + ' → <b style="color:' +
+                 (emCurso ? COR.suave : (subiu ? COR.vivo : COR.medio)) + '">' +
+                 brlCheio(f26) + '</b></span></div>';
+      }
+
       caixas += '<div class="mesBox' + (emCurso ? ' curso' : '') + '" data-m="' + k + '">' +
         '<div class="mn">' + MESL[k] + (emCurso ? ' · em curso' : '') + '</div>' +
-        '<div class="par2"><span>2025</span><b>' + (b ? brl(b) : 'sem venda') + '</b></div>' +
-        '<div class="par2"><span>2026</span><b>' + (a ? brl(a) : 'sem venda') + '</b></div>' +
+        '<div class="par2"><span>2025</span><b>' + (b ? brlCheio(b) : 'sem venda') + '</b></div>' +
+        '<div class="par2"><span>2026</span><b>' + (a ? brlCheio(a) : 'sem venda') + '</b></div>' +
         '<div class="dif" style="color:' + cor + '">' +
           (emCurso ? 'MÊS EM CURSO' : (d2 === null ? 'SEM BASE' : pct(d2))) + '</div>' +
         '<div class="abs"' + (!emCurso && d2 !== null && d2 >= 0 ? ' style="color:' + COR.verde + '"' : '') + '>' +
           (emCurso ? 'Comparação só quando ' + MESL[k] + ' fechar'
           : (d2 === null ? '2025 não teve venda neste mês'
-          : (a >= b ? '2026 fez ' + brl(a - b) + ' a mais, melhor que 2025'
-                    : '2026 fez ' + brl(b - a) + ' a menos'))) +
+          : (a >= b ? '2026 fez ' + brlCheio(a - b) + ' a mais, melhor que 2025'
+                    : '2026 fez ' + brlCheio(b - a) + ' a menos'))) +
         '</div>' +
         '<div class="canais">' +
-          linhaCanal('Loja', cB.l, cA.l, emCurso) +
-          linhaCanal('Online', cB.o, cA.o, emCurso) +
+          '<div class="chd"><span>CANAL</span><span>VENDAS</span><span>FATURAMENTO</span></div>' +
+          linhaCn('Loja', cB.l, cA.l, vB.l, vA.l) +
+          linhaCn('Online', cB.o, cA.o, vB.o, vA.o) +
           ((semA || semB)
             ? '<div class="semreg">Canal não registrado: ' + semB + ' venda' + (semB === 1 ? '' : 's') +
-              ' em 2025 e ' + semA + ' em 2026. Não temos essa informação no quadro.</div>'
+              ' em 2025 (' + brlCheio(vB.s) + ') e ' + semA + ' em 2026 (' + brlCheio(vA.s) +
+              '). Não temos essa informação no quadro.</div>'
             : '') +
         '</div></div>';
     }
@@ -2750,7 +2785,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v63</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v64</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
