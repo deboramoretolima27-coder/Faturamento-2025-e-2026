@@ -871,7 +871,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v74</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v76</span></p>
   </div>
 </div>
 
@@ -2744,7 +2744,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v74</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v76</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2991,7 +2991,7 @@ body.modoCapa{min-height:100%}
               'Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
   var F = null;                 // dados do funil
-  var MESREF = new Date().getMonth();   // o relatorio e sempre do mes corrente
+  var MESREF = new Date().getMonth();   // ajustado depois para o ultimo mes com movimento
   var eixoOrigem = 'ganho';
   var ordemFila = 'valor';
   var graficos = {};
@@ -3026,6 +3026,19 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- recorte do periodo ---------- */
+  // Se o mes corrente ainda nao teve movimento, o painel mostra o ultimo mes com dado.
+  function ajustarMes(){
+    if(!F || !F.leads.length) return;
+    var tem = function(m){
+      return F.leads.some(function(l){ return l.me === m || l.mf === m; });
+    };
+    if(tem(MESREF)) return;
+    var atual = new Date().getMonth();
+    for(var m = atual; m >= 0; m--){
+      if(tem(m)){ MESREF = m; return; }
+    }
+  }
+
   // Entra no relatorio quem chegou no mes ou quem fechou no mes, mesmo tendo entrado antes.
   function recorte(){
     if(!F) return [];
@@ -3504,6 +3517,12 @@ body.modoCapa{min-height:100%}
         document.getElementById('pfCarregando').classList.add('oculto');
         document.getElementById('pfFalha').classList.add('oculto');
         document.getElementById('pfConteudo').classList.remove('oculto');
+        ajustarMes();
+        var st = document.getElementById('pfSubtitulo');
+        if(st){
+          st.innerHTML = MESL[MESREF] + ' de ' + new Date().getFullYear() +
+            ' · funil, origem, conversão e motivos de perda';
+        }
         var ns = document.getElementById('pfNotaSafra');
         if(ns) ns.textContent = 'De qual mês vieram os negócios que estão em ' + MESL[MESREF] +
           '. Quem entrou antes e fechou agora aparece na safra do mês de entrada. Clique para ver os clientes.';
@@ -3537,12 +3556,6 @@ body.modoCapa{min-height:100%}
       b.classList.add('on'); ordemFila = b.dataset.f; fila(recorte());
     });
   });
-  (function(){
-    var st = document.getElementById('pfSubtitulo');
-    if(st) st.textContent = MESL[MESREF] + ' de ' + new Date().getFullYear() +
-      ' · funil, origem, conversão e motivos de perda';
-  })();
-
   var bAt = document.getElementById('pfAtualizar');
   if(bAt) bAt.addEventListener('click', function(){
     var b = this, rot = b.querySelector('.txt'), t0 = Date.now();
