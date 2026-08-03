@@ -701,6 +701,52 @@ body.modoCapa{min-height:100%}
 .metaLado .mVal{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.03em;margin-top:8px;color:var(--offwhite)}
 .metaLado .mSub{font-size:11px;color:rgba(250,244,232,.5);margin-top:6px;line-height:1.5}
 @media(max-width:900px){.metaLado{grid-template-columns:1fr;gap:18px}}
+
+/* ---------- TELA EM RETRATO, MONITOR EM PE ---------- */
+@media (orientation: portrait) and (min-width: 641px){
+  body{padding:38px 26px 60px}
+
+  /* a capa empilha os cartoes e ganha respiro */
+  #telaCapa{justify-content:flex-start;padding-top:8vh}
+  #telaCapa .tiles{grid-template-columns:1fr;gap:16px}
+  #telaCapa .logo{width:min(300px,50vw)}
+  #telaCapa h1{font-size:clamp(30px,5vw,44px)}
+
+  /* nada de duas colunas: em retrato a largura e o recurso escasso */
+  .c8,.c6,.c4{grid-column:span 12}
+  .par{grid-template-columns:1fr;gap:26px}
+  .recGrade{grid-template-columns:1fr;gap:24px}
+
+  /* bloco do mes: arco em cima, numeros no meio, faixas embaixo */
+  .mesAtual .trio{grid-template-columns:1fr;gap:22px}
+  .mesAtual .arcoCx{max-width:400px;margin:0 auto}
+  .mesAtual .faixasCx{border-left:0;padding-left:0;
+    border-top:1px solid rgba(238,227,209,.14);padding-top:16px}
+  .mesAtual .quatro{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+
+  /* mais altura para os graficos, que e o que sobra em retrato */
+  .tela{height:320px}
+  .tela.alta{height:380px}
+  .tela.metagrafico{height:480px}
+  .tela.pizza{height:300px}
+
+  .kpis{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .meses{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .faixasLeg{grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  #telaPerf .semanas{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  #telaPerf .parceiros{grid-template-columns:1fr}
+  #telaPerf .perdas{grid-template-columns:1fr}
+  #telaPerf .metaLado{grid-template-columns:1fr;gap:20px}
+}
+
+/* Telas estreitas de computador, sem ser celular, tambem preferem uma coluna. */
+@media (min-width:641px) and (max-width:1180px){
+  .mesAtual .trio{grid-template-columns:1fr;gap:20px}
+  .mesAtual .arcoCx{max-width:380px;margin:0 auto}
+  .mesAtual .faixasCx{border-left:0;padding-left:0;
+    border-top:1px solid rgba(238,227,209,.14);padding-top:16px}
+  .recGrade{grid-template-columns:1fr;gap:22px}
+}
 </style>
 </head>
 <body class="modoCapa">
@@ -794,7 +840,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v62</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v63</span></p>
   </div>
 </div>
 
@@ -2704,7 +2750,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v62</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v63</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
