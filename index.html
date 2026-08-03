@@ -355,7 +355,7 @@ body.modoCapa{min-height:100%}
   box-shadow:0 0 0 3px rgba(61,220,132,.18)}
 #telaCapa .selo{font-size:8px;font-weight:700;letter-spacing:.14em;color:rgba(250,244,232,.55);
   border:1px solid rgba(238,227,209,.3);padding:3px 8px;border-radius:9px;white-space:nowrap}
-#telaCapa .tvalor{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.04em;
+#telaCapa .tvalor{font-family:var(--display);font-size:27px;font-weight:700;letter-spacing:-.045em;
   margin-top:14px;line-height:1;color:var(--offwhite);font-variant-numeric:tabular-nums}
 #telaCapa .tvalor small{font-size:17px;font-weight:700}
 #telaCapa .tsub{font-size:11.5px;color:rgba(250,244,232,.58);margin-top:8px;line-height:1.5}
@@ -365,7 +365,7 @@ body.modoCapa{min-height:100%}
   background:rgba(224,178,60,.16);color:#E0B23C;border:1px solid rgba(224,178,60,.45);white-space:nowrap}
 #telaCapa .barra2{height:3px;background:rgba(238,227,209,.16);border-radius:2px;margin-top:14px;position:relative}
 #telaCapa .barra2 .marcaEsp{position:absolute;top:-3px;width:1.5px;height:9px;background:rgba(250,244,232,.55)}
-#telaCapa .capaLeg{font-size:10px;color:rgba(250,244,232,.4);margin-top:7px;line-height:1.4;min-height:14px}
+#telaCapa .capaLeg{font-size:10.5px;color:rgba(250,244,232,.5);margin-top:9px;line-height:1.55;min-height:14px}
 #telaCapa .barra2 i{display:block;height:100%;background:#3DDC84;width:0;border-radius:2px;transition:width .8s ease}
 #telaCapa .tacao{font-size:11px;font-weight:600;margin-top:16px;display:flex;align-items:center;gap:7px;
   color:var(--offwhite)}
@@ -790,7 +790,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v57</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v58</span></p>
   </div>
 </div>
 
@@ -2649,7 +2649,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v57</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v58</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2746,6 +2746,13 @@ body.modoCapa{min-height:100%}
   var painel = document.getElementById('telaPainel');
   var jaCarregou = false;
 
+  // Dias de trabalho, de segunda a sabado.
+  function diasUteis(a, b){
+    var n = 0, d = new Date(a.getTime());
+    while(d <= b){ if(d.getDay() !== 0) n++; d.setDate(d.getDate() + 1); }
+    return n;
+  }
+
   function brlCurto(v){
     if(v >= 1000000) return {n:(v/1000000).toFixed(2).replace('.',','), u:' mi'};
     if(v >= 1000)    return {n:String(Math.round(v/1000)), u:' mil'};
@@ -2766,8 +2773,9 @@ body.modoCapa{min-height:100%}
       var fat = 0, qtd = 0;
       for(var j=0;j<=u;j++){ fat += fatArr[j]||0; qtd += qtdArr[j]||0; }
 
-      var c = brlCurto(fat);
-      document.getElementById('capaValor').innerHTML = 'R$ ' + c.n + '<small>' + c.u + '</small>';
+      // Valor por extenso, sem abreviar.
+      document.getElementById('capaValor').textContent =
+        fat.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
 
       var mt = (D.metas && D.metas[ano]) || null;
       var hoje = new Date();
@@ -2775,15 +2783,25 @@ body.modoCapa{min-height:100%}
       var ate = parcial ? u - 1 : u;   // ultimo mes fechado
       var texto = qtd + ' vendas em ' + ano;
       var pct = null;       // quanto da meta do ano ja foi entregue
-      var esperado = null;  // quanto deveria estar entregue nesta altura do ano
+      var esperado = null;  // percentual esperado nesta altura do ano
+      var alvoHoje = null;  // valor que o ano deveria somar hoje
       if(mt){
         var metaAno = mt.meta.reduce(function(a,b){ return a + (b||0); }, 0);
         if(metaAno){
           pct = fat/metaAno*100;
           // As metas mensais sao desiguais, entao o esperado e a soma dos meses fechados.
-          if(ate >= 0){
+          if(ate >= 0 || parcial){
             var alvo = 0;
             for(var k=0;k<=ate;k++){ alvo += mt.meta[k]||0; }
+            // Soma tambem a fatia do mes corrente que ja correu.
+            if(parcial){
+              var pri = new Date(hoje.getFullYear(), u, 1);
+              var ult = new Date(hoje.getFullYear(), u + 1, 0);
+              var amn = new Date(hoje.getFullYear(), u, hoje.getDate() + 1);
+              var totD = diasUteis(pri, ult), corrD = diasUteis(pri, hoje);
+              if(totD) alvo += (mt.meta[u]||0) * corrD / totD;
+            }
+            alvoHoje = alvo;
             esperado = alvo/metaAno*100;
           }
           // O cartao do faturamento mantem o verde da marca. A seta e que indica a posicao.
@@ -2810,9 +2828,17 @@ body.modoCapa{min-height:100%}
       }
       var legenda = document.getElementById('capaLegenda');
       if(legenda){
-        legenda.textContent = esperado !== null
-          ? 'O traço marca os ' + esperado.toFixed(0) + '% esperados para esta altura do ano'
-          : '';
+        if(alvoHoje === null){ legenda.textContent = ''; }
+        else {
+          var dif = fat - alvoHoje;
+          var alvoTxt = alvoHoje.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+          var difTxt = Math.abs(dif).toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0});
+          legenda.innerHTML =
+            'Hoje o ano deveria somar <b style="color:#FAF4E8;font-weight:600">' + alvoTxt + '</b>, o traço na barra. ' +
+            (dif < 0
+              ? 'Faltam <b style="color:#E0B23C;font-weight:600">' + difTxt + '</b> para ficar em dia.'
+              : 'Está <b style="color:#3DDC84;font-weight:600">' + difTxt + '</b> à frente.');
+        }
       }
       if(pct !== null){
         setTimeout(function(){
