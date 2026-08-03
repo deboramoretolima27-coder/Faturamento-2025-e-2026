@@ -415,7 +415,11 @@ body.modoCapa{min-height:100%}
 .mesAtual .num2{font-family:var(--display);font-size:23px;font-weight:700;letter-spacing:-.03em;
   margin-top:7px;color:var(--offwhite);font-variant-numeric:tabular-nums}
 .mesAtual .num2 small{font-size:12px;font-weight:600;color:rgba(250,244,232,.45)}
-.mesAtual .nota2{font-size:10px;color:rgba(250,244,232,.42);margin-top:4px}
+.mesAtual .nota2{font-size:10px;color:rgba(250,244,232,.42);margin-top:8px}
+.mesAtual .hojeLinha{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+  font-size:11px;color:rgba(250,244,232,.5);margin-top:7px;padding-bottom:6px;
+  border-bottom:1px solid rgba(238,227,209,.09)}
+.mesAtual .hojeLinha b{font-weight:600;color:var(--offwhite);font-variant-numeric:tabular-nums;white-space:nowrap}
 .mesAtual .faixasCx{border-left:1px solid rgba(238,227,209,.14);padding-left:26px}
 .mesAtual .rlCab{display:grid;grid-template-columns:1fr auto 86px;gap:12px;font-size:8px;font-weight:700;
   letter-spacing:.13em;color:rgba(250,244,232,.4);padding-bottom:9px;
@@ -784,7 +788,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v50</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v51</span></p>
   </div>
 </div>
 
@@ -1948,6 +1952,15 @@ body.modoCapa{min-height:100%}
     // Onde o mes deveria estar ao fim de hoje para chegar na meta no ritmo certo.
     var idealHoje = totalDias ? meta * corridos / totalDias : 0;
     var hoje0 = Math.max(idealHoje - fatMes, 0);
+
+    // O que ja entrou hoje, pela data de cada venda.
+    var iso = hoje.getFullYear() + '-' +
+              ('0' + (hoje.getMonth()+1)).slice(-2) + '-' +
+              ('0' + hoje.getDate()).slice(-2);
+    var fatHoje = 0, qtdHoje = 0;
+    (D.vendas || []).forEach(function(v){
+      if(v.d && String(v.d).slice(0,10) === iso){ fatHoje += v.v; qtdHoje += 1; }
+    });
     var fatOutro = (D.fat[anoAtual === '2026' ? '2025' : '2026'] || [])[m] || 0;
     var outroAno = anoAtual === '2026' ? '2025' : '2026';
     var ff = FONTE.replace(/"/g,"'");
@@ -2037,10 +2050,13 @@ body.modoCapa{min-height:100%}
             '<small>/dia</small></p></div>' +
           '<div><p class="mini2">REALIZAR HOJE PARA FICAR EM DIA</p><p class="num2" style="color:' +
             (hoje0 > 0 ? cor : COR.vivo) + '">' +
-            (hoje0 > 0 ? brlCheio(hoje0) : 'EM DIA') + '</p><p class="nota2">' +
-            (hoje0 > 0
-              ? 'Até o fim do dia o mês precisa ter ' + brl(idealHoje)
-              : 'O mês já passou de ' + brl(idealHoje) + ', o esperado para hoje') + '</p></div>' +
+            (hoje0 > 0 ? brlCheio(hoje0) : 'EM DIA') + '</p>' +
+            '<div class="hojeLinha"><span>Feito hoje</span><b>' + brlCheio(fatHoje) +
+              (qtdHoje ? ' · ' + qtdHoje + (qtdHoje === 1 ? ' venda' : ' vendas') : '') + '</b></div>' +
+            '<div class="hojeLinha"><span>' + (hoje0 > 0 ? 'Ainda falta' : 'Acima do esperado') +
+              '</span><b style="color:' + (hoje0 > 0 ? cor : COR.vivo) + '">' +
+              brlCheio(hoje0 > 0 ? hoje0 : (fatMes - idealHoje)) + '</b></div>' +
+            '<p class="nota2">Até o fim do dia o mês precisa somar ' + brl(idealHoje) + '</p></div>' +
         '</div>' +
 
         '<div class="faixasCx">' +
@@ -2628,7 +2644,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v50</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v51</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
