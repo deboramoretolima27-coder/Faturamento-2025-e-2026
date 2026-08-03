@@ -211,6 +211,8 @@ footer button{background:transparent;border:1px solid var(--linha);border-radius
           padding:13px 24px;border-bottom:1px solid var(--linha)}
 .linhaCli .nome{font-size:13px;font-weight:500;line-height:1.35}
 .linhaCli .sub{font-size:11px;color:var(--suave);margin-top:4px;line-height:1.4}
+.linhaCli .dataV{font-weight:600;color:var(--marrom);font-variant-numeric:tabular-nums}
+#telaPainel .linhaCli .dataV,.gaveta .linhaCli .dataV{color:var(--offwhite)}
 .linhaCli .valor{font-family:var(--display);font-size:14px;font-weight:700;white-space:nowrap;letter-spacing:-.02em}
 .nadaAqui{padding:34px 24px;text-align:center;font-size:12px;color:var(--suave);letter-spacing:.1em}
 canvas{cursor:pointer}
@@ -859,10 +861,12 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- gaveta ---------- */
+  // Data completa da venda, no formato dia/mes/ano.
   function dataCurta(d){
     if(!d) return '';
-    var p = String(d).split('-');
-    return p.length === 3 ? p[2] + '/' + p[1] : String(d);
+    var p = String(d).trim().split(' ')[0].split('-');
+    if(p.length !== 3) return String(d);
+    return p[2] + '/' + p[1] + '/' + p[0];
   }
   function abrirDetalhe(eyebrow, titulo, filtro){
     var itens = (D.vendas || []).filter(filtro).sort(function(a,b){ return b.v - a.v; });
@@ -870,9 +874,16 @@ body.modoCapa{min-height:100%}
     var total = itens.reduce(function(a,b){ return a + b.v; }, 0);
     document.getElementById('gvEyebrow').textContent = eyebrow;
     document.getElementById('gvTitulo').textContent = titulo;
+    var datas = itens.map(function(v){ return v.d; }).filter(Boolean).sort();
+    var periodo = '';
+    if(datas.length){
+      periodo = datas.length > 1 && datas[0] !== datas[datas.length-1]
+        ? '  ·  de ' + dataCurta(datas[0]) + ' a ' + dataCurta(datas[datas.length-1])
+        : '  ·  ' + dataCurta(datas[0]);
+    }
     document.getElementById('gvResumo').textContent =
       itens.length + (itens.length === 1 ? ' venda  ·  ' : ' vendas  ·  ') + brlCheio(total) +
-      (itens.length ? '  ·  ticket médio ' + brlCheio(total/itens.length) : '');
+      (itens.length ? '  ·  ticket médio ' + brlCheio(total/itens.length) : '') + periodo;
     document.getElementById('gvBusca').value = '';
     listarClientes(itens);
     document.getElementById('gaveta').classList.add('on');
@@ -885,14 +896,15 @@ body.modoCapa{min-height:100%}
     var html = '';
     itens.forEach(function(v){
       var det = [];
-      if(v.d) det.push(dataCurta(v.d));
       if(v.c) det.push(v.c);
       if(v.vd) det.push(v.vd);
       if(v.o) det.push(v.o);
       if(v.ci) det.push(v.ci + (v.e ? '/' + v.e : ''));
       else if(v.e) det.push(v.e);
+      var quando = v.d ? dataCurta(v.d) : (v.m >= 0 ? MESL[v.m] + ' de ' + v.a + ', dia não registrado' : 'data não registrada');
       html += '<div class="linhaCli"><div><div class="nome">' + escapar(v.n) +
-              '</div><div class="sub">' + escapar(det.join('  ·  ')) + '</div></div>' +
+              '</div><div class="sub"><b class="dataV">' + escapar(quando) + '</b>' +
+              (det.length ? '  ·  ' + escapar(det.join('  ·  ')) : '') + '</div></div>' +
               '<div class="valor">' + brlCheio(v.v) + '</div></div>';
     });
     corpo.innerHTML = html;
