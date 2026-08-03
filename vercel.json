@@ -1,5 +1,5 @@
 {
   "functions": {
-    "api/dados.js": { "maxDuration": 60 }
+    "api/dados.mjs": { "maxDuration": 60 }
   }
 }
