@@ -849,12 +849,13 @@ body.modoCapa{min-height:100%}
       <a class="tile viva" href="#" id="irPerf">
         <div class="tcab">
           <span class="tnome">PERFORMANCE COMERCIAL</span>
-          <span class="obraSelo">EM CONSTRUÇÃO</span>
+          <span class="pisca"></span>
         </div>
-        <div class="tvalor" id="perfMes" style="color:#E0B23C">—</div>
-        <div class="tsub">Funil por etapa, origem da venda, cabeceiras e ritmo do mês. <b class="obraTxt">Ainda não ligado ao monday.</b></div>
-        <div class="barra2"><i style="width:35%;background:#E0B23C"></i></div>
-        <div class="tacao">Ver estrutura <span class="st">→</span></div>
+        <div class="tvalor" id="perfMes">—</div>
+        <div class="tsub" id="perfSub">funil de vendas em aberto</div>
+        <div class="barra2"><i id="perfBarra"></i></div>
+        <div class="capaLeg" id="perfLeg"></div>
+        <div class="tacao">Abrir painel <span class="st">→</span></div>
       </a>
 
       <div class="tile espera">
@@ -870,7 +871,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v72</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v73</span></p>
   </div>
 </div>
 
@@ -2744,7 +2745,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v72</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v73</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -3605,9 +3606,33 @@ body.modoCapa{min-height:100%}
 
   (function(){
     var h = new Date();
-    var titulo = MESL[h.getMonth()] + ' / ' + h.getFullYear();
-    var a1 = document.getElementById('perfMes');    if(a1) a1.textContent = titulo;
-    var a4 = document.getElementById('clubeMes');   if(a4) a4.textContent = 'Indicações de ' + h.getFullYear();
+    var a4 = document.getElementById('clubeMes');
+    if(a4) a4.textContent = 'Indicações de ' + h.getFullYear();
+
+    // O cartao da capa mostra quantos negocios seguem em jogo e quanto valem.
+    var alvo = document.getElementById('perfMes');
+    if(alvo) alvo.textContent = '—';
+    fetch('/api/funil', {cache:'no-store'})
+      .then(function(r){ return r.json(); })
+      .then(function(j){
+        if(!j || !j.leads) return;
+        var abertas = j.leads.filter(function(l){ return l.s === 'aberto'; });
+        var valor = abertas.reduce(function(a,b){ return a + (b.v || 0); }, 0);
+        var decid = j.leads.filter(function(l){ return l.s !== 'aberto'; }).length;
+        if(alvo) alvo.textContent = abertas.length + (abertas.length === 1 ? ' lead em jogo' : ' leads em jogo');
+        var sub = document.getElementById('perfSub');
+        if(sub) sub.innerHTML = 'Pipeline aberto de <b>' + 
+          valor.toLocaleString('pt-BR',{style:'currency',currency:'BRL',maximumFractionDigits:0}) + '</b>';
+        var bar = document.getElementById('perfBarra');
+        if(bar && j.leads.length){
+          setTimeout(function(){
+            bar.style.width = Math.round(abertas.length/j.leads.length*100) + '%';
+          }, 150);
+        }
+        var leg = document.getElementById('perfLeg');
+        if(leg) leg.textContent = j.leads.length + ' leads no funil, ' + decid + ' já decididos';
+      })
+      .catch(function(){});
   })();
 })();
 </script>
