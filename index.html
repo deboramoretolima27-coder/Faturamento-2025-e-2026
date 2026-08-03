@@ -360,6 +360,9 @@ body.modoCapa{min-height:100%}
 #telaCapa .tvalor small{font-size:17px;font-weight:700}
 #telaCapa .tsub{font-size:11.5px;color:rgba(250,244,232,.58);margin-top:8px;line-height:1.5}
 #telaCapa .tsub b{color:#3DDC84;font-weight:600}
+#telaCapa .tsub b.obraTxt{color:#E0B23C}
+#telaCapa .obraSelo{font-size:8px;font-weight:700;letter-spacing:.14em;padding:3px 8px;border-radius:9px;
+  background:rgba(224,178,60,.16);color:#E0B23C;border:1px solid rgba(224,178,60,.45);white-space:nowrap}
 #telaCapa .barra2{height:3px;background:rgba(238,227,209,.16);border-radius:2px;margin-top:14px;overflow:hidden}
 #telaCapa .barra2 i{display:block;height:100%;background:#3DDC84;width:0;transition:width .8s ease}
 #telaCapa .tacao{font-size:11px;font-weight:600;margin-top:16px;display:flex;align-items:center;gap:7px;
@@ -714,11 +717,11 @@ body.modoCapa{min-height:100%}
       <a class="tile viva" href="#" id="irPerf">
         <div class="tcab">
           <span class="tnome">PERFORMANCE COMERCIAL</span>
-          <span class="selo">EM CONSTRUÇÃO</span>
+          <span class="obraSelo">EM CONSTRUÇÃO</span>
         </div>
-        <div class="tvalor" style="font-size:22px;opacity:.75">estrutura pronta</div>
-        <div class="tsub">Funil por etapa, origem da venda, cabeceiras e ritmo do mês. Ainda não ligado ao monday.</div>
-        <div class="barra2"><i style="width:35%;background:rgba(250,244,232,.35)"></i></div>
+        <div class="tvalor" id="perfMes" style="color:#E0B23C">—</div>
+        <div class="tsub">Funil por etapa, origem da venda, cabeceiras e ritmo do mês. <b class="obraTxt">Ainda não ligado ao monday.</b></div>
+        <div class="barra2"><i style="width:35%;background:#E0B23C"></i></div>
         <div class="tacao">Ver estrutura <span class="st">→</span></div>
       </a>
 
@@ -928,10 +931,10 @@ body.modoCapa{min-height:100%}
 </svg>
     <h1>Performance Comercial</h1>
     <div class="sub">Funil, origem da venda, cabeceiras e ritmo do mês</div>
-    <div class="meta">Julho de 2026 · estrutura de exemplo</div>
+    <div class="meta"><span id="perfTitulo">—</span> · estrutura de exemplo</div>
     <div class="controles">
       <div class="anos">
-        <button class="on">Julho 2026</button>
+        <button class="on" id="perfBotao">—</button>
       </div>
     </div>
   </header>
@@ -2426,7 +2429,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v41</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v42</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2714,6 +2717,17 @@ body.modoCapa{min-height:100%}
   }
   var btn = document.getElementById('irPerf');
   if(btn) btn.addEventListener('click', abrir);
+
+  // Mes corrente no cartao da capa e no cabecalho da tela.
+  (function(){
+    var M = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho',
+             'Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    var h = new Date();
+    var titulo = M[h.getMonth()] + ' / ' + h.getFullYear();
+    var a1 = document.getElementById('perfMes');    if(a1) a1.textContent = titulo;
+    var a2 = document.getElementById('perfTitulo'); if(a2) a2.textContent = titulo;
+    var a3 = document.getElementById('perfBotao');  if(a3) a3.textContent = titulo;
+  })();
   var vlt = document.getElementById('irCapa2');
   if(vlt) vlt.addEventListener('click', voltar);
 })();
