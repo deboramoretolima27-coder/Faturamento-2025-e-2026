@@ -871,7 +871,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v73</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v74</span></p>
   </div>
 </div>
 
@@ -1071,10 +1071,9 @@ body.modoCapa{min-height:100%}
 <path fill-rule="nonzero" fill="currentColor" fill-opacity="1" d="M 120.777344 210.316406 C 76.152344 149.417969 155.410156 78.382812 222.785156 98.824219 C 222.800781 98.824219 222.796875 98.851562 222.78125 98.851562 C 184.421875 94.96875 155.957031 108.703125 140.199219 127.648438 C 116.273438 156.398438 121.898438 185.308594 135.46875 195.964844 C 151.5 208.5625 173.828125 211.042969 206.847656 167.832031 C 219.542969 151.214844 230.222656 146.15625 242.675781 150.589844 C 258.660156 156.289062 264.617188 176.601562 254.253906 193.777344 C 218.03125 253.800781 145.796875 244.449219 120.777344 210.316406 M 283.886719 166.546875 C 280.285156 200.34375 252.59375 237.097656 194.648438 241.570312 C 194.632812 241.570312 194.625 241.546875 194.644531 241.542969 C 239.835938 232.621094 261.96875 206.570312 269.6875 185.324219 C 278.558594 160.886719 268.789062 133.0625 240.242188 131.125 C 221.207031 129.839844 212.613281 139.574219 194.609375 161.761719 C 173.496094 187.761719 159.367188 188.808594 148.207031 180.367188 C 134.207031 169.785156 135.816406 144.730469 155.347656 124.316406 C 174.652344 104.125 213.84375 96.71875 248.015625 106.933594 C 248.65625 107.125 249.234375 106.402344 248.476562 105.894531 C 178.003906 58.570312 80.816406 116.445312 90.714844 194.828125 C 103.722656 297.875 290.246094 292.726562 285.34375 166.578125 C 285.308594 165.699219 283.972656 165.679688 283.886719 166.546875 "/>
 </svg>
     <h1>Performance Comercial</h1>
-    <div class="sub">Funil de vendas, origem, conversão e motivos de perda</div>
+    <div class="sub" id="pfSubtitulo">Funil de vendas, origem, conversão e motivos de perda</div>
     <div class="meta" id="pfCarimbo">carregando…</div>
     <div class="controles">
-      <div class="anos" id="pfPeriodo"></div>
       <button class="btnTopo" id="pfAtualizar"><span class="giro">↻</span> <span class="txt">Atualizar dados</span></button>
     </div>
   </header>
@@ -1101,7 +1100,7 @@ body.modoCapa{min-height:100%}
 
       <div class="card c12">
         <div class="topo"><div><h2>Safras de clientes</h2>
-          <div class="nota">Cada mês de entrada e o que aconteceu com aqueles leads até hoje. Clique numa safra para ver os clientes.</div>
+          <div class="nota" id="pfNotaSafra"></div>
         </div></div>
         <div class="safras" id="pfSafras"></div>
       </div>
@@ -2745,7 +2744,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v73</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v74</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2992,7 +2991,7 @@ body.modoCapa{min-height:100%}
               'Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
   var F = null;                 // dados do funil
-  var periodo = null;           // indice do mes escolhido, ou 'tudo'
+  var MESREF = new Date().getMonth();   // o relatorio e sempre do mes corrente
   var eixoOrigem = 'ganho';
   var ordemFila = 'valor';
   var graficos = {};
@@ -3027,40 +3026,10 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- recorte do periodo ---------- */
-  // O recorte usa o mes de ENTRADA do lead. E assim que se enxerga safra.
+  // Entra no relatorio quem chegou no mes ou quem fechou no mes, mesmo tendo entrado antes.
   function recorte(){
     if(!F) return [];
-    if(periodo === 'tudo') return F.leads;
-    return F.leads.filter(function(l){ return l.me === periodo; });
-  }
-
-  // Monta os botoes com os meses que realmente existem no quadro.
-  function montarPeriodos(){
-    var alvo = document.getElementById('pfPeriodo');
-    var presentes = {};
-    F.leads.forEach(function(l){ if(l.me >= 0) presentes[l.me] = (presentes[l.me] || 0) + 1; });
-    var meses = Object.keys(presentes).map(Number).sort(function(a,b){ return a-b; });
-    if(!meses.length){ alvo.innerHTML = ''; periodo = 'tudo'; return; }
-
-    // Abre no mes mais recente com volume relevante, nao num mes de sobra.
-    if(periodo === null){
-      var forte = meses.slice().reverse().filter(function(m){ return presentes[m] >= 5; });
-      periodo = forte.length ? forte[0] : meses[meses.length - 1];
-    }
-    alvo.innerHTML = meses.map(function(m){
-      return '<button data-m="' + m + '"' + (m === periodo ? ' class="on"' : '') + '>' +
-             MESL[m] + '</button>';
-    }).join('') +
-    '<button data-m="tudo"' + (periodo === 'tudo' ? ' class="on"' : '') + '>Tudo</button>';
-
-    alvo.querySelectorAll('button').forEach(function(b){
-      b.addEventListener('click', function(){
-        alvo.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
-        b.classList.add('on');
-        periodo = b.dataset.m === 'tudo' ? 'tudo' : parseInt(b.dataset.m, 10);
-        desenhar();
-      });
-    });
+    return F.leads.filter(function(l){ return l.me === MESREF || l.mf === MESREF; });
   }
 
   /* ---------- gaveta reaproveitada do painel ---------- */
@@ -3085,14 +3054,26 @@ body.modoCapa{min-height:100%}
       return '<div class="kpi"><div class="rot">' + rot + '</div><div class="val">' + val + '</div>' +
              (sub ? '<div class="sub">' + sub + '</div>' : '') + '</div>';
     }
+    // Quem entrou neste mes e quem veio de safras anteriores mas fechou aqui.
+    var entraram = L.filter(function(l){ return l.me === MESREF; });
+    var deSafras = L.filter(function(l){ return l.me !== MESREF && l.me >= 0; });
+    var ganhasSafra = ganhas.filter(function(l){ return l.me !== MESREF && l.me >= 0; });
+    var fatSafra = ganhasSafra.reduce(function(a,b){ return a + b.v; }, 0);
+
     document.getElementById('pfKpis').innerHTML =
-      card('Leads no período', L.length,
-           abertas.length + ' em aberto, ' + ganhas.length + ' ganhas e ' + perdidas.length + ' perdidas') +
+      card('Leads de entrada', entraram.length,
+           'Entraram em ' + MESL[MESREF] +
+           (deSafras.length
+             ? '. Mais ' + deSafras.length + (deSafras.length === 1 ? ' negócio veio' : ' negócios vieram') +
+               ' de safras anteriores'
+             : '. Nenhum negócio de safra anterior')) +
       card('Vendas ganhas', ganhas.length,
            'Conversão de ' + conv.toFixed(1).replace('.',',') + '% sobre os ' + L.length +
-           ' leads que entraram') +
+           ' negócios do mês' +
+           (ganhasSafra.length ? '. ' + ganhasSafra.length + ' de safras anteriores' : '')) +
       card('Faturamento ganho', brlCheio(fatG),
-           ganhas.length ? 'Ticket médio de ' + brlCheio(fatG/ganhas.length) : '') +
+           (ganhas.length ? 'Ticket médio de ' + brlCheio(fatG/ganhas.length) : '') +
+           (fatSafra ? '. ' + brlCheio(fatSafra) + ' vieram de safras anteriores' : '')) +
       card('Pipeline aberto', brlCheio(fatA),
            abertas.length + ' negócios ainda vivos');
 
@@ -3106,35 +3087,19 @@ body.modoCapa{min-height:100%}
     var placar = document.getElementById('pfPlacarDia');
     var leg = document.getElementById('pfLegDia');
 
-    if(periodo === 'tudo'){
-      // Sem mes definido, o grafico diario perde sentido. Mostra por mes.
-      var porMes = new Array(12).fill(0);
-      L.forEach(function(l){ if(l.me >= 0) porMes[l.me] += 1; });
-      var opM = base();
-      opM.plugins.tooltip.callbacks = { label:function(c){
-        return c.parsed.y + (c.parsed.y === 1 ? ' lead' : ' leads'); }};
-      graficos.dia = new Chart(alvo, {
-        type:'bar',
-        data:{labels:MESL.map(function(m){ return m.slice(0,3); }),
-              datasets:[{data:porMes, backgroundColor:COR.claro, borderRadius:2, maxBarThickness:34}]},
-        options:opM});
-      placar.innerHTML = '';
-      leg.innerHTML = '';
-      return;
-    }
-
     var ano = new Date().getFullYear();
-    var diasNoMes = new Date(ano, periodo + 1, 0).getDate();
+    var diasNoMes = new Date(ano, MESREF + 1, 0).getDate();
     var conta = new Array(diasNoMes).fill(0);
+    // So conta quem realmente entrou neste mes.
     L.forEach(function(l){
-      if(!l.e) return;
+      if(!l.e || l.me !== MESREF) return;
       var d = parseInt(l.e.slice(8, 10), 10);
       if(d >= 1 && d <= diasNoMes) conta[d-1] += 1;
     });
     var nomesDia = ['dom','seg','ter','qua','qui','sex','sáb'];
     var semana = [], vazios = 0;
     for(var i = 0; i < diasNoMes; i++){
-      semana.push(nomesDia[new Date(ano, periodo, i+1).getDay()]);
+      semana.push(nomesDia[new Date(ano, MESREF, i+1).getDay()]);
       if(!conta[i]) vazios++;
     }
     var maxD = Math.max.apply(null, conta);
@@ -3184,7 +3149,7 @@ body.modoCapa{min-height:100%}
       if(!els.length) return;
       var d = els[0].index + 1;
       var doDia = L.filter(function(l){ return l.e && parseInt(l.e.slice(8,10), 10) === d; });
-      abrir('Dia ' + d + ' de ' + MESL[periodo], doDia.length + ' leads', doDia);
+      abrir('Dia ' + d + ' de ' + MESL[MESREF], doDia.length + ' leads', doDia);
     };
 
     graficos.dia = new Chart(alvo, {
@@ -3197,10 +3162,10 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- safras de clientes ---------- */
-  function safras(){
+  function safras(L){
     var alvo = document.getElementById('pfSafras');
     var mapa = {};
-    F.leads.forEach(function(l){
+    L.forEach(function(l){
       if(l.me < 0) return;
       if(!mapa[l.me]) mapa[l.me] = {leads:0, ganhas:0, perdidas:0, abertas:0, fat:0, dias:[]};
       var m = mapa[l.me];
@@ -3217,8 +3182,10 @@ body.modoCapa{min-height:100%}
       var conv = s2.leads ? s2.ganhas/s2.leads*100 : 0;
       var medioDias = s2.dias.length
         ? Math.round(s2.dias.reduce(function(a,b){ return a+b; }, 0)/s2.dias.length) : null;
+      var atual = m === MESREF;
       return '<tr data-m="' + m + '">' +
-        '<td>' + MESL[m] + '</td>' +
+        '<td>' + MESL[m] + (atual ? ' <span style="font-weight:400;color:' + COR.suave +
+          ';font-size:10.5px">mês corrente</span>' : '') + '</td>' +
         '<td class="forte">' + s2.leads + '</td>' +
         '<td style="color:' + COR.vivo + '">' + s2.ganhas + '</td>' +
         '<td>' + s2.perdidas + '</td>' +
@@ -3232,16 +3199,16 @@ body.modoCapa{min-height:100%}
 
     alvo.innerHTML =
       '<table class="safraTab"><thead><tr>' +
-        '<th>SAFRA</th><th>LEADS</th><th>GANHAS</th><th>PERDIDAS</th><th>EM ABERTO</th>' +
+        '<th>SAFRA DE ENTRADA</th><th>NEGÓCIOS</th><th>GANHAS</th><th>PERDIDAS</th><th>EM ABERTO</th>' +
         '<th>CONVERSÃO</th><th>FATURAMENTO</th><th>TEMPO MÉDIO</th>' +
       '</tr></thead><tbody>' + linhas + '</tbody></table>';
 
     alvo.querySelectorAll('tr[data-m]').forEach(function(tr){
       tr.addEventListener('click', function(){
         var m = parseInt(tr.dataset.m, 10);
-        var itens = F.leads.filter(function(l){ return l.me === m; });
+        var itens = L.filter(function(l){ return l.me === m; });
         var g = itens.filter(function(l){ return l.s === 'ganha'; });
-        abrir('Safra de ' + MESL[m], itens.length + ' leads · ' + g.length + ' ganhas · ' +
+        abrir('Safra de ' + MESL[m], itens.length + ' negócios · ' + g.length + ' ganhas · ' +
               brlCheio(g.reduce(function(a,b){ return a + b.v; }, 0)), itens);
       });
     });
@@ -3516,7 +3483,7 @@ body.modoCapa{min-height:100%}
   function desenhar(){
     if(!F || typeof Chart === 'undefined') return;
     var L = recorte();
-    kpis(L); porDia(L); safras(); funil(L); origem(L); vendedores(L); perdas(L); produtos(L); tempo(L); fila(L);
+    kpis(L); porDia(L); safras(L); funil(L); origem(L); vendedores(L); perdas(L); produtos(L); tempo(L); fila(L);
   }
 
   /* ---------- carregar ---------- */
@@ -3537,7 +3504,9 @@ body.modoCapa{min-height:100%}
         document.getElementById('pfCarregando').classList.add('oculto');
         document.getElementById('pfFalha').classList.add('oculto');
         document.getElementById('pfConteudo').classList.remove('oculto');
-        montarPeriodos();
+        var ns = document.getElementById('pfNotaSafra');
+        if(ns) ns.textContent = 'De qual mês vieram os negócios que estão em ' + MESL[MESREF] +
+          '. Quem entrou antes e fechou agora aparece na safra do mês de entrada. Clique para ver os clientes.';
         var q = new Date(j.atualizado || Date.now());
         document.getElementById('pfCarimbo').textContent =
           'Quadro ' + (j.quadro || 'monday') + '  ·  ' + (j.total || 0) + ' leads  ·  leitura de ' +
@@ -3568,6 +3537,12 @@ body.modoCapa{min-height:100%}
       b.classList.add('on'); ordemFila = b.dataset.f; fila(recorte());
     });
   });
+  (function(){
+    var st = document.getElementById('pfSubtitulo');
+    if(st) st.textContent = MESL[MESREF] + ' de ' + new Date().getFullYear() +
+      ' · funil, origem, conversão e motivos de perda';
+  })();
+
   var bAt = document.getElementById('pfAtualizar');
   if(bAt) bAt.addEventListener('click', function(){
     var b = this, rot = b.querySelector('.txt'), t0 = Date.now();
