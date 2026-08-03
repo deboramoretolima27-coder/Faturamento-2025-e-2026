@@ -408,7 +408,7 @@ body.modoCapa{min-height:100%}
 .mesAtual .titMes{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--offwhite)}
 .mesAtual .subMes,.mesAtual .refMes{font-size:10.5px;color:rgba(250,244,232,.45)}
 .mesAtual .refMes b{color:rgba(250,244,232,.75);font-weight:600}
-.mesAtual .trio{display:grid;grid-template-columns:330px 1fr 290px;gap:28px;align-items:center;margin-top:20px}
+.mesAtual .trio{display:grid;grid-template-columns:340px 1fr 280px;gap:26px;align-items:center;margin-top:20px}
 .mesAtual .arcoCx svg{width:100%;height:auto;display:block}
 .mesAtual .quatro{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}
 .mesAtual .mini2{font-size:8.5px;font-weight:700;letter-spacing:.16em;color:rgba(250,244,232,.45);margin:0}
@@ -787,7 +787,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v53</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v54</span></p>
   </div>
 </div>
 
@@ -1966,7 +1966,7 @@ body.modoCapa{min-height:100%}
 
     /* Arco de zero ate a Hiper Meta, com Meta e Super marcadas no percurso. */
     var teto = hip || sup || meta || 1;
-    var R = 116, cx = 166, cy = 152;
+    var R = 118, cx = 180, cy = 162;
     function ponto(frac, raio){
       var r = raio || R;
       var ang = Math.PI * (1 - Math.min(Math.max(frac, 0), 1));
@@ -1981,12 +1981,12 @@ body.modoCapa{min-height:100%}
     function marca(valor, corFaixa, rotulo){
       if(!valor) return '';
       var f = Math.min(valor/teto, 1);
-      var a = ponto(f, R - 9), b = ponto(f, R + 9), t = ponto(f, R + 22);
+      var a = ponto(f, R - 10), b = ponto(f, R + 10), t = ponto(f, R + 28);
       var alcancou = fatMes >= valor;
       // O rotulo muda de ancoragem perto das pontas, para nunca sair do quadro.
       var anc = 'middle', dx = 0;
-      if(t[0] > cx + 70){ anc = 'end';   dx = 6; }
-      else if(t[0] < cx - 70){ anc = 'start'; dx = -6; }
+      if(t[0] > cx + 70){ anc = 'end';   dx = 8; }
+      else if(t[0] < cx - 70){ anc = 'start'; dx = -8; }
       var tx = (t[0] + dx).toFixed(1);
       return '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) +
              '" y2="' + b[1].toFixed(1) + '" stroke="' + corFaixa + '" stroke-width="2.6" stroke-linecap="round"' +
@@ -2001,16 +2001,16 @@ body.modoCapa{min-height:100%}
     var CF = {meta:'#FAF4E8', sup:'#E0B23C', hip:'#3DDC84'};
     var fracReal = Math.min(fatMes/teto, 1);
     var svg =
-      '<svg viewBox="0 0 332 182" role="img" aria-label="Progresso do mês contra as faixas de meta">' +
+      '<svg viewBox="0 0 372 200" role="img" aria-label="Progresso do mês contra as faixas de meta">' +
         '<path d="' + arco(1) + '" fill="none" stroke="rgba(238,227,209,.10)" stroke-width="13" stroke-linecap="round"/>' +
         (fatMes > 0 ? '<path d="' + arco(Math.max(fracReal, 0.012)) + '" fill="none" stroke="' + cor +
           '" stroke-width="13" stroke-linecap="round"/>' : '') +
         marca(meta, CF.meta, 'META') +
         marca(sup, CF.sup, 'SUPER') +
         marca(hip, CF.hip, 'HIPER') +
-        '<text x="166" y="124" text-anchor="middle" font-size="31" font-weight="700" fill="#FAF4E8" ' +
+        '<text x="180" y="134" text-anchor="middle" font-size="28" font-weight="700" fill="#FAF4E8" ' +
           'font-family="' + ff + '" letter-spacing="-1">' + brlCheio(fatMes) + '</text>' +
-        '<text x="166" y="145" text-anchor="middle" font-size="10" font-weight="700" fill="' + cor + '" ' +
+        '<text x="180" y="155" text-anchor="middle" font-size="10" font-weight="700" fill="' + cor + '" ' +
           'font-family="' + ff + '" letter-spacing="1.4">' + p.toFixed(1).replace('.',',') + '% DA META</text>' +
       '</svg>';
 
@@ -2646,7 +2646,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v53</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v54</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
