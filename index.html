@@ -851,7 +851,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v68</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v69</span></p>
   </div>
 </div>
 
@@ -1055,7 +1055,7 @@ body.modoCapa{min-height:100%}
     <div class="meta" id="pfCarimbo">carregando…</div>
     <div class="controles">
       <div class="anos" id="pfPeriodo">
-        <button data-p="ano" class="on">Ano de 2026</button>
+        <button data-p="ano" class="on" id="pfBotaoAno">Ano</button>
         <button data-p="mes" id="pfBotaoMes">Mês</button>
       </div>
       <button class="btnTopo" id="pfAtualizar"><span class="giro">↻</span> <span class="txt">Atualizar dados</span></button>
@@ -2712,7 +2712,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v68</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v69</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -3034,8 +3034,12 @@ body.modoCapa{min-height:100%}
            abertas.length + ' negócios ainda vivos');
 
     var perdidoV = perdidas.reduce(function(a,b){ return a + b.v; }, 0);
+    var hj = new Date();
+    var rotuloPeriodo = periodo === 'ano'
+      ? 'Ano de ' + hj.getFullYear() + ' até ' + MESL[hj.getMonth()].toLowerCase()
+      : 'Mês de ' + MESL[hj.getMonth()] + ' de ' + hj.getFullYear();
     document.getElementById('pfLeitura').textContent =
-      (periodo === 'ano' ? 'Ano de 2026' : MESL[new Date().getMonth()]) + ': ' + L.length +
+      rotuloPeriodo + ': ' + L.length +
       ' leads, ' + ganhas.length + ' viraram venda somando ' + brlCheio(fatG) + '. ' +
       brlCheio(fatA) + ' seguem em aberto e ' + brlCheio(perdidoV) + ' foram perdidos.';
   }
@@ -3348,8 +3352,11 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- controles ---------- */
+  var hoje0 = new Date();
+  var bAno = document.getElementById('pfBotaoAno');
+  if(bAno) bAno.textContent = 'Ano de ' + hoje0.getFullYear();
   var bMes = document.getElementById('pfBotaoMes');
-  if(bMes) bMes.textContent = MESL[new Date().getMonth()];
+  if(bMes) bMes.textContent = MESL[hoje0.getMonth()] + ' de ' + hoje0.getFullYear();
 
   document.querySelectorAll('#pfPeriodo button').forEach(function(b){
     b.addEventListener('click', function(){
