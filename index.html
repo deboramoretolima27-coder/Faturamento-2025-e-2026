@@ -363,8 +363,10 @@ body.modoCapa{min-height:100%}
 #telaCapa .tsub b.obraTxt{color:#E0B23C}
 #telaCapa .obraSelo{font-size:8px;font-weight:700;letter-spacing:.14em;padding:3px 8px;border-radius:9px;
   background:rgba(224,178,60,.16);color:#E0B23C;border:1px solid rgba(224,178,60,.45);white-space:nowrap}
-#telaCapa .barra2{height:3px;background:rgba(238,227,209,.16);border-radius:2px;margin-top:14px;overflow:hidden}
-#telaCapa .barra2 i{display:block;height:100%;background:#3DDC84;width:0;transition:width .8s ease}
+#telaCapa .barra2{height:3px;background:rgba(238,227,209,.16);border-radius:2px;margin-top:14px;position:relative}
+#telaCapa .barra2 .marcaEsp{position:absolute;top:-3px;width:1.5px;height:9px;background:rgba(250,244,232,.55)}
+#telaCapa .capaLeg{font-size:10px;color:rgba(250,244,232,.4);margin-top:7px;line-height:1.4;min-height:14px}
+#telaCapa .barra2 i{display:block;height:100%;background:#3DDC84;width:0;border-radius:2px;transition:width .8s ease}
 #telaCapa .tacao{font-size:11px;font-weight:600;margin-top:16px;display:flex;align-items:center;gap:7px;
   color:var(--offwhite)}
 #telaCapa .tacao .st{transition:transform .2s ease}
@@ -760,6 +762,7 @@ body.modoCapa{min-height:100%}
         <div class="tvalor" id="capaValor">—</div>
         <div class="tsub" id="capaSub">buscando os dados do quadro</div>
         <div class="barra2"><i id="capaBarra"></i></div>
+        <div class="capaLeg" id="capaLegenda"></div>
         <div class="tacao">Abrir painel <span class="st">→</span></div>
       </a>
 
@@ -787,7 +790,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v54</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v56</span></p>
   </div>
 </div>
 
@@ -2646,7 +2649,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v54</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v56</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2769,15 +2772,48 @@ body.modoCapa{min-height:100%}
       var mt = (D.metas && D.metas[ano]) || null;
       var hoje = new Date();
       var parcial = (String(hoje.getFullYear()) === ano && hoje.getMonth() === u);
-      var ate = parcial ? u - 1 : u;
+      var ate = parcial ? u - 1 : u;   // ultimo mes fechado
       var texto = qtd + ' vendas em ' + ano;
-      var pct = null;
-      if(mt && ate >= 0){
-        var real = 0, alvo = 0;
-        for(var k=0;k<=ate;k++){ real += fatArr[k]||0; alvo += mt.meta[k]||0; }
-        if(alvo){ pct = real/alvo*100; texto += ' &middot; <b>' + pct.toFixed(0) + '% da meta</b>'; }
+      var pct = null;       // quanto da meta do ano ja foi entregue
+      var esperado = null;  // quanto deveria estar entregue nesta altura do ano
+      if(mt){
+        var metaAno = mt.meta.reduce(function(a,b){ return a + (b||0); }, 0);
+        if(metaAno){
+          pct = fat/metaAno*100;
+          // As metas mensais sao desiguais, entao o esperado e a soma dos meses fechados.
+          if(ate >= 0){
+            var alvo = 0;
+            for(var k=0;k<=ate;k++){ alvo += mt.meta[k]||0; }
+            esperado = alvo/metaAno*100;
+          }
+          var acima = (esperado === null) || (pct >= esperado);
+          var corPct = acima ? '#3DDC84' : '#E0B23C';
+          texto += ' &middot; <b style="color:' + corPct + '">' + (acima ? '▲' : '▼') + ' ' +
+                   pct.toFixed(0) + '% da meta do ano</b>';
+          var barra = document.getElementById('capaBarra');
+          if(barra) barra.style.background = corPct;
+        }
       }
       document.getElementById('capaSub').innerHTML = texto;
+
+      // Traco na barra marcando o esperado para esta altura do ano.
+      var trilho = document.querySelector('#irPainel .barra2');
+      if(trilho){
+        var velho = trilho.querySelector('.marcaEsp');
+        if(velho) velho.remove();
+        if(esperado !== null){
+          var mk = document.createElement('span');
+          mk.className = 'marcaEsp';
+          mk.style.left = Math.min(esperado, 100).toFixed(1) + '%';
+          trilho.appendChild(mk);
+        }
+      }
+      var legenda = document.getElementById('capaLegenda');
+      if(legenda){
+        legenda.textContent = esperado !== null
+          ? 'O traço marca os ' + esperado.toFixed(0) + '% esperados para esta altura do ano'
+          : '';
+      }
       if(pct !== null){
         setTimeout(function(){
           document.getElementById('capaBarra').style.width = Math.min(pct,100).toFixed(0) + '%';
