@@ -1,5 +1,6 @@
 {
   "functions": {
-    "api/dados.mjs": { "maxDuration": 60 }
+    "api/dados.mjs": { "maxDuration": 60 },
+    "api/funil.mjs": { "maxDuration": 60 }
   }
 }
