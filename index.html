@@ -783,7 +783,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v48</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v49</span></p>
   </div>
 </div>
 
@@ -1944,6 +1944,9 @@ body.modoCapa{min-height:100%}
     var cor = noRitmo ? COR.vivo : '#E0B23C';
     var ritmoAtual = corridos ? fatMes/corridos : 0;
     var projecao = ritmoAtual * totalDias;
+    // Onde o mes deveria estar ao fim de hoje para chegar na meta no ritmo certo.
+    var idealHoje = totalDias ? meta * corridos / totalDias : 0;
+    var hoje0 = Math.max(idealHoje - fatMes, 0);
     var fatOutro = (D.fat[anoAtual === '2026' ? '2025' : '2026'] || [])[m] || 0;
     var outroAno = anoAtual === '2026' ? '2025' : '2026';
     var ff = FONTE.replace(/"/g,"'");
@@ -2031,10 +2034,12 @@ body.modoCapa{min-height:100%}
           '<div><p class="mini2">DIAS RESTANTES</p><p class="num2">' + restam + '</p></div>' +
           '<div><p class="mini2">RITMO ATUAL</p><p class="num2">' + brlCheio(ritmoAtual) +
             '<small>/dia</small></p></div>' +
-          '<div><p class="mini2">PROJEÇÃO DO MÊS</p><p class="num2" style="color:' + cor + '">' +
-            brl(projecao) + '</p><p class="nota2">' +
-            (meta ? Math.round(projecao/meta*100) + '% da meta · ' : '') + qtdMes +
-            (qtdMes === 1 ? ' venda' : ' vendas') + '</p></div>' +
+          '<div><p class="mini2">REALIZAR HOJE PARA FICAR EM DIA</p><p class="num2" style="color:' +
+            (hoje0 > 0 ? cor : COR.vivo) + '">' +
+            (hoje0 > 0 ? brlCheio(hoje0) : 'EM DIA') + '</p><p class="nota2">' +
+            (hoje0 > 0
+              ? 'Até o fim do dia o mês precisa ter ' + brl(idealHoje)
+              : 'O mês já passou de ' + brl(idealHoje) + ', o esperado para hoje') + '</p></div>' +
         '</div>' +
 
         '<div class="faixasCx">' +
@@ -2622,7 +2627,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v48</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v49</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
