@@ -579,6 +579,25 @@ body.modoCapa{min-height:100%}
 .nadaAqui{color:rgba(250,244,232,.5)}
 
 
+/* ---------- SAFRAS E ENTRADA DIARIA ---------- */
+.legDia{display:flex;gap:18px;margin-top:14px;font-size:11px;color:rgba(250,244,232,.5);flex-wrap:wrap}
+.legDia span{display:flex;align-items:center;gap:6px}
+.legDia i{width:11px;height:11px;border-radius:2px;display:block}
+.safras{overflow-x:auto}
+.safraTab{width:100%;border-collapse:collapse;min-width:640px}
+.safraTab th{font-size:8px;font-weight:700;letter-spacing:.13em;color:rgba(250,244,232,.4);
+  text-align:right;padding:0 10px 10px;border-bottom:1px solid rgba(238,227,209,.16);white-space:nowrap}
+.safraTab th:first-child{text-align:left}
+.safraTab td{font-size:12px;padding:11px 10px;border-bottom:1px solid rgba(238,227,209,.09);
+  text-align:right;font-variant-numeric:tabular-nums;color:rgba(250,244,232,.7);white-space:nowrap}
+.safraTab td:first-child{text-align:left;font-weight:600;color:var(--offwhite)}
+.safraTab tr{cursor:pointer;transition:background .15s}
+.safraTab tr:hover td{background:rgba(250,244,232,.06)}
+.safraTab .forte{color:var(--offwhite);font-weight:600}
+.safraBar{display:inline-block;width:64px;height:5px;background:rgba(238,227,209,.16);border-radius:3px;
+  overflow:hidden;vertical-align:middle;margin-left:8px}
+.safraBar i{display:block;height:100%;background:#3DDC84}
+
 /* ---------- PERFORMANCE usa o mesmo visual do painel ---------- */
 /* O painel usa a mesma foto da capa,com um veu claro para nao atrapalhar a leitura. */
 #telaPerf{position:relative;min-height:100vh;padding-top:1px}
@@ -851,7 +870,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v70</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v72</span></p>
   </div>
 </div>
 
@@ -1054,10 +1073,7 @@ body.modoCapa{min-height:100%}
     <div class="sub">Funil de vendas, origem, conversão e motivos de perda</div>
     <div class="meta" id="pfCarimbo">carregando…</div>
     <div class="controles">
-      <div class="anos" id="pfPeriodo">
-        <button data-p="ano" class="on" id="pfBotaoAno">Ano</button>
-        <button data-p="mes" id="pfBotaoMes">Mês</button>
-      </div>
+      <div class="anos" id="pfPeriodo"></div>
       <button class="btnTopo" id="pfAtualizar"><span class="giro">↻</span> <span class="txt">Atualizar dados</span></button>
     </div>
   </header>
@@ -1067,11 +1083,27 @@ body.modoCapa{min-height:100%}
   <div id="pfFalha" class="oculto" style="padding:64px 0;text-align:center;font-size:13px;color:#E0B23C;line-height:1.7"></div>
 
   <div id="pfConteudo" class="oculto">
-    <div class="leitura"><span class="tag">Leitura</span><span id="pfLeitura"></span></div>
-
     <div class="kpis" id="pfKpis"></div>
 
     <div class="grade">
+
+      <div class="card c12">
+        <div class="topo">
+          <div><h2>Entrada de leads por dia</h2>
+            <div class="nota">Quantos leads entraram em cada dia. A linha tracejada é a média e os picos ficam destacados.</div>
+          </div>
+          <div class="placar" id="pfPlacarDia"></div>
+        </div>
+        <div class="tela"><canvas id="pfDia"></canvas></div>
+        <div class="legDia" id="pfLegDia"></div>
+      </div>
+
+      <div class="card c12">
+        <div class="topo"><div><h2>Safras de clientes</h2>
+          <div class="nota">Cada mês de entrada e o que aconteceu com aqueles leads até hoje. Clique numa safra para ver os clientes.</div>
+        </div></div>
+        <div class="safras" id="pfSafras"></div>
+      </div>
 
       <div class="card c12">
         <div class="topo"><div><h2>Funil de vendas</h2>
@@ -2712,7 +2744,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v70</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v72</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2959,7 +2991,7 @@ body.modoCapa{min-height:100%}
               'Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
   var F = null;                 // dados do funil
-  var periodo = 'ano';          // ano ou mes
+  var periodo = null;           // indice do mes escolhido, ou 'tudo'
   var eixoOrigem = 'ganho';
   var ordemFila = 'valor';
   var graficos = {};
@@ -2994,12 +3026,39 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- recorte do periodo ---------- */
+  // O recorte usa o mes de ENTRADA do lead. E assim que se enxerga safra.
   function recorte(){
     if(!F) return [];
-    if(periodo === 'ano') return F.leads;
-    var m = new Date().getMonth();
-    return F.leads.filter(function(l){
-      return (l.s === 'aberto' ? l.me : (l.mf >= 0 ? l.mf : l.me)) === m;
+    if(periodo === 'tudo') return F.leads;
+    return F.leads.filter(function(l){ return l.me === periodo; });
+  }
+
+  // Monta os botoes com os meses que realmente existem no quadro.
+  function montarPeriodos(){
+    var alvo = document.getElementById('pfPeriodo');
+    var presentes = {};
+    F.leads.forEach(function(l){ if(l.me >= 0) presentes[l.me] = (presentes[l.me] || 0) + 1; });
+    var meses = Object.keys(presentes).map(Number).sort(function(a,b){ return a-b; });
+    if(!meses.length){ alvo.innerHTML = ''; periodo = 'tudo'; return; }
+
+    // Abre no mes mais recente com volume relevante, nao num mes de sobra.
+    if(periodo === null){
+      var forte = meses.slice().reverse().filter(function(m){ return presentes[m] >= 5; });
+      periodo = forte.length ? forte[0] : meses[meses.length - 1];
+    }
+    alvo.innerHTML = meses.map(function(m){
+      return '<button data-m="' + m + '"' + (m === periodo ? ' class="on"' : '') + '>' +
+             MESL[m] + '</button>';
+    }).join('') +
+    '<button data-m="tudo"' + (periodo === 'tudo' ? ' class="on"' : '') + '>Tudo</button>';
+
+    alvo.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click', function(){
+        alvo.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+        b.classList.add('on');
+        periodo = b.dataset.m === 'tudo' ? 'tudo' : parseInt(b.dataset.m, 10);
+        desenhar();
+      });
     });
   }
 
@@ -3037,14 +3096,154 @@ body.modoCapa{min-height:100%}
            abertas.length + ' negócios ainda vivos');
 
     var perdidoV = perdidas.reduce(function(a,b){ return a + b.v; }, 0);
-    var hj = new Date();
-    var rotuloPeriodo = periodo === 'ano'
-      ? 'Ano de ' + hj.getFullYear() + ' até ' + MESL[hj.getMonth()].toLowerCase()
-      : 'Mês de ' + MESL[hj.getMonth()] + ' de ' + hj.getFullYear();
-    document.getElementById('pfLeitura').textContent =
-      rotuloPeriodo + ': ' + L.length + ' leads, ' + ganhas.length + ' viraram venda somando ' +
-      brlCheio(fatG) + ', conversão de ' + conv.toFixed(1).replace('.',',') + '%. ' +
-      brlCheio(fatA) + ' seguem em aberto e ' + brlCheio(perdidoV) + ' foram perdidos.';
+  }
+
+  /* ---------- entrada de leads por dia ---------- */
+  function porDia(L){
+    destruir('dia');
+    var alvo = document.getElementById('pfDia');
+    var placar = document.getElementById('pfPlacarDia');
+    var leg = document.getElementById('pfLegDia');
+
+    if(periodo === 'tudo'){
+      // Sem mes definido, o grafico diario perde sentido. Mostra por mes.
+      var porMes = new Array(12).fill(0);
+      L.forEach(function(l){ if(l.me >= 0) porMes[l.me] += 1; });
+      var opM = base();
+      opM.plugins.tooltip.callbacks = { label:function(c){
+        return c.parsed.y + (c.parsed.y === 1 ? ' lead' : ' leads'); }};
+      graficos.dia = new Chart(alvo, {
+        type:'bar',
+        data:{labels:MESL.map(function(m){ return m.slice(0,3); }),
+              datasets:[{data:porMes, backgroundColor:COR.claro, borderRadius:2, maxBarThickness:34}]},
+        options:opM});
+      placar.innerHTML = '';
+      leg.innerHTML = '';
+      return;
+    }
+
+    var ano = new Date().getFullYear();
+    var diasNoMes = new Date(ano, periodo + 1, 0).getDate();
+    var conta = new Array(diasNoMes).fill(0);
+    L.forEach(function(l){
+      if(!l.e) return;
+      var d = parseInt(l.e.slice(8, 10), 10);
+      if(d >= 1 && d <= diasNoMes) conta[d-1] += 1;
+    });
+    var nomesDia = ['dom','seg','ter','qua','qui','sex','sáb'];
+    var semana = [], vazios = 0;
+    for(var i = 0; i < diasNoMes; i++){
+      semana.push(nomesDia[new Date(ano, periodo, i+1).getDay()]);
+      if(!conta[i]) vazios++;
+    }
+    var maxD = Math.max.apply(null, conta);
+    var media = conta.reduce(function(a,b){ return a+b; }, 0) / diasNoMes;
+
+    placar.innerHTML =
+      '<div><div class="pn">MÉDIA POR DIA</div><div class="pv">' +
+        media.toFixed(1).replace('.',',') + '</div></div>' +
+      '<div><div class="pn">MELHOR DIA</div><div class="pv" style="color:' + COR.vivo + '">' + maxD + '</div></div>' +
+      '<div><div class="pn">SEM LEAD</div><div class="pv" style="color:' + COR.ambar + '">' + vazios + '</div></div>';
+
+    leg.innerHTML =
+      '<span><i style="background:' + COR.vivo + '"></i>pico do mês</span>' +
+      '<span><i style="background:' + COR.claro + '"></i>dia útil</span>' +
+      '<span><i style="background:' + COR.medio + '"></i>domingo</span>' +
+      '<span><i style="height:0;border-top:2px dashed rgba(250,244,232,.5);border-radius:0"></i>média de ' +
+        media.toFixed(1).replace('.',',') + '</span>';
+
+    var linhaMedia = { id:'lm' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw:function(chart){
+        var y = chart.scales.y.getPixelForValue(media), a = chart.chartArea, ctx = chart.ctx;
+        ctx.save(); ctx.strokeStyle = 'rgba(250,244,232,.5)'; ctx.lineWidth = 1.4; ctx.setLineDash([5,4]);
+        ctx.beginPath(); ctx.moveTo(a.left, y); ctx.lineTo(a.right, y); ctx.stroke(); ctx.restore();
+      }};
+    var rotulos = { id:'rt' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw:function(chart){
+        var ctx = chart.ctx; ctx.save(); ctx.textAlign = 'center';
+        chart.getDatasetMeta(0).data.forEach(function(el, i){
+          if(!conta[i]) return;
+          var pico = conta[i] === maxD;
+          ctx.fillStyle = pico ? COR.vivo : 'rgba(250,244,232,.55)';
+          ctx.font = (pico ? '700 11px ' : '600 10px ') + FONTE;
+          ctx.fillText(conta[i], el.x, el.y - 7);
+        });
+        ctx.restore();
+      }};
+
+    var op = base();
+    op.layout = {padding:{top:18}};
+    op.scales.x.ticks.autoSkip = false;
+    op.scales.x.ticks.font = {family:FONTE, size:9};
+    op.scales.y.beginAtZero = true;
+    op.plugins.tooltip.callbacks = {
+      title: function(c){ return (c && c[0]) ? 'Dia ' + c[0].label + ' · ' + semana[c[0].dataIndex] : ''; },
+      label: function(c){ return c.parsed.y + (c.parsed.y === 1 ? ' lead' : ' leads'); }};
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var d = els[0].index + 1;
+      var doDia = L.filter(function(l){ return l.e && parseInt(l.e.slice(8,10), 10) === d; });
+      abrir('Dia ' + d + ' de ' + MESL[periodo], doDia.length + ' leads', doDia);
+    };
+
+    graficos.dia = new Chart(alvo, {
+      type:'bar',
+      data:{labels:conta.map(function(_, i){ return ('0' + (i+1)).slice(-2); }),
+            datasets:[{data:conta, borderRadius:2, maxBarThickness:20,
+              backgroundColor:conta.map(function(v, i){
+                return v === maxD && v > 0 ? COR.vivo : (semana[i] === 'dom' ? COR.medio : COR.claro); })}]},
+      options:op, plugins:[linhaMedia, rotulos]});
+  }
+
+  /* ---------- safras de clientes ---------- */
+  function safras(){
+    var alvo = document.getElementById('pfSafras');
+    var mapa = {};
+    F.leads.forEach(function(l){
+      if(l.me < 0) return;
+      if(!mapa[l.me]) mapa[l.me] = {leads:0, ganhas:0, perdidas:0, abertas:0, fat:0, dias:[]};
+      var m = mapa[l.me];
+      m.leads += 1;
+      if(l.s === 'ganha'){ m.ganhas += 1; m.fat += l.v; if(l.d > 0) m.dias.push(l.d); }
+      else if(l.s === 'perdida') m.perdidas += 1;
+      else m.abertas += 1;
+    });
+    var meses = Object.keys(mapa).map(Number).sort(function(a,b){ return a-b; });
+    if(!meses.length){ alvo.innerHTML = '<div class="nadaAqui">SEM INFORMAÇÃO</div>'; return; }
+
+    var linhas = meses.map(function(m){
+      var s2 = mapa[m];
+      var conv = s2.leads ? s2.ganhas/s2.leads*100 : 0;
+      var medioDias = s2.dias.length
+        ? Math.round(s2.dias.reduce(function(a,b){ return a+b; }, 0)/s2.dias.length) : null;
+      return '<tr data-m="' + m + '">' +
+        '<td>' + MESL[m] + '</td>' +
+        '<td class="forte">' + s2.leads + '</td>' +
+        '<td style="color:' + COR.vivo + '">' + s2.ganhas + '</td>' +
+        '<td>' + s2.perdidas + '</td>' +
+        '<td>' + s2.abertas + '</td>' +
+        '<td class="forte">' + conv.toFixed(0) + '%' +
+          '<span class="safraBar"><i style="width:' + Math.min(conv,100).toFixed(0) + '%"></i></span></td>' +
+        '<td class="forte">' + brlCheio(s2.fat) + '</td>' +
+        '<td>' + (medioDias !== null ? medioDias + ' dias' : '—') + '</td>' +
+      '</tr>';
+    }).join('');
+
+    alvo.innerHTML =
+      '<table class="safraTab"><thead><tr>' +
+        '<th>SAFRA</th><th>LEADS</th><th>GANHAS</th><th>PERDIDAS</th><th>EM ABERTO</th>' +
+        '<th>CONVERSÃO</th><th>FATURAMENTO</th><th>TEMPO MÉDIO</th>' +
+      '</tr></thead><tbody>' + linhas + '</tbody></table>';
+
+    alvo.querySelectorAll('tr[data-m]').forEach(function(tr){
+      tr.addEventListener('click', function(){
+        var m = parseInt(tr.dataset.m, 10);
+        var itens = F.leads.filter(function(l){ return l.me === m; });
+        var g = itens.filter(function(l){ return l.s === 'ganha'; });
+        abrir('Safra de ' + MESL[m], itens.length + ' leads · ' + g.length + ' ganhas · ' +
+              brlCheio(g.reduce(function(a,b){ return a + b.v; }, 0)), itens);
+      });
+    });
   }
 
   /* ---------- funil por etapa ---------- */
@@ -3316,7 +3515,7 @@ body.modoCapa{min-height:100%}
   function desenhar(){
     if(!F || typeof Chart === 'undefined') return;
     var L = recorte();
-    kpis(L); funil(L); origem(L); vendedores(L); perdas(L); produtos(L); tempo(L); fila(L);
+    kpis(L); porDia(L); safras(); funil(L); origem(L); vendedores(L); perdas(L); produtos(L); tempo(L); fila(L);
   }
 
   /* ---------- carregar ---------- */
@@ -3337,6 +3536,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('pfCarregando').classList.add('oculto');
         document.getElementById('pfFalha').classList.add('oculto');
         document.getElementById('pfConteudo').classList.remove('oculto');
+        montarPeriodos();
         var q = new Date(j.atualizado || Date.now());
         document.getElementById('pfCarimbo').textContent =
           'Quadro ' + (j.quadro || 'monday') + '  ·  ' + (j.total || 0) + ' leads  ·  leitura de ' +
@@ -3355,18 +3555,6 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- controles ---------- */
-  var hoje0 = new Date();
-  var bAno = document.getElementById('pfBotaoAno');
-  if(bAno) bAno.textContent = 'Ano de ' + hoje0.getFullYear();
-  var bMes = document.getElementById('pfBotaoMes');
-  if(bMes) bMes.textContent = MESL[hoje0.getMonth()] + ' de ' + hoje0.getFullYear();
-
-  document.querySelectorAll('#pfPeriodo button').forEach(function(b){
-    b.addEventListener('click', function(){
-      document.querySelectorAll('#pfPeriodo button').forEach(function(x){ x.classList.remove('on'); });
-      b.classList.add('on'); periodo = b.dataset.p; desenhar();
-    });
-  });
   document.querySelectorAll('#pfSelOrigem button').forEach(function(b){
     b.addEventListener('click', function(){
       document.querySelectorAll('#pfSelOrigem button').forEach(function(x){ x.classList.remove('on'); });
