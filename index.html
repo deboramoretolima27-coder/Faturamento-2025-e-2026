@@ -346,8 +346,8 @@ body.modoCapa{min-height:100%}
 #telaCapa .tile.viva:hover{transform:translateY(-3px);border-color:rgba(238,227,209,.55);
   background:#1C1A17;box-shadow:0 18px 44px rgba(0,0,0,.55)}
 #telaCapa .tile.viva:focus-visible{outline:2px solid var(--areia);outline-offset:3px}
-#telaCapa .tile.espera{opacity:.72;background:rgba(20,20,19,.92)}
-#telaCapa .tile.espera .tvalor,#telaCapa .tile.espera .tsub{opacity:.62}
+#telaCapa .tile.espera{opacity:.86;background:rgba(20,20,19,.92)}
+#telaCapa .tile.espera .tsub{opacity:.72}
 
 #telaCapa .tcab{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #telaCapa .tnome{font-size:9px;font-weight:700;letter-spacing:.16em;color:rgba(250,244,232,.55)}
@@ -773,17 +773,18 @@ body.modoCapa{min-height:100%}
       <div class="tile espera">
         <div class="tcab">
           <span class="tnome">CLUBE CIADOSONO</span>
-          <span class="selo">EM BREVE</span>
+          <span class="obraSelo">EM CONSTRUÇÃO</span>
         </div>
-        <div class="tvalor">—</div>
-        <div class="tsub">Arquitetos parceiros, projetos indicados e ranking de indicações.</div>
-        <div class="barra2"></div>
+        <div class="tvalor" id="clubeMes" style="color:#E0B23C">—</div>
+        <div class="tsub">Arquitetos parceiros, projetos indicados e ranking de indicações.
+          <b class="obraTxt">Ainda não ligado ao monday.</b></div>
+        <div class="barra2"><i style="width:12%;background:#E0B23C"></i></div>
         <div class="tacao">Em construção</div>
       </div>
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v49</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v50</span></p>
   </div>
 </div>
 
@@ -2627,7 +2628,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v49</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v50</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2926,6 +2927,7 @@ body.modoCapa{min-height:100%}
     var a1 = document.getElementById('perfMes');    if(a1) a1.textContent = titulo;
     var a2 = document.getElementById('perfTitulo'); if(a2) a2.textContent = titulo;
     var a3 = document.getElementById('perfBotao');  if(a3) a3.textContent = titulo;
+    var a4 = document.getElementById('clubeMes');   if(a4) a4.textContent = titulo;
   })();
   var vlt = document.getElementById('irCapa2');
   if(vlt) vlt.addEventListener('click', voltar);
