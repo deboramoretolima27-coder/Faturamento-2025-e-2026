@@ -1689,9 +1689,16 @@ body.modoCapa{min-height:100%}
     op.scales.y.grid = {color:'rgba(238,227,209,.12)'};
     op.scales.y.ticks.padding = 6;
     op.scales.y.ticks.callback = function(v){ return brl(v); };
+    // Mantem apenas o conjunto principal, sem nunca esvaziar a lista do tooltip.
     op.plugins.tooltip.filter = function(c){ return c.datasetIndex === 0; };
+    op.plugins.tooltip.mode = 'index';
+    op.plugins.tooltip.intersect = false;
+    op.interaction = {mode:'index', intersect:false};
     op.plugins.tooltip.callbacks = {
-      title: function(c){ return MESL[c[0].dataIndex] + ' de ' + ano; },
+      title: function(c){
+        if(!c || !c.length || !c[0]) return '';
+        return MESL[c[0].dataIndex] + ' de ' + ano;
+      },
       label: function(c){
         var i = c.dataIndex, v = fat[i];
         var linhas = ['Faturado   ' + brlCheio(v) + '  ·  ' + qtd[i] + ' vendas'];
@@ -1708,7 +1715,7 @@ body.modoCapa{min-height:100%}
         return linhas;
       },
       footer: function(c){
-        if(!mt) return '';
+        if(!mt || !c || !c.length || !c[0]) return '';
         var i = c[0].dataIndex, v = fat[i];
         if(v >= mt.hiper[i])       return '★ HIPER META ALCANÇADA';
         if(v >= mt['super'][i])    return '★ SUPER META ALCANÇADA';
@@ -2064,7 +2071,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').textContent = 'Nós vamos mudar o sono do mundo.';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v39</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2073,11 +2080,21 @@ body.modoCapa{min-height:100%}
         document.getElementById('carregando').classList.add('oculto');
         var f = document.getElementById('falha');
         f.classList.remove('oculto');
+        var msg = String(e.message || '');
+        var dica = '';
+        if(location.protocol === 'file:'){
+          dica = '<br><br><b>Este arquivo foi aberto direto do computador.</b> O painel só funciona pelo endereço ' +
+                 'faturamento-2025-e-2026.vercel.app, porque é lá que a leitura do monday acontece.';
+        } else if(msg.indexOf('Failed to fetch') > -1 || msg.indexOf('NetworkError') > -1){
+          dica = '<br><br>O navegador não conseguiu alcançar a API. Verifique a conexão, ' +
+                 'aguarde o fim da publicação no Vercel e recarregue com Ctrl + Shift + R.';
+        } else {
+          dica = '<br><br>Confira se a variável MONDAY_TOKEN está cadastrada no Vercel e se o projeto foi republicado depois disso.';
+        }
         f.innerHTML = 'Não foi possível ler os dados do monday.<br><br>' +
           '<span style="font-family:monospace;font-size:11px;color:' + COR.marrom +
           ';display:inline-block;max-width:640px;text-align:left;white-space:pre-wrap;background:' + COR.areia +
-          ';padding:12px 14px;border-radius:3px">' + escapar(e.message) + '</span>' +
-          '<br><br>Confira se a variável MONDAY_TOKEN está cadastrada no Vercel e se o projeto foi republicado depois disso.';
+          ';padding:12px 14px;border-radius:3px">' + escapar(e.message) + '</span>' + dica;
         if(aoTerminar) aoTerminar();
       });
   }
