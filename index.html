@@ -417,17 +417,24 @@ body.modoCapa{min-height:100%}
 .mesAtual .trilha i{display:block;height:100%;width:0;transition:width .9s ease}
 .mesAtual .ref{font-size:11.5px;color:rgba(250,244,232,.5);margin-top:16px;line-height:1.6}
 .mesAtual .ref b{color:var(--offwhite);font-weight:600}
-.mesAtual .par2b{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}
-.mesAtual .mini2{font-size:9px;font-weight:700;letter-spacing:.13em;color:rgba(250,244,232,.5);margin:0}
-.mesAtual .num2{font-family:var(--display);font-size:26px;font-weight:700;letter-spacing:-.03em;
+.mesAtual .par2b{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.mesAtual .mini2{font-size:8.5px;font-weight:700;letter-spacing:.13em;color:rgba(250,244,232,.5);margin:0}
+.mesAtual .num2{font-family:var(--display);font-size:23px;font-weight:700;letter-spacing:-.03em;
   margin-top:7px;color:var(--offwhite)}
-.mesAtual .ritmo{margin-top:20px;border-top:1px solid rgba(238,227,209,.16);padding-top:16px}
-.mesAtual .rl{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;
-  border-bottom:1px solid rgba(238,227,209,.1);font-size:11.5px;color:rgba(250,244,232,.65)}
+.mesAtual .ritmo{margin-top:18px;border-top:1px solid rgba(238,227,209,.16);padding-top:13px}
+.mesAtual .rlCab{display:grid;grid-template-columns:1fr auto 96px;gap:14px;font-size:8px;font-weight:700;
+  letter-spacing:.13em;color:rgba(250,244,232,.45);padding-bottom:8px}
+.mesAtual .rlCab span:nth-child(2),.mesAtual .rlCab span:nth-child(3){text-align:right}
+.mesAtual .rl{display:grid;grid-template-columns:1fr auto 96px;gap:14px;align-items:baseline;padding:8px 0;
+  border-bottom:1px solid rgba(238,227,209,.1)}
 .mesAtual .rl:last-child{border-bottom:0}
-.mesAtual .rl b{font-family:var(--display);font-size:16px;font-weight:700;letter-spacing:-.02em;color:var(--offwhite)}
-.mesAtual .rl.sec b{font-size:14px;font-weight:600;color:rgba(250,244,232,.75)}
-.mesAtual .proj{font-size:11px;margin-top:16px;line-height:1.6}
+.mesAtual .rl .rf{font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--offwhite)}
+.mesAtual .rl .ra{font-size:11.5px;color:rgba(250,244,232,.55);text-align:right;font-variant-numeric:tabular-nums}
+.mesAtual .rl b{font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:-.02em;
+  color:var(--offwhite);text-align:right;font-variant-numeric:tabular-nums}
+.mesAtual .rl.sec .rf{color:rgba(250,244,232,.6)}
+.mesAtual .rl.sec b{font-size:12.5px;font-weight:600;color:rgba(250,244,232,.7)}
+.mesAtual .proj{font-size:10.5px;margin-top:16px;line-height:1.6}
 @media(max-width:820px){
   .mesAtual .duplo{grid-template-columns:1fr}
   .mesAtual .esq{border-right:0;border-bottom:1px solid rgba(238,227,209,.16)}
@@ -775,7 +782,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v43</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v44</span></p>
   </div>
 </div>
 
@@ -1895,12 +1902,11 @@ body.modoCapa{min-height:100%}
 
 
   /* ---------- mes em curso ---------- */
-  // Dias uteis entre duas datas, inclusive.
+  // A loja abre de segunda a sabado. So o domingo fica de fora.
   function diasUteis(a, b){
     var n = 0, d = new Date(a.getTime());
     while(d <= b){
-      var w = d.getDay();
-      if(w !== 0 && w !== 6) n++;
+      if(d.getDay() !== 0) n++;
       d.setDate(d.getDate() + 1);
     }
     return n;
@@ -1942,8 +1948,10 @@ body.modoCapa{min-height:100%}
 
     function linha(nome, alvo, sec){
       var v = restam ? Math.max(alvo - fatMes, 0)/restam : 0;
-      return '<div class="rl' + (sec ? ' sec' : '') + '"><span>' + nome + '</span><b>' +
-             (alvo ? brlCheio(v) : 'SEM META') + '</b></div>';
+      return '<div class="rl' + (sec ? ' sec' : '') + '">' +
+             '<span class="rf">' + nome + '</span>' +
+             '<span class="ra">' + (alvo ? brlCheio(alvo) : '—') + '</span>' +
+             '<b>' + (alvo ? brlCheio(v) : 'SEM META') + '</b></div>';
     }
 
     caixa.innerHTML =
@@ -1965,17 +1973,18 @@ body.modoCapa{min-height:100%}
       '</div><div class="dir">' +
         '<p class="rot2">O QUE FALTA PARA FECHAR O MÊS</p>' +
         '<div class="par2b">' +
-          '<div><p class="mini2">FALTA</p><p class="num2" style="color:' + cor + '">' + brl(falta) + '</p></div>' +
-          '<div><p class="mini2">DIAS ÚTEIS RESTANTES</p><p class="num2">' + restam + '</p></div>' +
+          '<div><p class="mini2">FALTA PARA A META</p><p class="num2" style="color:' + cor + '">' + brl(falta) + '</p></div>' +
+          '<div><p class="mini2">DIAS DE TRABALHO RESTANTES</p><p class="num2">' + restam + '</p></div>' +
         '</div>' +
-        '<div class="ritmo"><p class="mini2">RITMO NECESSÁRIO POR DIA ÚTIL</p>' +
+        '<div class="ritmo">' +
+          '<div class="rlCab"><span>FAIXA</span><span>ALVO DO MÊS</span><span>POR DIA</span></div>' +
           (restam
-            ? linha('Meta', meta, false) + linha('Super Meta', sup, true) + linha('Hiper Meta', hip, true)
-            : '<div class="rl"><span>Mês encerrado</span><b>—</b></div>') +
+            ? linha('META', meta, false) + linha('SUPER', sup, true) + linha('HIPER', hip, true)
+            : '<div class="rl"><span class="rf">Mês encerrado</span><span class="ra">—</span><b>—</b></div>') +
         '</div>' +
         '<p class="proj" style="color:' + cor + '">' +
           (corridos
-            ? 'No ritmo atual de ' + brlCheio(fatMes/corridos) + ' por dia útil, o mês fecharia em ' +
+            ? 'No ritmo atual de ' + brlCheio(fatMes/corridos) + ' por dia de trabalho, o mês fecharia em ' +
               brlCheio(projecao) + (meta ? ', ' + Math.round(projecao/meta*100) + '% da meta.' : '.')
             : 'Ainda sem dia útil corrido no mês.') +
         '</p>' +
@@ -2563,7 +2572,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v43</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v44</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
