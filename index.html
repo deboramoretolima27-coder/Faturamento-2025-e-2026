@@ -414,7 +414,7 @@ body.modoCapa{min-height:100%}
 .mesAtual .arcoCx svg{width:100%;height:auto;display:block}
 .mesAtual .quatro{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}
 .mesAtual .mini2{font-size:8.5px;font-weight:700;letter-spacing:.16em;color:rgba(250,244,232,.45);margin:0}
-.mesAtual .num2{font-family:var(--display);font-size:23px;font-weight:700;letter-spacing:-.03em;
+.mesAtual .num2{font-family:var(--display);font-size:21px;font-weight:700;letter-spacing:-.03em;
   margin-top:7px;color:var(--offwhite);font-variant-numeric:tabular-nums}
 .mesAtual .num2 small{font-size:12px;font-weight:600;color:rgba(250,244,232,.45)}
 .mesAtual .nota2{font-size:10px;color:rgba(250,244,232,.42);margin-top:8px}
@@ -445,7 +445,7 @@ body.modoCapa{min-height:100%}
   .mesAtual{padding:18px 15px 20px}
   .mesAtual .trio{grid-template-columns:1fr;gap:18px}
   .mesAtual .arcoCx{max-width:280px;margin:0 auto}
-  .mesAtual .num2{font-size:20px}
+  .mesAtual .num2{font-size:18px}
 }
 
 /* ---------- FUNIL DE CLIENTES ---------- */
@@ -790,7 +790,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v58</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v59</span></p>
   </div>
 </div>
 
@@ -2046,7 +2046,7 @@ body.modoCapa{min-height:100%}
 
         '<div class="quatro">' +
           '<div><p class="mini2">FALTA PARA A META</p><p class="num2" style="color:' + cor + '">' +
-            brl(Math.max(meta - fatMes, 0)) + '</p></div>' +
+            brlCheio(Math.max(meta - fatMes, 0)) + '</p></div>' +
           '<div><p class="mini2">DIAS RESTANTES</p><p class="num2">' + restam + '</p></div>' +
           '<div><p class="mini2">RITMO ATUAL</p><p class="num2">' + brlCheio(ritmoAtual) +
             '<small>/dia</small></p></div>' +
@@ -2058,7 +2058,7 @@ body.modoCapa{min-height:100%}
             '<div class="hojeLinha"><span>' + (hoje0 > 0 ? 'Ainda falta' : 'Acima do esperado') +
               '</span><b style="color:' + (hoje0 > 0 ? cor : COR.vivo) + '">' +
               brlCheio(hoje0 > 0 ? hoje0 : (fatMes - idealHoje)) + '</b></div>' +
-            '<p class="nota2">Até o fim do dia o mês precisa somar ' + brl(idealHoje) + '</p></div>' +
+            '<p class="nota2">Até o fim do dia o mês precisa somar ' + brlCheio(idealHoje) + '</p></div>' +
         '</div>' +
 
         '<div class="faixasCx">' +
@@ -2649,7 +2649,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v58</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v59</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
