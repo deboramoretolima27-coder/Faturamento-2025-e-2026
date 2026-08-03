@@ -399,33 +399,47 @@ body.modoCapa{min-height:100%}
 
 /* ---------- MES EM CURSO ---------- */
 .mesAtual{background:rgba(20,20,19,.86);border:1px solid rgba(238,227,209,.22);border-radius:4px;
-  box-shadow:0 10px 30px rgba(0,0,0,.34);overflow:hidden;margin-bottom:28px;padding:24px 26px 26px;
+  box-shadow:0 10px 30px rgba(0,0,0,.34);margin-bottom:28px;padding:22px 26px 24px;
   backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.mesAtual .duplo{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:30px;align-items:center}
-.mesAtual .arcoCx{position:relative}
+.mesAtual .cabMes{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+  padding-bottom:16px;border-bottom:1px solid rgba(238,227,209,.14)}
+.mesAtual .cabEsq{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.mesAtual .bolha{width:7px;height:7px;border-radius:50%;flex:none}
+.mesAtual .titMes{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--offwhite)}
+.mesAtual .subMes,.mesAtual .refMes{font-size:10.5px;color:rgba(250,244,232,.45)}
+.mesAtual .refMes b{color:rgba(250,244,232,.75);font-weight:600}
+.mesAtual .trio{display:grid;grid-template-columns:186px 1fr 300px;gap:28px;align-items:center;margin-top:20px}
 .mesAtual .arcoCx svg{width:100%;height:auto;display:block}
-.mesAtual .arcoLeg{text-align:center;font-size:9px;font-weight:700;letter-spacing:.16em;
-  color:rgba(250,244,232,.45);margin-top:4px}
-.mesAtual .rlCab{display:grid;grid-template-columns:1fr auto 96px;gap:12px;font-size:8px;font-weight:700;
-  letter-spacing:.13em;color:rgba(250,244,232,.42);padding-bottom:9px;
-  border-bottom:1px solid rgba(238,227,209,.16)}
+.mesAtual .quatro{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}
+.mesAtual .mini2{font-size:8.5px;font-weight:700;letter-spacing:.16em;color:rgba(250,244,232,.45);margin:0}
+.mesAtual .num2{font-family:var(--display);font-size:23px;font-weight:700;letter-spacing:-.03em;
+  margin-top:7px;color:var(--offwhite);font-variant-numeric:tabular-nums}
+.mesAtual .num2 small{font-size:12px;font-weight:600;color:rgba(250,244,232,.45)}
+.mesAtual .nota2{font-size:10px;color:rgba(250,244,232,.42);margin-top:4px}
+.mesAtual .faixasCx{border-left:1px solid rgba(238,227,209,.14);padding-left:26px}
+.mesAtual .rlCab{display:grid;grid-template-columns:1fr auto 86px;gap:12px;font-size:8px;font-weight:700;
+  letter-spacing:.13em;color:rgba(250,244,232,.4);padding-bottom:9px;
+  border-bottom:1px solid rgba(238,227,209,.14)}
 .mesAtual .rlCab span:nth-child(2),.mesAtual .rlCab span:nth-child(3){text-align:right}
-.mesAtual .rl{display:grid;grid-template-columns:1fr auto 96px;gap:12px;align-items:baseline;padding:9px 0;
-  border-bottom:1px solid rgba(238,227,209,.1)}
+.mesAtual .rl{display:grid;grid-template-columns:1fr auto 86px;gap:12px;align-items:baseline;padding:9px 0;
+  border-bottom:1px solid rgba(238,227,209,.09)}
 .mesAtual .rl:last-child{border-bottom:0}
 .mesAtual .rl .rf{font-size:9px;font-weight:700;letter-spacing:.12em;color:var(--offwhite)}
-.mesAtual .rl .ra{font-size:11.5px;color:rgba(250,244,232,.5);text-align:right;font-variant-numeric:tabular-nums}
-.mesAtual .rl b{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.02em;
+.mesAtual .rl .ra{font-size:11px;color:rgba(250,244,232,.45);text-align:right;font-variant-numeric:tabular-nums}
+.mesAtual .rl b{font-family:var(--display);font-size:14px;font-weight:700;letter-spacing:-.02em;
   color:var(--offwhite);text-align:right;font-variant-numeric:tabular-nums}
-.mesAtual .rl.sec .rf{color:rgba(250,244,232,.55)}
-.mesAtual .rl.sec b{font-size:13px;font-weight:600;color:rgba(250,244,232,.68)}
-.mesAtual .proj{font-size:10.5px;margin-top:14px;line-height:1.55}
-.mesAtual .ref2{font-size:10.5px;color:rgba(250,244,232,.45);margin-top:8px;line-height:1.55}
-.mesAtual .ref2 b{color:rgba(250,244,232,.7);font-weight:600}
-@media(max-width:820px){
-  .mesAtual{padding:20px 16px 22px}
-  .mesAtual .duplo{grid-template-columns:1fr;gap:20px}
-  .mesAtual .arcoCx{max-width:320px;margin:0 auto}
+.mesAtual .rl.sec .rf{color:rgba(250,244,232,.5)}
+.mesAtual .rl.sec b{font-size:12.5px;font-weight:600;color:rgba(250,244,232,.65)}
+@media(max-width:1080px){
+  .mesAtual .trio{grid-template-columns:170px 1fr;gap:22px}
+  .mesAtual .faixasCx{grid-column:1 / -1;border-left:0;padding-left:0;
+    border-top:1px solid rgba(238,227,209,.14);padding-top:14px}
+}
+@media(max-width:640px){
+  .mesAtual{padding:18px 15px 20px}
+  .mesAtual .trio{grid-template-columns:1fr;gap:18px}
+  .mesAtual .arcoCx{max-width:230px;margin:0 auto}
+  .mesAtual .num2{font-size:20px}
 }
 
 /* ---------- FUNIL DE CLIENTES ---------- */
@@ -769,7 +783,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v45</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v46</span></p>
   </div>
 </div>
 
@@ -1928,41 +1942,47 @@ body.modoCapa{min-height:100%}
     var esperado = totalDias ? corridos/totalDias*100 : 0;
     var noRitmo = p >= esperado;
     var cor = noRitmo ? COR.vivo : '#E0B23C';
-    var projecao = corridos ? (fatMes/corridos) * totalDias : 0;
+    var ritmoAtual = corridos ? fatMes/corridos : 0;
+    var projecao = ritmoAtual * totalDias;
     var fatOutro = (D.fat[anoAtual === '2026' ? '2025' : '2026'] || [])[m] || 0;
+    var outroAno = anoAtual === '2026' ? '2025' : '2026';
+    var ff = FONTE.replace(/"/g,"'");
 
-    /* Arco de 0 ate a Hiper Meta. A Meta e a Super entram como marcas no percurso. */
+    /* Arco de zero ate a Hiper Meta, com Meta e Super marcadas no percurso. */
     var teto = hip || sup || meta || 1;
-    var R = 110, cx = 130, cy = 138;
-    function ponto(frac){
+    var R = 76, cx = 90, cy = 100;
+    function ponto(frac, raio){
+      var r = raio || R;
       var ang = Math.PI * (1 - Math.min(Math.max(frac, 0), 1));
-      return [cx + R * Math.cos(ang), cy - R * Math.sin(ang)];
+      return [cx + r * Math.cos(ang), cy - r * Math.sin(ang)];
     }
     function arco(frac){
       var a = ponto(0), b = ponto(frac);
-      var grande = frac > 0.5 ? 1 : 0;
-      return 'M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) +
-             ' A' + R + ' ' + R + ' 0 ' + grande + ' 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1);
+      return 'M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + R + ' ' + R + ' 0 ' +
+             (frac > 0.5 ? 1 : 0) + ' 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1);
     }
-    function marca(valor, cor2, esp){
+    function marca(valor, corLinha, corTexto, rotulo){
+      if(!valor) return '';
       var f = valor/teto;
-      var a = ponto(f), b = [cx + (R+13) * Math.cos(Math.PI*(1-f)), cy - (R+13) * Math.sin(Math.PI*(1-f))];
+      var a = ponto(f, R - 5), b = ponto(f, R + 7), t = ponto(f, R + 19);
       return '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) +
-             '" y2="' + b[1].toFixed(1) + '" stroke="' + cor2 + '" stroke-width="' + esp + '"/>';
+             '" y2="' + b[1].toFixed(1) + '" stroke="' + corLinha + '" stroke-width="1.8"/>' +
+             '<text x="' + t[0].toFixed(1) + '" y="' + (t[1] + 2.5).toFixed(1) + '" text-anchor="middle" ' +
+               'font-size="7.5" font-weight="700" fill="' + corTexto + '" font-family="' + ff +
+               '" letter-spacing=".8">' + rotulo + '</text>';
     }
     var fracReal = Math.min(fatMes/teto, 1);
     var svg =
-      '<svg viewBox="0 0 260 156" role="img" aria-label="Progresso do mês contra a meta">' +
-        '<path d="' + arco(1) + '" fill="none" stroke="rgba(238,227,209,.10)" stroke-width="14" stroke-linecap="round"/>' +
-        (fatMes > 0 ? '<path d="' + arco(Math.max(fracReal, 0.012)) + '" fill="none" stroke="' + cor +
-          '" stroke-width="14" stroke-linecap="round"/>' : '') +
-        (meta ? marca(meta, '#FAF4E8', 2) : '') +
-        (sup  ? marca(sup, 'rgba(250,244,232,.5)', 2) : '') +
-        '<text x="130" y="104" text-anchor="middle" font-size="28" font-weight="700" fill="#FAF4E8" ' +
-          'font-family="' + FONTE.replace(/"/g,"'") + '" letter-spacing="-1">' + brlCheio(fatMes) + '</text>' +
-        '<text x="130" y="126" text-anchor="middle" font-size="10" font-weight="700" fill="' + cor + '" ' +
-          'font-family="' + FONTE.replace(/"/g,"'") + '" letter-spacing="1.4">' +
-          p.toFixed(1).replace('.',',') + '% DA META</text>' +
+      '<svg viewBox="0 0 180 112" role="img" aria-label="Progresso do mês contra as faixas de meta">' +
+        '<path d="' + arco(1) + '" fill="none" stroke="rgba(238,227,209,.10)" stroke-width="9" stroke-linecap="round"/>' +
+        (fatMes > 0 ? '<path d="' + arco(Math.max(fracReal, 0.015)) + '" fill="none" stroke="' + cor +
+          '" stroke-width="9" stroke-linecap="round"/>' : '') +
+        marca(meta, '#FAF4E8', 'rgba(250,244,232,.6)', 'META') +
+        marca(sup, 'rgba(250,244,232,.45)', 'rgba(250,244,232,.4)', 'SUPER') +
+        '<text x="90" y="80" text-anchor="middle" font-size="24" font-weight="700" fill="#FAF4E8" ' +
+          'font-family="' + ff + '" letter-spacing="-.8">' + brlCheio(fatMes) + '</text>' +
+        '<text x="90" y="97" text-anchor="middle" font-size="9" font-weight="700" fill="' + cor + '" ' +
+          'font-family="' + ff + '" letter-spacing="1.3">' + p.toFixed(1).replace('.',',') + '% DA META</text>' +
       '</svg>';
 
     function linha(nome, alvo, sec){
@@ -1974,26 +1994,39 @@ body.modoCapa{min-height:100%}
     }
 
     caixa.innerHTML =
-      '<div class="duplo">' +
-        '<div><div class="arcoCx">' + svg + '</div>' +
-          '<p class="arcoLeg">' + MESL[m].toUpperCase() + ' · DIA ' + hoje.getDate() + ' DE ' + ultimo.getDate() +
-          ' · ' + corridos + ' DE ' + totalDias + ' DIAS DE TRABALHO</p></div>' +
-        '<div>' +
+      '<div class="cabMes">' +
+        '<div class="cabEsq">' +
+          '<span class="bolha" style="background:' + cor + ';box-shadow:0 0 0 3px ' +
+            (noRitmo ? 'rgba(61,220,132,.2)' : 'rgba(224,178,60,.2)') + '"></span>' +
+          '<span class="titMes">' + MESL[m].toUpperCase() + ' EM CURSO</span>' +
+          '<span class="subMes">dia ' + hoje.getDate() + ' de ' + ultimo.getDate() + ' · ' +
+            corridos + ' de ' + totalDias + ' dias de trabalho</span>' +
+        '</div>' +
+        '<span class="refMes">' + (fatOutro
+          ? MESL[m] + ' de ' + outroAno + ' fechou em <b>' + brlCheio(fatOutro) + '</b>'
+          : 'Sem base do mesmo mês em ' + outroAno) + '</span>' +
+      '</div>' +
+
+      '<div class="trio">' +
+        '<div class="arcoCx">' + svg + '</div>' +
+
+        '<div class="quatro">' +
+          '<div><p class="mini2">FALTA PARA A META</p><p class="num2" style="color:' + cor + '">' +
+            brl(Math.max(meta - fatMes, 0)) + '</p></div>' +
+          '<div><p class="mini2">DIAS RESTANTES</p><p class="num2">' + restam + '</p></div>' +
+          '<div><p class="mini2">RITMO ATUAL</p><p class="num2">' + brlCheio(ritmoAtual) +
+            '<small>/dia</small></p></div>' +
+          '<div><p class="mini2">PROJEÇÃO DO MÊS</p><p class="num2" style="color:' + cor + '">' +
+            brl(projecao) + '</p><p class="nota2">' +
+            (meta ? Math.round(projecao/meta*100) + '% da meta · ' : '') + qtdMes +
+            (qtdMes === 1 ? ' venda' : ' vendas') + '</p></div>' +
+        '</div>' +
+
+        '<div class="faixasCx">' +
           '<div class="rlCab"><span>FAIXA</span><span>ALVO</span><span>POR DIA</span></div>' +
           (restam
             ? linha('META', meta, false) + linha('SUPER', sup, true) + linha('HIPER', hip, true)
             : '<div class="rl"><span class="rf">MÊS ENCERRADO</span><span class="ra">—</span><b>—</b></div>') +
-          '<p class="proj" style="color:' + cor + '">' +
-            (corridos
-              ? 'No ritmo atual de ' + brlCheio(fatMes/corridos) + ' por dia, o mês fecharia em ' +
-                brlCheio(projecao) + (meta ? ', ' + Math.round(projecao/meta*100) + '% da meta.' : '.')
-              : 'Ainda sem dia de trabalho corrido no mês.') +
-          '</p>' +
-          '<p class="ref2">' + qtdMes + (qtdMes === 1 ? ' venda' : ' vendas') +
-            (qtdMes ? ', ticket médio de <b>' + brlCheio(fatMes/qtdMes) + '</b>' : '') +
-            (fatOutro ? '. ' + MESL[m] + ' do outro ano fechou em <b>' + brlCheio(fatOutro) + '</b>' : '') +
-            '. Faltam <b>' + brlCheio(Math.max(meta - fatMes, 0)) + '</b> em ' + restam +
-            (restam === 1 ? ' dia.' : ' dias.') + '</p>' +
         '</div>' +
       '</div>';
   }
@@ -2574,7 +2607,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v45</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v46</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
