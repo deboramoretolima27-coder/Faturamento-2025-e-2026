@@ -779,16 +779,15 @@ body.modoCapa{min-height:100%}
           <span class="tnome">CLUBE CIADOSONO</span>
           <span class="obraSelo">EM CONSTRUÇÃO</span>
         </div>
-        <div class="tvalor" id="clubeMes" style="color:#E0B23C">—</div>
-        <div class="tsub">Arquitetos parceiros, projetos indicados e ranking de indicações.
-          <b class="obraTxt">Ainda não ligado ao monday.</b></div>
+        <div class="tvalor" id="clubeMes" style="color:#E0B23C;font-size:24px">—</div>
+        <div class="tsub">Arquitetos parceiros, projetos indicados e ranking de indicações.</div>
         <div class="barra2"><i style="width:12%;background:#E0B23C"></i></div>
         <div class="tacao">Em construção</div>
       </div>
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v51</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v52</span></p>
   </div>
 </div>
 
@@ -2644,7 +2643,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v51</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v52</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2943,7 +2942,7 @@ body.modoCapa{min-height:100%}
     var a1 = document.getElementById('perfMes');    if(a1) a1.textContent = titulo;
     var a2 = document.getElementById('perfTitulo'); if(a2) a2.textContent = titulo;
     var a3 = document.getElementById('perfBotao');  if(a3) a3.textContent = titulo;
-    var a4 = document.getElementById('clubeMes');   if(a4) a4.textContent = titulo;
+    var a4 = document.getElementById('clubeMes');   if(a4) a4.textContent = 'Indicações de ' + h.getFullYear();
   })();
   var vlt = document.getElementById('irCapa2');
   if(vlt) vlt.addEventListener('click', voltar);
