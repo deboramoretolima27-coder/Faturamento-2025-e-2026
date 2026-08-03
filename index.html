@@ -794,7 +794,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v61</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v62</span></p>
   </div>
 </div>
 
@@ -849,7 +849,7 @@ body.modoCapa{min-height:100%}
       <div class="grade">
         <div class="card c12">
           <div class="topo">
-            <div><h2>Faturamento mês a mês, 2026 contra 2025</h2>
+            <div><h2 id="tituloComp">Faturamento mês a mês, 2026 contra 2025</h2>
               <div class="nota" id="notaComp"></div></div>
             <div class="mini" id="selComp">
               <button data-modo="fat" class="on">Faturamento</button>
@@ -1504,6 +1504,7 @@ body.modoCapa{min-height:100%}
     if(modoComp === 'canal'){
       document.getElementById('compUnico').classList.add('oculto');
       document.getElementById('compCanais').classList.remove('oculto');
+      document.getElementById('tituloComp').textContent = 'Canal de venda, ano contra ano';
       document.getElementById('notaComp').textContent =
         'Cada canal no seu quadro, com o mesmo mês nos dois anos. A linha tracejada é 2025 e a cheia é 2026. ' +
         'Os dois quadros usam a mesma escala, então dá para comparar o tamanho de um canal contra o outro.';
@@ -1585,20 +1586,64 @@ body.modoCapa{min-height:100%}
     document.getElementById('compUnico').classList.remove('oculto');
     document.getElementById('compCanais').classList.add('oculto');
     destruir('cLoja'); destruir('cOnline');
+
+    document.getElementById('tituloComp').textContent = 'Quanto cada mês ganhou ou perdeu';
     document.getElementById('notaComp').textContent =
-      'Marrom claro é 2025, marrom escuro é 2026. Clique numa barra para ver os clientes daquele mês.';
-    op.scales.y.ticks.callback = function(v){ return brl(v); };
-    op.plugins.tooltip.callbacks = { label:function(c){
-      var ind = c.dataIndex, y = c.dataset.label;
-      var q = (y === A ? qA : qB)[ind] || 0;
-      return y + ': ' + brlCheio(c.parsed.y) + '  ·  ' + q + ' vendas'; }};
+      'Só a diferença em reais contra o mesmo mês de ' + B + '. Acima da linha o mês ganhou, abaixo perdeu. ' +
+      'Clique numa barra para ver os clientes.';
+
+    // Só meses fechados. Comparar um mês em curso com um mês inteiro enganaria.
+    var dif = MES.map(function(_, i){
+      if(i > fim2) return null;
+      if(!fA[i] && !fB[i]) return null;
+      return (fA[i] || 0) - (fB[i] || 0);
+    });
+
+    var op = clone(BASE);
+    op.layout = {padding:{top:22, bottom:6}};
+    op.scales.y.ticks.callback = function(v){ return (v > 0 ? '+' : '') + brl(v); };
+    op.plugins.tooltip.callbacks = {
+      title: function(c){ return (c && c[0]) ? MESL[c[0].dataIndex] : ''; },
+      label: function(c){
+        var i = c.dataIndex, d = c.parsed.y;
+        return [B + ': ' + brlCheio(fB[i] || 0),
+                A + ': ' + brlCheio(fA[i] || 0),
+                (d >= 0 ? 'Ganhou ' : 'Perdeu ') + brlCheio(Math.abs(d)) +
+                  (fB[i] ? '  ·  ' + Math.abs(d/fB[i]*100).toFixed(0) + '%' : '')];
+      }};
+    op.onClick = function(e, els){
+      if(!els.length) return;
+      var i = els[0].index;
+      lerComparativo(i, fA, fB, qA, qB);
+      abrirDetalhe('Faturamento · ' + A, MESL[i], function(v){ return v.a === A && v.m === i; });
+    };
+
+    // Rotulo em cima das barras positivas e embaixo das negativas.
+    var rotDif = { id:'rd' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw:function(chart){
+        var ctx = chart.ctx; ctx.save(); ctx.textAlign = 'center';
+        ctx.font = '700 10px ' + FONTE;
+        chart.getDatasetMeta(0).data.forEach(function(el, i){
+          if(dif[i] === null) return;
+          ctx.fillStyle = dif[i] >= 0 ? COR.vivo : '#E0B23C';
+          ctx.fillText((dif[i] >= 0 ? '+' : '−') + brl(Math.abs(dif[i])).replace('R$ ', ''),
+                       el.x, dif[i] >= 0 ? el.y - 8 : el.y + 16);
+        });
+        ctx.restore();
+      }};
+    var linhaZero = { id:'lz' + Math.random().toString(36).slice(2),
+      afterDatasetsDraw:function(chart){
+        var y = chart.scales.y.getPixelForValue(0), a = chart.chartArea, ctx = chart.ctx;
+        ctx.save(); ctx.strokeStyle = 'rgba(250,244,232,.45)'; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(a.left, y); ctx.lineTo(a.right, y); ctx.stroke(); ctx.restore();
+      }};
+
     charts.comp = new Chart(document.getElementById('gComp'), {
       type:'bar',
-      data:{labels:MES, datasets:[
-        {label:B, data:fB, backgroundColor:COR.medio, borderRadius:2, maxBarThickness:24},
-        {label:A, data:fA.map(function(v,i){ return i <= uA ? v : null; }),
-         backgroundColor:COR.marrom, borderRadius:2, maxBarThickness:24}
-      ]}, options:op
+      data:{labels:MES, datasets:[{ data:dif, borderRadius:2, maxBarThickness:34,
+        backgroundColor:dif.map(function(v){
+          return v === null ? 'transparent' : (v >= 0 ? COR.vivo : '#E0B23C'); }) }]},
+      options:op, plugins:[rotDif, linhaZero]
     });
 
     tentar('caixas do mês', function(){ montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial); });
@@ -2659,7 +2704,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v61</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v62</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
