@@ -408,7 +408,7 @@ body.modoCapa{min-height:100%}
 .mesAtual .titMes{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--offwhite)}
 .mesAtual .subMes,.mesAtual .refMes{font-size:10.5px;color:rgba(250,244,232,.45)}
 .mesAtual .refMes b{color:rgba(250,244,232,.75);font-weight:600}
-.mesAtual .trio{display:grid;grid-template-columns:186px 1fr 300px;gap:28px;align-items:center;margin-top:20px}
+.mesAtual .trio{display:grid;grid-template-columns:300px 1fr 290px;gap:30px;align-items:center;margin-top:20px}
 .mesAtual .arcoCx svg{width:100%;height:auto;display:block}
 .mesAtual .quatro{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}
 .mesAtual .mini2{font-size:8.5px;font-weight:700;letter-spacing:.16em;color:rgba(250,244,232,.45);margin:0}
@@ -431,14 +431,14 @@ body.modoCapa{min-height:100%}
 .mesAtual .rl.sec .rf{color:rgba(250,244,232,.5)}
 .mesAtual .rl.sec b{font-size:12.5px;font-weight:600;color:rgba(250,244,232,.65)}
 @media(max-width:1080px){
-  .mesAtual .trio{grid-template-columns:170px 1fr;gap:22px}
+  .mesAtual .trio{grid-template-columns:250px 1fr;gap:24px}
   .mesAtual .faixasCx{grid-column:1 / -1;border-left:0;padding-left:0;
     border-top:1px solid rgba(238,227,209,.14);padding-top:14px}
 }
 @media(max-width:640px){
   .mesAtual{padding:18px 15px 20px}
   .mesAtual .trio{grid-template-columns:1fr;gap:18px}
-  .mesAtual .arcoCx{max-width:230px;margin:0 auto}
+  .mesAtual .arcoCx{max-width:280px;margin:0 auto}
   .mesAtual .num2{font-size:20px}
 }
 
@@ -783,7 +783,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v46</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v47</span></p>
   </div>
 </div>
 
@@ -1950,7 +1950,7 @@ body.modoCapa{min-height:100%}
 
     /* Arco de zero ate a Hiper Meta, com Meta e Super marcadas no percurso. */
     var teto = hip || sup || meta || 1;
-    var R = 76, cx = 90, cy = 100;
+    var R = 118, cx = 138, cy = 150;
     function ponto(frac, raio){
       var r = raio || R;
       var ang = Math.PI * (1 - Math.min(Math.max(frac, 0), 1));
@@ -1961,34 +1961,44 @@ body.modoCapa{min-height:100%}
       return 'M' + a[0].toFixed(1) + ' ' + a[1].toFixed(1) + ' A' + R + ' ' + R + ' 0 ' +
              (frac > 0.5 ? 1 : 0) + ' 1 ' + b[0].toFixed(1) + ' ' + b[1].toFixed(1);
     }
-    function marca(valor, corLinha, corTexto, rotulo){
+    // Cada faixa tem cor propria, escalando do branco ao verde.
+    function marca(valor, corFaixa, rotulo){
       if(!valor) return '';
-      var f = valor/teto;
-      var a = ponto(f, R - 5), b = ponto(f, R + 7), t = ponto(f, R + 19);
+      var f = Math.min(valor/teto, 1);
+      var a = ponto(f, R - 9), b = ponto(f, R + 9), t = ponto(f, R + 26);
+      var alcancou = fatMes >= valor;
       return '<line x1="' + a[0].toFixed(1) + '" y1="' + a[1].toFixed(1) + '" x2="' + b[0].toFixed(1) +
-             '" y2="' + b[1].toFixed(1) + '" stroke="' + corLinha + '" stroke-width="1.8"/>' +
-             '<text x="' + t[0].toFixed(1) + '" y="' + (t[1] + 2.5).toFixed(1) + '" text-anchor="middle" ' +
-               'font-size="7.5" font-weight="700" fill="' + corTexto + '" font-family="' + ff +
-               '" letter-spacing=".8">' + rotulo + '</text>';
+             '" y2="' + b[1].toFixed(1) + '" stroke="' + corFaixa + '" stroke-width="2.6" stroke-linecap="round"' +
+             (alcancou ? '' : ' opacity=".85"') + '/>' +
+             '<text x="' + t[0].toFixed(1) + '" y="' + (t[1] + 3).toFixed(1) + '" text-anchor="middle" ' +
+               'font-size="9" font-weight="700" fill="' + corFaixa + '" font-family="' + ff +
+               '" letter-spacing="1">' + rotulo + '</text>' +
+             '<text x="' + t[0].toFixed(1) + '" y="' + (t[1] + 14).toFixed(1) + '" text-anchor="middle" ' +
+               'font-size="8.5" font-weight="600" fill="' + corFaixa + '" opacity=".65" font-family="' + ff +
+               '">' + mil(valor) + '</text>';
     }
+    var CF = {meta:'#FAF4E8', sup:'#E0B23C', hip:'#3DDC84'};
     var fracReal = Math.min(fatMes/teto, 1);
     var svg =
-      '<svg viewBox="0 0 180 112" role="img" aria-label="Progresso do mês contra as faixas de meta">' +
-        '<path d="' + arco(1) + '" fill="none" stroke="rgba(238,227,209,.10)" stroke-width="9" stroke-linecap="round"/>' +
-        (fatMes > 0 ? '<path d="' + arco(Math.max(fracReal, 0.015)) + '" fill="none" stroke="' + cor +
-          '" stroke-width="9" stroke-linecap="round"/>' : '') +
-        marca(meta, '#FAF4E8', 'rgba(250,244,232,.6)', 'META') +
-        marca(sup, 'rgba(250,244,232,.45)', 'rgba(250,244,232,.4)', 'SUPER') +
-        '<text x="90" y="80" text-anchor="middle" font-size="24" font-weight="700" fill="#FAF4E8" ' +
-          'font-family="' + ff + '" letter-spacing="-.8">' + brlCheio(fatMes) + '</text>' +
-        '<text x="90" y="97" text-anchor="middle" font-size="9" font-weight="700" fill="' + cor + '" ' +
-          'font-family="' + ff + '" letter-spacing="1.3">' + p.toFixed(1).replace('.',',') + '% DA META</text>' +
+      '<svg viewBox="0 0 276 176" role="img" aria-label="Progresso do mês contra as faixas de meta">' +
+        '<path d="' + arco(1) + '" fill="none" stroke="rgba(238,227,209,.10)" stroke-width="13" stroke-linecap="round"/>' +
+        (fatMes > 0 ? '<path d="' + arco(Math.max(fracReal, 0.012)) + '" fill="none" stroke="' + cor +
+          '" stroke-width="13" stroke-linecap="round"/>' : '') +
+        marca(meta, CF.meta, 'META') +
+        marca(sup, CF.sup, 'SUPER') +
+        marca(hip, CF.hip, 'HIPER') +
+        '<text x="138" y="122" text-anchor="middle" font-size="31" font-weight="700" fill="#FAF4E8" ' +
+          'font-family="' + ff + '" letter-spacing="-1">' + brlCheio(fatMes) + '</text>' +
+        '<text x="138" y="143" text-anchor="middle" font-size="10" font-weight="700" fill="' + cor + '" ' +
+          'font-family="' + ff + '" letter-spacing="1.4">' + p.toFixed(1).replace('.',',') + '% DA META</text>' +
       '</svg>';
 
-    function linha(nome, alvo, sec){
+    function linha(nome, alvo, sec, corF){
       var v = restam ? Math.max(alvo - fatMes, 0)/restam : 0;
       return '<div class="rl' + (sec ? ' sec' : '') + '">' +
-             '<span class="rf">' + nome + '</span>' +
+             '<span class="rf" style="color:' + corF + '">' +
+               '<i style="display:inline-block;width:7px;height:7px;border-radius:2px;background:' + corF +
+               ';margin-right:7px;vertical-align:middle"></i>' + nome + '</span>' +
              '<span class="ra">' + (alvo ? brlCheio(alvo) : '—') + '</span>' +
              '<b>' + (alvo ? brlCheio(v) : '—') + '</b></div>';
     }
@@ -2025,7 +2035,7 @@ body.modoCapa{min-height:100%}
         '<div class="faixasCx">' +
           '<div class="rlCab"><span>FAIXA</span><span>ALVO</span><span>POR DIA</span></div>' +
           (restam
-            ? linha('META', meta, false) + linha('SUPER', sup, true) + linha('HIPER', hip, true)
+            ? linha('META', meta, false, CF.meta) + linha('SUPER', sup, true, CF.sup) + linha('HIPER', hip, true, CF.hip)
             : '<div class="rl"><span class="rf">MÊS ENCERRADO</span><span class="ra">—</span><b>—</b></div>') +
         '</div>' +
       '</div>';
@@ -2607,7 +2617,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v46</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v47</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
