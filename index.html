@@ -790,7 +790,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v56</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v57</span></p>
   </div>
 </div>
 
@@ -2649,7 +2649,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v56</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v57</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
@@ -2786,12 +2786,12 @@ body.modoCapa{min-height:100%}
             for(var k=0;k<=ate;k++){ alvo += mt.meta[k]||0; }
             esperado = alvo/metaAno*100;
           }
+          // O cartao do faturamento mantem o verde da marca. A seta e que indica a posicao.
           var acima = (esperado === null) || (pct >= esperado);
-          var corPct = acima ? '#3DDC84' : '#E0B23C';
-          texto += ' &middot; <b style="color:' + corPct + '">' + (acima ? '▲' : '▼') + ' ' +
+          texto += ' &middot; <b>' + (acima ? '▲' : '▼') + ' ' +
                    pct.toFixed(0) + '% da meta do ano</b>';
           var barra = document.getElementById('capaBarra');
-          if(barra) barra.style.background = corPct;
+          if(barra) barra.style.background = '#3DDC84';
         }
       }
       document.getElementById('capaSub').innerHTML = texto;
