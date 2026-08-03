@@ -408,8 +408,12 @@ body.modoCapa{min-height:100%}
 .mesAtual .cabEsq{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .mesAtual .bolha{width:7px;height:7px;border-radius:50%;flex:none}
 .mesAtual .titMes{font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--offwhite)}
-.mesAtual .subMes,.mesAtual .refMes{font-size:10.5px;color:rgba(250,244,232,.45)}
-.mesAtual .refMes b{color:rgba(250,244,232,.75);font-weight:600}
+.mesAtual .subMes{font-size:10.5px;color:rgba(250,244,232,.45)}
+.mesAtual .metaTopo{display:inline-flex;align-items:baseline;gap:11px;padding:7px 15px;border-radius:3px;
+  background:rgba(250,244,232,.07);border:1px solid rgba(238,227,209,.22)}
+.mesAtual .mtRot{font-size:8.5px;font-weight:700;letter-spacing:.16em;color:rgba(250,244,232,.5);white-space:nowrap}
+.mesAtual .mtVal{font-family:var(--display);font-size:20px;font-weight:700;letter-spacing:-.03em;
+  color:var(--offwhite);font-variant-numeric:tabular-nums;white-space:nowrap}
 .mesAtual .trio{display:grid;grid-template-columns:340px 1fr 280px;gap:26px;align-items:center;margin-top:20px}
 .mesAtual .arcoCx svg{width:100%;height:auto;display:block}
 .mesAtual .quatro{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px}
@@ -790,7 +794,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v59</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v60</span></p>
   </div>
 </div>
 
@@ -2036,9 +2040,8 @@ body.modoCapa{min-height:100%}
           '<span class="subMes">dia ' + hoje.getDate() + ' de ' + ultimo.getDate() + ' · ' +
             corridos + ' de ' + totalDias + ' dias de trabalho</span>' +
         '</div>' +
-        '<span class="refMes">' + (fatOutro
-          ? MESL[m] + ' de ' + outroAno + ' fechou em <b>' + brlCheio(fatOutro) + '</b>'
-          : 'Sem base do mesmo mês em ' + outroAno) + '</span>' +
+        '<span class="metaTopo"><span class="mtRot">META DE ' + MESL[m].toUpperCase() + '</span>' +
+          '<span class="mtVal">' + brlCheio(meta) + '</span></span>' +
       '</div>' +
 
       '<div class="trio">' +
@@ -2649,7 +2652,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v59</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v60</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
