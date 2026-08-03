@@ -794,7 +794,7 @@ body.modoCapa{min-height:100%}
 
     </div>
 
-    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v60</span></p>
+    <p class="rodape2">Nós vamos mudar o sono do mundo. <span style="opacity:.4;font-size:11px;font-family:var(--texto);font-weight:600">v61</span></p>
   </div>
 </div>
 
@@ -856,8 +856,12 @@ body.modoCapa{min-height:100%}
               <button data-modo="canal">Canal de venda</button>
             </div>
           </div>
-          <div class="tela alta"><canvas id="gComp"></canvas></div>
-          <span class="dica">deslize o gráfico para o lado</span>
+          <div id="compUnico"><div class="tela alta"><canvas id="gComp"></canvas></div>
+            <span class="dica">deslize o gráfico para o lado</span></div>
+          <div id="compCanais" class="oculto"><div class="par">
+            <div><div class="rot">Loja</div><div class="tela"><canvas id="gCanalLoja"></canvas></div></div>
+            <div><div class="rot" style="color:#3DDC84">Online</div><div class="tela"><canvas id="gCanalOnline"></canvas></div></div>
+          </div></div>
         </div>
         <div class="card c12">
           <div class="topo"><div>
@@ -1498,86 +1502,89 @@ body.modoCapa{min-height:100%}
     };
 
     if(modoComp === 'canal'){
+      document.getElementById('compUnico').classList.add('oculto');
+      document.getElementById('compCanais').classList.remove('oculto');
       document.getElementById('notaComp').textContent =
-        'Evolução contínua dos dois canais, de Janeiro de 2025 até hoje. A linha divisória marca a virada do ano. ' +
-        'A faixa clara são as vendas sem canal registrado no quadro.';
+        'Cada canal no seu quadro, com o mesmo mês nos dois anos. A linha tracejada é 2025 e a cheia é 2026. ' +
+        'Os dois quadros usam a mesma escala, então dá para comparar o tamanho de um canal contra o outro.';
 
-      var rotulos = [], serieLoja = [], serieOn = [], serieSem = [], mapa = [];
-      [B, A].forEach(function(y){
-        var lim = (y === A) ? uA : 11;
-        for(var i = 0; i <= lim; i++){
+      var uA2 = ultimoMes(A);
+      function serieCanal(y, campo, lim){
+        return MES.map(function(_, i){
+          if(lim !== null && i > lim) return null;
           var c = ((D.canal[y] || [])[i]) || {l:0,o:0};
-          var q = ((y === A ? qA : qB)[i]) || 0;
-          rotulos.push(MES[i] + '/' + y.slice(2));
-          serieLoja.push(c.l || 0);
-          serieOn.push(c.o || 0);
-          serieSem.push(Math.max(q - (c.l || 0) - (c.o || 0), 0));
-          mapa.push({ano:y, mes:i});
-        }
-      });
-      var corte = 12;
-
-      var divisor = { id:'div' + Math.random().toString(36).slice(2),
-        beforeDatasetsDraw:function(chart){
-          var x = chart.scales.x.getPixelForValue(corte - 0.5);
-          var a2 = chart.chartArea, ctx = chart.ctx;
-          ctx.save();
-          ctx.strokeStyle = 'rgba(238,227,209,.3)'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
-          ctx.beginPath(); ctx.moveTo(x, a2.top); ctx.lineTo(x, a2.bottom); ctx.stroke();
-          ctx.setLineDash([]);
-          ctx.fillStyle = COR.suave; ctx.font = '600 10px ' + FONTE;
-          ctx.textAlign = 'right'; ctx.fillText('2025', x - 8, a2.top + 12);
-          ctx.textAlign = 'left';  ctx.fillText('2026', x + 8, a2.top + 12);
-          ctx.restore();
-        }};
-
-      var opl = legenda(clone(BASE));
-      opl.scales.x.ticks.maxRotation = 60;
-      opl.scales.x.ticks.autoSkip = false;
-      opl.scales.x.ticks.font = {family:FONTE, size:9};
-      opl.scales.y.title = {display:true, text:'vendas no mês', color:COR.suave, font:{family:FONTE,size:10}};
-      opl.interaction = {mode:'index', intersect:false};
-      opl.plugins.tooltip.callbacks = { label:function(c){
-        return c.dataset.label + ': ' + c.parsed.y + (c.parsed.y === 1 ? ' venda' : ' vendas'); }};
-      opl.onClick = function(e, els){
-        if(!els.length) return;
-        var p = mapa[els[0].index];
-        var canalNome = els[0].datasetIndex === 0 ? 'Loja' : (els[0].datasetIndex === 1 ? 'Online' : null);
-        lerCanal(p, serieLoja, serieOn, serieSem, els[0].index, corte);
-        if(canalNome){
-          abrirDetalhe('Canal ' + canalNome + ' · ' + p.ano, MESL[p.mes], function(v){
-            return v.a === p.ano && v.m === p.mes && v.c === canalNome; });
-        } else {
-          abrirDetalhe('Sem canal registrado · ' + p.ano, MESL[p.mes], function(v){
-            return v.a === p.ano && v.m === p.mes && !v.c; });
-        }
-      };
-
-      charts.comp = new Chart(document.getElementById('gComp'), {
-        type:'line',
-        data:{labels:rotulos, datasets:[
-          {label:'Loja', data:serieLoja, borderColor:COR.marrom, backgroundColor:'rgba(46,30,17,.06)',
-           borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:COR.marrom, fill:true, tension:.28},
-          {label:'Online', data:serieOn, borderColor:COR.vivo, backgroundColor:'rgba(61,220,132,.12)',
-           borderWidth:2.5, pointRadius:2.5, pointBackgroundColor:COR.vivo, fill:true, tension:.28},
-          {label:'Sem canal registrado', data:serieSem, borderColor:COR.suave, borderDash:[4,4],
-           borderWidth:1.5, pointRadius:0, fill:false, tension:.28}
-        ]}, options:opl, plugins:[divisor]
+          return c[campo] || 0;
+        });
+      }
+      // A escala e a mesma nos dois quadros, senao a comparacao engana.
+      var maxCanal = 0;
+      ['l','o'].forEach(function(cp){
+        [B, A].forEach(function(y){
+          ((D.canal[y] || [])).forEach(function(c){ maxCanal = Math.max(maxCanal, c[cp] || 0); });
+        });
       });
 
-      var lojaIni = serieLoja.slice(0,6).reduce(function(x,y){return x+y;},0);
-      var lojaFim = serieLoja.slice(-6).reduce(function(x,y){return x+y;},0);
-      var onIni = serieOn.slice(0,6).reduce(function(x,y){return x+y;},0);
-      var onFim = serieOn.slice(-6).reduce(function(x,y){return x+y;},0);
-      leitura('Nos seis primeiros meses da série a loja fez ' + lojaIni + ' vendas e o online ' + onIni +
-              '. Nos seis últimos, loja ' + lojaFim + ' e online ' + onFim + '. ' +
-              (onFim > onIni ? 'O online cresceu' : 'O online recuou') + ' e ' +
-              (lojaFim > lojaIni ? 'a loja cresceu' : 'a loja recuou') + ' no período.');
+      function quadro(chave, canvasId, campo, corLinha, corArea, rotulo){
+        destruir(chave);
+        var d25 = serieCanal(B, campo, null);
+        var d26 = serieCanal(A, campo, uA2);
+        var op2 = clone(BASE);
+        op2.plugins.legend = {display:true, position:'bottom',
+          labels:{color:COR.suave, boxWidth:12, boxHeight:2, font:{family:FONTE,size:10}}};
+        op2.scales.y.beginAtZero = true;
+        op2.scales.y.suggestedMax = Math.ceil(maxCanal * 1.12);
+        op2.scales.y.title = {display:true, text:'vendas no mês', color:COR.suave, font:{family:FONTE,size:10}};
+        op2.interaction = {mode:'index', intersect:false};
+        op2.plugins.tooltip.callbacks = { label:function(c){
+          return c.dataset.label + ': ' + c.parsed.y + (c.parsed.y === 1 ? ' venda' : ' vendas'); }};
+        op2.onClick = function(e, els){
+          if(!els.length) return;
+          var i = els[0].index, qual = els[0].datasetIndex === 0 ? B : A;
+          var v25 = d25[i] || 0, v26 = d26[i] || 0;
+          var t = rotulo + ' em ' + MESL[i] + ': ' + v25 + ' vendas em ' + B + ' e ' + v26 + ' em ' + A + '.';
+          if(v25) t += ' ' + (v26 >= v25 ? 'Alta' : 'Queda') + ' de ' + Math.abs(v26 - v25) +
+                       ' vendas, ' + Math.abs((v26 - v25)/v25*100).toFixed(0) + '%.';
+          leitura(t);
+          abrirDetalhe('Canal ' + rotulo + ' · ' + qual, MESL[i], function(v){
+            return v.a === qual && v.m === i && v.c === rotulo; });
+        };
+        charts[chave] = new Chart(document.getElementById(canvasId), {
+          type:'line',
+          data:{labels:MES, datasets:[
+            {label:B, data:d25, borderColor:'rgba(250,244,232,.45)', borderDash:[5,4],
+             borderWidth:1.8, pointRadius:2, fill:false, tension:.25},
+            {label:A, data:d26, borderColor:corLinha, backgroundColor:corArea,
+             borderWidth:2.6, pointRadius:3, pointBackgroundColor:corLinha, fill:true, tension:.25}
+          ]}, options:op2
+        });
+      }
+
+      quadro('cLoja', 'gCanalLoja', 'l', COR.marrom, 'rgba(238,227,209,.10)', 'Loja');
+      quadro('cOnline', 'gCanalOnline', 'o', COR.vivo, 'rgba(61,220,132,.12)', 'Online');
+
+      /* leitura: quantos meses cada canal cresceu */
+      var parcial2 = (new Date().getFullYear() === Number(A) && new Date().getMonth() === uA2);
+      var lim2 = parcial2 ? uA2 - 1 : uA2;
+      var subLoja = 0, subOn = 0, comp = 0;
+      for(var w = 0; w <= lim2; w++){
+        var c25 = ((D.canal[B]||[])[w]) || {l:0,o:0};
+        var c26 = ((D.canal[A]||[])[w]) || {l:0,o:0};
+        comp++;
+        if((c26.l||0) >= (c25.l||0)) subLoja++;
+        if((c26.o||0) >= (c25.o||0)) subOn++;
+      }
+      leitura('Nos ' + comp + ' meses fechados de ' + A + ': a loja cresceu em ' + subLoja +
+              ' e o online em ' + subOn + ', sempre contra o mesmo mês de ' + B + '. ' +
+              'Clique num ponto para ver os clientes.');
+
       tentar('caixas do mês', function(){ montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial); });
       tentar('clientes que voltaram', gRecorrentes);
       return;
     }
 
+    document.getElementById('compUnico').classList.remove('oculto');
+    document.getElementById('compCanais').classList.add('oculto');
+    destruir('cLoja'); destruir('cOnline');
     document.getElementById('notaComp').textContent =
       'Marrom claro é 2025, marrom escuro é 2026. Clique numa barra para ver os clientes daquele mês.';
     op.scales.y.ticks.callback = function(v){ return brl(v); };
@@ -2652,7 +2659,7 @@ body.modoCapa{min-height:100%}
         document.getElementById('carimbo').textContent =
           (j.total || 0) + ' registros  ·  leitura de ' +
           q.toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v60</span>';
+        document.getElementById('fonte').innerHTML = 'Nós vamos mudar o sono do mundo. <span style="opacity:.45">v61</span>';
         if(window.pintarCapa) window.pintarCapa(D);
         desenhar();
         if(aoTerminar) aoTerminar();
