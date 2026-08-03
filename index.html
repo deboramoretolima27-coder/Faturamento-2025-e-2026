@@ -509,6 +509,32 @@ body.modoCapa{min-height:100%}
 </style>
 </head>
 <body class="modoCapa">
+<div id="erroGeral" style="display:none;position:fixed;left:0;right:0;bottom:0;z-index:99;
+  background:#7A1F1F;color:#FFF;font-family:Inter,system-ui,sans-serif;font-size:12px;
+  padding:12px 46px 12px 16px;line-height:1.5;white-space:pre-wrap;max-height:40vh;overflow:auto">
+  <button onclick="this.parentNode.style.display='none'" style="position:absolute;top:8px;right:12px;
+    background:transparent;border:0;color:#FFF;font-size:20px;cursor:pointer">&times;</button>
+  <b>Falha no painel.</b> <span id="erroTexto"></span>
+</div>
+<script>
+// Mostra na tela qualquer erro de codigo, em vez de deixar a pagina muda.
+(function(){
+  function mostrar(msg){
+    var c = document.getElementById('erroGeral');
+    var t = document.getElementById('erroTexto');
+    if(!c || !t) return;
+    t.textContent = (t.textContent ? t.textContent + '\n\n' : '') + msg;
+    c.style.display = 'block';
+  }
+  window.addEventListener('error', function(e){
+    mostrar((e.message || 'erro') + '  ·  linha ' + (e.lineno || '?'));
+  });
+  window.addEventListener('unhandledrejection', function(e){
+    mostrar('Promessa rejeitada: ' + (e.reason && e.reason.message ? e.reason.message : e.reason));
+  });
+  window.avisarErro = mostrar;
+})();
+</script>
 
 <div id="telaCapa">
   <div class="dentro">
@@ -1119,8 +1145,8 @@ body.modoCapa{min-height:100%}
               '. Nos seis últimos, loja ' + lojaFim + ' e online ' + onFim + '. ' +
               (onFim > onIni ? 'O online cresceu' : 'O online recuou') + ' e ' +
               (lojaFim > lojaIni ? 'a loja cresceu' : 'a loja recuou') + ' no período.');
-      montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial);
-      gRecorrentes();
+      tentar('caixas do mês', function(){ montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial); });
+      tentar('clientes que voltaram', gRecorrentes);
       return;
     }
 
@@ -1140,8 +1166,8 @@ body.modoCapa{min-height:100%}
       ]}, options:op
     });
 
-    montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial);
-    gRecorrentes();
+    tentar('caixas do mês', function(){ montarCaixasMes(A, B, fA, fB, qA, qB, uA, parcial); });
+    tentar('clientes que voltaram', gRecorrentes);
 
     leitura('De 1º de janeiro a ' + diaMes() + ': 2026 fez ' + brlCheio(sA) + ' contra ' + brlCheio(sB) +
             ' de 2025, ' + pct(varTotal).replace('▲ ','alta de ').replace('▼ ','queda de ') +
@@ -1967,13 +1993,26 @@ body.modoCapa{min-height:100%}
   }
 
   /* ---------- desenhar ---------- */
+  // Cada bloco roda isolado. Um erro num grafico nao derruba os demais.
+  function tentar(nome, fn){
+    try { fn(); }
+    catch(e){
+      if(window.avisarErro) window.avisarErro('Bloco ' + nome + ': ' + (e && e.message ? e.message : e));
+      else if(window.console) console.error(nome, e);
+    }
+  }
+
   function desenhar(){
-    if(aba === 'comp'){ desenharComparativo(); return; }
-    montarKPIs(); gFaturamento(); gCanal(); gOrigem(); gTopClientes();
+    if(aba === 'comp'){ tentar('comparativo', desenharComparativo); return; }
+    tentar('indicadores', montarKPIs);
+    tentar('faturamento', gFaturamento);
+    tentar('canal', gCanal);
+    tentar('origem', gOrigem);
+    tentar('maiores clientes', gTopClientes);
     document.getElementById('notaGeo').textContent =
       'Quantidade de vendas por estado e cidade em ' + ano + '. Clique para ver os clientes.';
-    gGeo('gEstados','vEstados', (D.estados||{})[ano], 'estados', COR.marrom, 'e', 'Estado');
-    gGeo('gCidades','vCidades', (D.cidades||{})[ano], 'cidades', COR.medio, 'ci', 'Cidade');
+    tentar('estados', function(){ gGeo('gEstados','vEstados', (D.estados||{})[ano], 'estados', COR.marrom, 'e', 'Estado'); });
+    tentar('cidades', function(){ gGeo('gCidades','vCidades', (D.cidades||{})[ano], 'cidades', COR.medio, 'ci', 'Cidade'); });
 
     var u = ultimoMes(ano);
     if(u < 0){ leitura(ano + ': SEM INFORMAÇÃO no quadro.'); return; }
@@ -2003,6 +2042,9 @@ body.modoCapa{min-height:100%}
       })
       .then(function(j){
         if(j.erro) throw new Error(j.erro);
+        if(typeof Chart === 'undefined'){
+          throw new Error('A biblioteca de gráficos não carregou. Verifique a conexão ou bloqueadores de conteúdo.');
+        }
         D = j;
         document.getElementById('carregando').classList.add('oculto');
         document.getElementById('painel').style.display = 'block';
